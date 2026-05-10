@@ -1,0 +1,82 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: duanju-api
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/duanju?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: negan123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+    default-property-inclusion: non_null
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: deleteTime
+      logic-delete-value: "NOW()"
+      logic-not-delete-value: "NULL"
+
+sa-token:
+  token-name: Authorization
+  timeout: 2592000       # 30天
+  active-timeout: -1
+  is-concurrent: true
+  is-share: true
+  token-style: uuid
+  is-log: false
+
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+
+logging:
+  level:
+    com.duanju: debug
+    com.baomidou.mybatisplus: warn
+
+# 短剧业务配置
+duanju:
+  site-id: 1
+  wxpay:
+    app-id: wx_your_appid
+    mch-id: your_mch_id
+    api-v3-key: your_api_v3_key
+    private-key-path: /data/wxpay/apiclient_key.pem
+    cert-serial-no: your_cert_serial_no
+    notify-url: https://yourdomain.com/api/pay/callback/wechat
+    mini-app-id: wx_miniapp_appid
+    mp-app-id: wx_mp_appid
+  alipay:
+    app-id: your_alipay_appid
+    private-key: your_private_key
+    alipay-public-key: alipay_public_key
+    notify-url: https://yourdomain.com/api/pay/callback/alipay
+    return-url: https://yourdomain.com/pages/pay/result
+    sandbox: false
+  sms:
+    provider: aliyun  # aliyun / tencent
+    access-key-id: your_key
+    access-key-secret: your_secret
+    sign-name: 短剧平台
+    template-code: SMS_XXXXXX
+  upload:
+    provider: local   # local / oss / minio
+    local-path: /data/uploads
+    base-url: http://localhost:8080/uploads

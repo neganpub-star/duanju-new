@@ -1,0 +1,52 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: duanju-admin
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/duanju?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: negan123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 1
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+    default-property-inclusion: non_null
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      logic-delete-field: deleteTime
+      logic-delete-value: "NOW()"
+      logic-not-delete-value: "NULL"
+
+sa-token:
+  token-name: Authorization
+  timeout: 86400         # 后管 token 1天
+  active-timeout: 7200   # 2小时无操作自动退出
+  is-concurrent: false
+  token-style: uuid
+  is-log: false
+
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+
+logging:
+  level:
+    com.duanju: debug
+
+duanju:
+  site-id: 1
