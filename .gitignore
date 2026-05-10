@@ -13,3 +13,5 @@ target/
 
 # Local config
 application-local.yml
+admin-ui/node_modules/
+admin-ui/dist/
