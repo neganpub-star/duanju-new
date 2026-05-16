@@ -198,7 +198,7 @@
 				</view>
 				<!-- 快捷入口 -->
 				<view class="hero-shortcuts" v-if="userInfoStore">
-					<view class="shortcut-item" @click="uni.switchTab({ url: '/pages/home/watch' })">
+					<view class="shortcut-item" @click="goWatchHistory">
 						<u-icon name="eye" color="#fff" size="22"></u-icon>
 						<text class="shortcut-label">{{ $t('user.watchHistory') }}</text>
 					</view>
@@ -775,6 +775,9 @@
 
 			},
 			// 菜单列表点击
+			goWatchHistory() {
+				uni.switchTab({ url: '/pages/home/watch' })
+			},
 			menuItemClick(id, title, url, docKey) {
 
 				if (url) {
