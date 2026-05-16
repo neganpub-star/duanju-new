@@ -12,11 +12,15 @@ import com.duanju.drama.domain.EpisodeUnlock;
 import com.duanju.drama.domain.Video;
 import com.duanju.drama.domain.VideoEpisodes;
 import com.duanju.drama.domain.VideoFavorite;
+import com.duanju.drama.domain.VideoLike;
 import com.duanju.drama.domain.WatchLog;
 import com.duanju.drama.service.VideoService;
+import com.duanju.drama.mapper.CommentMapper;
 import com.duanju.drama.mapper.EpisodeUnlockMapper;
 import com.duanju.drama.mapper.VideoEpisodesMapper;
 import com.duanju.drama.mapper.VideoFavoriteMapper;
+import com.duanju.drama.mapper.VideoLikeMapper;
+import com.duanju.drama.mapper.VideoMapper;
 import com.duanju.drama.mapper.WatchLogMapper;
 import com.duanju.system.domain.DramaUser;
 import com.duanju.system.mapper.DramaUserMapper;
@@ -70,8 +74,11 @@ public class VideoController {
     }
 
     private final VideoService videoService;
+    private final VideoMapper videoMapper;
     private final VideoEpisodesMapper episodesMapper;
     private final VideoFavoriteMapper favoriteMapper;
+    private final VideoLikeMapper videoLikeMapper;
+    private final CommentMapper commentMapper;
     private final WatchLogMapper watchLogMapper;
     private final DramaUserMapper userMapper;
     private final EpisodeUnlockMapper unlockMapper;
@@ -124,13 +131,15 @@ public class VideoController {
         if (video == null) return R.fail(I18nUtil.msg("error.video.not.found"));
         List<VideoEpisodes> episodes = episodesMapper.selectByVideoId(videoId);
 
-        // 查询当前用户是否已收藏
+        // 查询当前用户是否已收藏、已点赞
         boolean isFav = false;
+        boolean isLiked = false;
         if (StpUtil.isLogin()) {
             long userId = StpUtil.getLoginIdAsLong();
             isFav = favoriteMapper.selectCount(new LambdaQueryWrapper<VideoFavorite>()
                     .eq(VideoFavorite::getUserId, userId)
                     .eq(VideoFavorite::getVideoId, videoId)) > 0;
+            isLiked = videoLikeMapper.existsByUserAndVideo(userId, videoId) > 0;
         }
 
         VideoDetailResp resp = new VideoDetailResp();
@@ -144,9 +153,12 @@ public class VideoController {
         resp.setDisplayDesc(video.getDisplayDesc());
         resp.setEpisodes(video.getSeriesCount());
         resp.setEpisodeCount(video.getSeriesCount());
-        resp.setFavorites(0);
+        resp.setFavorites(favoriteMapper.countByVideoId(videoId));
         resp.setIsFavorite(isFav);
-        resp.setShares(0);
+        resp.setIsLike(isLiked);
+        resp.setLikes(video.getLikes() != null ? video.getLikes() : 0);
+        resp.setShares(video.getShares() != null ? video.getShares() : 0);
+        resp.setComments(commentMapper.countTopComments(videoId));
         List<EpisodeVO> episodeVOs = episodes.stream().map(EpisodeVO::from).collect(Collectors.toList());
 
         // 判断当前用户的访问权限，隐藏无权限分集的URL（强制走 /play 鉴权）
@@ -259,8 +271,8 @@ public class VideoController {
             video.put("description", v.getDescription());
             video.put("episodes", v.getSeriesCount());
             video.put("is_favorite", favIds.contains(v.getId()) ? 1 : 0);
-            video.put("favorites", 0);
-            video.put("shares", 0);
+            video.put("favorites", favoriteMapper.countByVideoId(v.getId()));
+            video.put("shares", v.getShares() != null ? v.getShares() : 0);
 
             // 外层条目（模板通过 item.id / item.vid / item.url / item.name 等访问）
             Map<String, Object> m = new LinkedHashMap<>();
@@ -271,8 +283,8 @@ public class VideoController {
             m.put("image", cover);
             m.put("name",  ep1 != null ? (ep1.getTitle() != null ? ep1.getTitle() : "第1集") : "第1集");
             m.put("is_like", 0);
-            m.put("likes", 0);
-            m.put("shares", 0);
+            m.put("likes", v.getLikes() != null ? v.getLikes() : 0);
+            m.put("shares", v.getShares() != null ? v.getShares() : 0);
             m.put("adsTrue", false);
             m.put("video", video);
             return m;
@@ -465,9 +477,53 @@ public class VideoController {
     @Operation(summary = "点赞/取消点赞")
     @PostMapping("/likes")
     public R<Map<String, Object>> toggleLike(@RequestBody Map<String, Object> req) {
+        Long videoId = toLong(req.get("vid"));
+        String action = req.get("action") != null ? req.get("action").toString() : "like";
+        if (videoId == null) return R.fail(I18nUtil.msg("error.video.id.missing"));
+
+        // 未登录：直接返回成功但不更改任何数据
+        if (!StpUtil.isLogin()) {
+            Map<String, Object> resp = new LinkedHashMap<>();
+            resp.put("is_like", "like".equals(action) ? 1 : 0);
+            return R.ok(resp);
+        }
+
+        long userId = StpUtil.getLoginIdAsLong();
+        boolean alreadyLiked = videoLikeMapper.existsByUserAndVideo(userId, videoId) > 0;
+        boolean isNowLiked;
+
+        if ("like".equals(action)) {
+            if (!alreadyLiked) {
+                VideoLike like = new VideoLike();
+                like.setSiteId(siteId);
+                like.setUserId(userId);
+                like.setVideoId(videoId);
+                like.setCreateTime(java.time.LocalDateTime.now());
+                videoLikeMapper.insert(like);
+                videoMapper.updateLikesCount(videoId, 1);
+            }
+            isNowLiked = true;
+        } else {
+            if (alreadyLiked) {
+                videoLikeMapper.deleteByUserAndVideo(userId, videoId);
+                videoMapper.updateLikesCount(videoId, -1);
+            }
+            isNowLiked = false;
+        }
+
         Map<String, Object> resp = new LinkedHashMap<>();
-        resp.put("is_like", 1);
+        resp.put("is_like", isNowLiked ? 1 : 0);
         return R.ok(resp);
+    }
+
+    @Operation(summary = "记录分享")
+    @PostMapping("/share")
+    public R<Void> recordShare(@RequestBody Map<String, Object> req) {
+        Long videoId = toLong(req.get("vid"));
+        if (videoId != null) {
+            videoMapper.incrementSharesCount(videoId);
+        }
+        return R.ok();
     }
 
     @Operation(summary = "记录观看")
@@ -646,7 +702,11 @@ public class VideoController {
         private Integer favorites;
         @JsonProperty("is_favorite")
         private Boolean isFavorite;
+        @JsonProperty("is_like")
+        private Boolean isLike;
+        private Integer likes;
         private Integer shares;
+        private Integer comments;
         private Object viewTime;
         private Long episodeId;
         @JsonProperty("episodes_list")

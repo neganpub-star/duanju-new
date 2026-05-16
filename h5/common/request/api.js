@@ -206,6 +206,11 @@ const api = {
 			method: 'POST',
 			desc: '点赞/取消点赞'
 		},
+		share: {
+			url: '/api/video/share',
+			method: 'POST',
+			desc: '记录分享'
+		},
 	},
 	// 评论
 	comment: {

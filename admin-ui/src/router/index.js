@@ -154,7 +154,7 @@ export const constantRoutes = [
         path: 'usable',
         component: () => import('@/views/commerce/usable/index'),
         name: 'CommerceUsable',
-        meta: { title: '积分套餐', icon: 'coin' }
+        meta: { title: '积分套餐', icon: 'form' }
       },
       {
         path: 'reseller',

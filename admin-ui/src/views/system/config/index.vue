@@ -176,14 +176,14 @@ const form = reactive({})
 const activeTab = ref('')
 
 const GROUP_LABELS = {
+  general:   '通用配置',
   storage:   '存储配置',
   transcode: '转码配置',
   platform:  '平台配置',
-  general:   '通用配置',
 }
 
 // tab 排列顺序
-const GROUP_ORDER = ['storage', 'transcode', 'platform', 'general']
+const GROUP_ORDER = ['general', 'storage', 'transcode', 'platform']
 
 const grouped = computed(() => {
   const map = {}

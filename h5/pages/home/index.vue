@@ -84,7 +84,7 @@
 					<u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/data.png" :text="$t('common.noData')" />
 				</view>
 				<view class="liststatus" v-else>
-					<u-loadmore :status="status" :line="true" :nomoreText="$t('home.noMore')" />
+					<u-loadmore :status="status" :line="true" :nomoreText="$t('home.noMore')" :loadmoreText="$t('home.loadMore')" />
 				</view>
 			</view>
 		</scroll-view>

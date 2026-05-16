@@ -56,7 +56,7 @@
 						<u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/data.png" :text="$t('search.noResults')"></u-empty>
 					</view>
 					<view class="liststatus" v-if="contents.list.length">
-						<u-loadmore :status="contents.status" :line="true" :nomoreText="$t('home.noMore')" />
+						<u-loadmore :status="contents.status" :line="true" :nomoreText="$t('home.noMore')" :loadmoreText="$t('home.loadMore')" />
 					</view>
 				</view>
 			</template>

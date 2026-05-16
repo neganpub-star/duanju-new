@@ -215,6 +215,10 @@ export default {
 					this.replyTarget = null;
 					uni.showToast({ title: '发表成功', icon: 'none', duration: 1200 });
 					this.loadComments(true);
+					if (!payload.parent_id) {
+						// 顶级评论才通知父页面更新计数
+						this.$emit('comment-added');
+					}
 				}
 			});
 		},

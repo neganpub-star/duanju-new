@@ -234,7 +234,7 @@
 			
 		</view> -->
 		<!-- <ad-custom ref="adFullscreenVideo" unit-id="adunit-6dee867484d19ef1" bindload="adLoad" binderror="adError" bindclose="adClose"></ad-custom> -->
-		<CommentPanel :show="showComment" :video-id="videoInfo.id" @close="showComment = false" />
+		<CommentPanel :show="showComment" :video-id="videoInfo.id" @close="showComment = false" @comment-added="onCommentAdded" />
 		<!-- 分享海报弹窗 -->
 		<view v-if="showSharePoster" class="share-poster-mask" @click.self="showSharePoster = false">
 			<view class="share-poster-popup">
@@ -727,6 +727,7 @@
 						this.videoInfo.share = res.data.shares
 						this.videoInfo.likes = res.data.likes || 0
 						this.videoInfo.comments = res.data.comments || 0
+						this.videoInfo.isLike = res.data.is_like ? 1 : 0
 						
 						if(res.data.episodes_list && res.data.episodes_list.length) {
 							this.prevTime = res.data.view_time
@@ -1274,6 +1275,9 @@
 			},
 			onCommentClick() {
 				this.showComment = true;
+			},
+			onCommentAdded() {
+				this.videoInfo.comments = (this.videoInfo.comments || 0) + 1;
 			},
 			// 新增生成合成图片方法
 			createPosterImage() {
