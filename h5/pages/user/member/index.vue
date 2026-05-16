@@ -121,7 +121,7 @@
 				// #endif
 				if(!this.buttonLoading) return
 				this.buttonLoading = false
-				uni.showLoading({ title: '开通中...', mask: true })
+				uni.showLoading({ title: this.$t('payment.activating'), mask: true })
 				this.$request('order.create', {
 					vip_id: id,
 					total_fee: price,
@@ -132,7 +132,7 @@
 					if(res.code === 1) {
 						this.handlePayResult(res.data)
 					} else {
-						uni.showToast({ title: res.msg || '下单失败', icon: 'none' })
+						uni.showToast({ title: res.msg || this.$t('payment.orderFailed'), icon: 'none' })
 					}
 				}).catch(() => {
 					uni.hideLoading()
@@ -516,9 +516,9 @@
 				}
 				// 余额支付直接成功，或支付配置未完成
 				if(data.payError) {
-					uni.showToast({ title: '支付功能配置中，请联系客服', icon: 'none', duration: 3000 })
+					uni.showToast({ title: this.$t('payment.notConfigured'), icon: 'none', duration: 3000 })
 				} else {
-					uni.showToast({ title: '开通成功', icon: 'success' })
+					uni.showToast({ title: this.$t('payment.success'), icon: 'success' })
 					this.getUserInfo()
 				}
 			},

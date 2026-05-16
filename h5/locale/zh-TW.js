@@ -105,6 +105,14 @@ export default {
     updatedTo: '更新至{0}集',
     unlocked: '已解鎖',
   },
+  payment: {
+    notConfigured: '支付功能配置中，請聯繫客服',
+    paying: '支付中...',
+    success: '支付成功',
+    failed: '支付失敗',
+    orderFailed: '下單失敗',
+    activating: '開通中...',
+  },
   vip: {
     title: '開通VIP會員',
     benefit1: '全站短劇免廣告',

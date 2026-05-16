@@ -111,6 +111,14 @@ export default {
     unlocked: '已解锁',
   },
   // 会员
+  payment: {
+    notConfigured: '支付功能配置中，请联系客服',
+    paying: '支付中...',
+    success: '支付成功',
+    failed: '支付失败',
+    orderFailed: '下单失败',
+    activating: '开通中...',
+  },
   vip: {
     title: '开通VIP会员',
     benefit1: '全站短剧免广告',

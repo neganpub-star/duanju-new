@@ -149,9 +149,9 @@
 					return
 				}
 				if(data.payError) {
-					uni.showToast({ title: '支付功能配置中，请联系客服', icon: 'none', duration: 3000 })
+					uni.showToast({ title: this.$t('payment.notConfigured'), icon: 'none', duration: 3000 })
 				} else {
-					uni.showToast({ title: '充值成功', icon: 'success' })
+					uni.showToast({ title: this.$t('payment.success'), icon: 'success' })
 					this.getUserInfo && this.getUserInfo()
 				}
 			},

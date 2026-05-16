@@ -105,6 +105,14 @@ export default {
     updatedTo: 'Updated to ep {0}',
     unlocked: 'Unlocked',
   },
+  payment: {
+    notConfigured: 'Payment not configured, please contact support',
+    paying: 'Processing...',
+    success: 'Payment successful',
+    failed: 'Payment failed',
+    orderFailed: 'Order failed',
+    activating: 'Activating...',
+  },
   vip: {
     title: 'Activate VIP',
     benefit1: 'Ad-free viewing',
