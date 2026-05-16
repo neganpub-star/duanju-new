@@ -46,13 +46,16 @@
 				<u-loadmore :status="loadStatus" :line="true" />
 			</view>
 		</scroll-view>
+		<CustomTabBar current="/pages/home/watch" />
 	</view>
 </template>
 
 <script>
 	import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
-	
+	import CustomTabBar from '@/components/CustomTabBar.vue'
+
 	export default {
+		components: { CustomTabBar },
 		data() {
 			return {
 				headerHeight: 0,
@@ -83,12 +86,6 @@
 			}).exec();
 		},
 		onShow() {
-			uni.setTabBarStyle({
-				color: '#999',
-				selectedColor: '#9354FF',
-				backgroundColor: '#ffffff',
-				borderStyle: 'black',
-			});
 			this.refreshHandle();
 		},
 		methods: {
@@ -217,6 +214,9 @@
 		height: 100vh;
 		display: flex;
 		flex-direction: column;
+		/* #ifdef H5 */
+		padding-bottom: 100rpx;
+		/* #endif */
 	}
 
 	.header-fixed {

@@ -30,6 +30,8 @@ import CustomBackTop from '@/components/CustomBackTop.vue'
 Vue.component('CustomBackTop', CustomBackTop)
 
 //自定义tabbar
+import CustomTabBar from '@/components/CustomTabBar.vue'
+Vue.component('CustomTabBar', CustomTabBar)
 
 
 // import * as system from "@/components/system.js"

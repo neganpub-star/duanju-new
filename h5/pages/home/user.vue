@@ -312,6 +312,7 @@
 
 
 		<!-- <tabBar v-if="tabChange" selectedIndex =3></tabBar> -->
+		<CustomTabBar current="/pages/home/user" />
 	</view>
 </template>
 
@@ -323,8 +324,9 @@
 		mapActions
 	} from "vuex"
 	import LangSwitcher from '@/components/LangSwitcher.vue'
+	import CustomTabBar from '@/components/CustomTabBar.vue'
 	export default {
-		components: { LangSwitcher },
+		components: { LangSwitcher, CustomTabBar },
 		data() {
 			return {
 				isBgColor: `#5E72F7`,
@@ -632,12 +634,6 @@
 		},
 		onShow() {
 			this.tabChange = true
-			uni.setTabBarStyle({
-				color: '#999',
-				selectedColor: '#9354FF',
-				backgroundColor: '#ffffff',
-				borderStyle: 'black',
-			});
 			this.token && this.getUserInfo()
 		},
 		onHide() {
@@ -1322,6 +1318,9 @@
 <style lang="scss" scoped>
 	.page_content {
 		position: relative;
+		/* #ifdef H5 */
+		padding-bottom: 100rpx;
+		/* #endif */
 
 		.head_content {
 			position: fixed;

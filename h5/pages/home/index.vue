@@ -93,12 +93,15 @@
 		<!-- #ifdef MP-WEIXIN -->
 		<zero-privacy :onNeed="false" :hideTabBar="true"></zero-privacy>
 		<!-- #endif -->
+		<CustomTabBar current="/pages/home/index" />
 	</view>
 </template>
 
 <script>
 	import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
+	import CustomTabBar from '@/components/CustomTabBar.vue'
 	export default {
+		components: { CustomTabBar },
 		data() {
 			return {
 				navbarTitle: this.$store.state.app.title || '影视视频',
@@ -131,12 +134,6 @@
 			},
 		},
 		onShow() {
-			uni.setTabBarStyle({
-				color: '#999',
-				selectedColor: '#9354FF',
-				backgroundColor: '#ffffff',
-				borderStyle: 'black',
-			});
 			if (this.token) {
 				this.getUserInfo && this.getUserInfo()
 				this.getCategoryList && this.getCategoryList()
@@ -379,6 +376,9 @@
 		height: 100vh;
 		display: flex;
 		flex-direction: column;
+		/* #ifdef H5 */
+		padding-bottom: 100rpx;
+		/* #endif */
 	}
 
 	.header_new {

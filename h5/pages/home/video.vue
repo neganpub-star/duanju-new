@@ -139,14 +139,16 @@
 		</view>
 		<!-- #endif -->
 		<CommentPanel :show="showComment" :video-id="commentVideoId" @close="showComment = false" />
+		<CustomTabBar current="/pages/home/video" />
 	</view>
 </template>
 
 <script>
 	import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
 	import CommentPanel from '../video/components/CommentPanel.vue'
+	import CustomTabBar from '@/components/CustomTabBar.vue'
 	export default {
-		components: { CommentPanel },
+		components: { CommentPanel, CustomTabBar },
 		data() {
 			return {
 				isIos: uni.getSystemInfoSync().osName == 'ios' ? true : false,
@@ -272,12 +274,6 @@
 		},
 		onShow() {
 			this.tabChange = true
-			uni.setTabBarStyle({
-				color: '#999',
-				selectedColor: '#fff',
-				backgroundColor: '#000',
-				borderStyle: 'black'
-			})
 			// #ifdef MP-WEIXIN
 				if(this.userInfo.mgg == 1){
 					this.shipinAd = null,
@@ -305,12 +301,6 @@
 		onHide() {
 			this.videoPause()
 			this.tabChange = false
-			uni.setTabBarStyle({
-				color: "#999",
-				selectedColor: `#9354FF`,
-				backgroundColor: "#fff",
-				borderStyle: "black",
-			})
 		},
 		onShareAppMessage(res) {
 			// #ifdef MP-WEIXIN
@@ -735,7 +725,10 @@
 		    margin-top:-265rpx;/*高度的一半*/
 		}
 	.page_content {
-		
+		/* #ifdef H5 */
+		padding-bottom: 100rpx;
+		/* #endif */
+
 		.ad_box {
 			position: absolute;
 			bottom: 80rpx;
