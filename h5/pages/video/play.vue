@@ -156,7 +156,6 @@
 										<path d="M15.7 23.4L28.3 30.6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
 									</svg>
 								</button>
-								<text class="share-label">{{ $t('video.share') }}</text>
 							</view>
 						</view>
 						<view class="progress" v-if="!isNeedToPay && duration > 0 && videoIndex == index">
@@ -181,7 +180,7 @@
 					<view class="left">
 						<text class="text1">{{ videoInfo.title }}</text>
 						<text class="divider">|</text>
-						<text class="text2">{{ originData[originIndex].name }}</text>
+						<text class="text2">{{ originData[originIndex].display_title || originData[originIndex].name }}</text>
 					</view>
 					<view class="right" :style="'color:#ffe066'" @click="isShowMenu = true">{{ $t('video.selectEpisode') }}</view>
 				</view>
@@ -1604,7 +1603,7 @@
 						}
 						
 						.image {
-							width: 70rpx;
+							width: 44rpx;
 							margin: 0 auto;
 							opacity: 0.9;
 						}
