@@ -130,31 +130,39 @@
 						</view>
 						<view class="sidebar" v-if="!isDrag && !isNeedToPay && !isPlayError && videoIndex == index">
 							<view class="item" @click.stop="onCommentClick">
-								<u-icon name="chat" size="40" color="#fff"></u-icon>
+								<view class="icon-circle">
+									<u-icon name="chat" size="44" color="#fff"></u-icon>
+								</view>
 							</view>
 							<view class="item" :class="{ 'liked-anim': likeAnim }" @click="handleLikes(item.id, index)">
-								<image class="image" :src="`/static/img/likes_${item.is_like ? 1 : 0 }.png`" mode="widthFix"></image>
+								<view class="icon-circle">
+									<image class="image" :src="`/static/img/likes_${item.is_like ? 1 : 0 }.png`" mode="widthFix"></image>
+								</view>
 								<text class="text" :class="{ active: item.is_like }">{{ item.likes }}</text>
 							</view>
 							<view class="item" :class="{ 'collected-anim': collectAnim }" @click="handleCollect">
-								<svg class="star-svg" width="45" height="45" viewBox="0 0 48 48" style="display:block;margin:0 auto;"
-									:style="videoInfo.isCollect || collectAnim ? 'filter: drop-shadow(0 0 8px #ffe066);' : ''">
-									<polygon points="24,7 29.1,18.2 41.5,19.8 32.5,28.6 35.2,41 24,34.2 12.8,41 15.5,28.6 6.5,19.8 18.9,18.2"
-										:fill="videoInfo.isCollect || collectAnim ? '#ffe066' : '#fff'"
-										:stroke="videoInfo.isCollect || collectAnim ? '#ffe066' : '#fff'"
-										stroke-width="3" stroke-linejoin="round"/>
-								</svg>
+								<view class="icon-circle">
+									<svg class="star-svg" viewBox="0 0 48 48"
+										:style="videoInfo.isCollect || collectAnim ? 'filter: drop-shadow(0 0 8px #ffe066);' : ''">
+										<polygon points="24,7 29.1,18.2 41.5,19.8 32.5,28.6 35.2,41 24,34.2 12.8,41 15.5,28.6 6.5,19.8 18.9,18.2"
+											:fill="videoInfo.isCollect || collectAnim ? '#ffe066' : '#fff'"
+											:stroke="videoInfo.isCollect || collectAnim ? '#ffe066' : '#fff'"
+											stroke-width="3" stroke-linejoin="round"/>
+									</svg>
+								</view>
 								<text class="text" :class="{ active: videoInfo.isCollect || collectAnim }">{{ videoInfo.collect }}</text>
 							</view>
 							<view class="item share-item">
 								<button class="btn share-btn" @click="handleShare">
-									<svg class="share-svg-icon" width="36" height="36" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-										<circle cx="32" cy="12" r="4" fill="#fff"/>
-										<circle cx="12" cy="22" r="4" fill="#fff"/>
-										<circle cx="32" cy="32" r="4" fill="#fff"/>
-										<path d="M15.7 20.6L28.3 13.4" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
-										<path d="M15.7 23.4L28.3 30.6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
-									</svg>
+									<view class="icon-circle">
+										<svg class="share-svg-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<circle cx="32" cy="12" r="4" fill="#fff"/>
+											<circle cx="12" cy="22" r="4" fill="#fff"/>
+											<circle cx="32" cy="32" r="4" fill="#fff"/>
+											<path d="M15.7 20.6L28.3 13.4" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+											<path d="M15.7 23.4L28.3 30.6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+										</svg>
+									</view>
 								</button>
 							</view>
 						</view>
@@ -1608,31 +1616,59 @@
 				
 				.sidebar {
 					position: absolute;
-					right: 30rpx;
+					right: 24rpx;
 					bottom: 200rpx;
 					z-index: 9999 !important;
-					
+
 					.item {
-						margin-bottom: 40rpx;
+						margin-bottom: 32rpx;
 						text-align: center;
-						filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
+						display: flex;
+						flex-direction: column;
+						align-items: center;
 
 						&:last-child {
 							margin-bottom: 0;
 						}
 
+						.icon-circle {
+							width: 88rpx;
+							height: 88rpx;
+							background: rgba(0, 0, 0, 0.40);
+							border-radius: 50%;
+							display: flex;
+							align-items: center;
+							justify-content: center;
+							border: 1rpx solid rgba(255, 255, 255, 0.20);
+							margin-bottom: 8rpx;
+						}
+
 						.image {
 							width: 44rpx;
-							margin: 0 auto;
+							height: 44rpx;
 							opacity: 0.95;
 						}
 
+						.star-svg {
+							width: 44rpx;
+							height: 44rpx;
+							display: block;
+						}
+
+						.share-svg-icon {
+							width: 40rpx;
+							height: 40rpx;
+							display: block;
+						}
+
 						.text {
-							font-size: 28rpx;
+							font-size: 24rpx;
+							color: rgba(255, 255, 255, 0.92);
 							text-shadow: 0 1px 4px rgba(0,0,0,0.7);
 
 							&.active {
-								color: #5E72F7;
+								color: #ffe066;
+								font-weight: bold;
 							}
 						}
 
@@ -1641,10 +1677,9 @@
 							background: transparent;
 							color: #fff;
 							box-sizing: border-box;
-							font-size: 28rpx;
-							line-height: 40rpx;
 							padding: 0;
 							border: none;
+							line-height: 1;
 
 							&::after {
 								display: none;
