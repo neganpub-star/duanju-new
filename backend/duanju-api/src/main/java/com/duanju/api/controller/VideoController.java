@@ -462,6 +462,14 @@ public class VideoController {
         private Integer addlog;
     }
 
+    @Operation(summary = "点赞/取消点赞")
+    @PostMapping("/likes")
+    public R<Map<String, Object>> toggleLike(@RequestBody Map<String, Object> req) {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        resp.put("is_like", 1);
+        return R.ok(resp);
+    }
+
     @Operation(summary = "记录观看")
     @PostMapping({"/view/{id}", "/view"})
     public R<Void> addView(@PathVariable(required = false) Long id,

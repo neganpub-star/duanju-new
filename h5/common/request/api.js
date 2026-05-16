@@ -202,9 +202,9 @@ const api = {
 			desc: '播放记录'
 		},
 		likes: {
-			url: '/api/video/favorite',
+			url: '/api/video/likes',
 			method: 'POST',
-			desc: '收藏/取消收藏'
+			desc: '点赞/取消点赞'
 		},
 	},
 	// 评论
