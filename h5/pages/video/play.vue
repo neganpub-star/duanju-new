@@ -133,12 +133,13 @@
 								<view class="icon-circle">
 									<u-icon name="chat" size="44" color="#fff"></u-icon>
 								</view>
+								<text v-if="videoInfo.comments > 0" class="text">{{ videoInfo.comments }}</text>
 							</view>
-							<view class="item" :class="{ 'liked-anim': likeAnim }" @click="handleLikes(item.id, index)">
+							<view class="item" :class="{ 'liked-anim': likeAnim }" @click="handleLikes()">
 								<view class="icon-circle">
-									<image class="image" :src="`/static/img/likes_${item.is_like ? 1 : 0 }.png`" mode="widthFix"></image>
+									<image class="image" :src="`/static/img/likes_${videoInfo.isLike ? 1 : 0}.png`" mode="widthFix"></image>
 								</view>
-								<text class="text" :class="{ active: item.is_like }">{{ item.likes }}</text>
+								<text v-if="videoInfo.likes > 0" class="text" :class="{ active: videoInfo.isLike }">{{ videoInfo.likes }}</text>
 							</view>
 							<view class="item" :class="{ 'collected-anim': collectAnim }" @click="handleCollect">
 								<view class="icon-circle">
@@ -340,7 +341,7 @@
 				oldIndex: 0, // 源数据上一次索引
 				circular: true, // swiper首尾循环
 				
-				videoInfo: { id: '', title: '', cover: '', length: '', collect: 0, isCollect: 0, share: 0 },
+				videoInfo: { id: '', title: '', cover: '', length: '', collect: 0, isCollect: 0, share: 0, likes: 0, isLike: 0, comments: 0 },
 				videoData: [], // 渲染数据
 				videoIndex: 0, // 渲染数据索引
 
@@ -724,6 +725,8 @@
 						this.videoInfo.collect = res.data.favorites
 						this.videoInfo.isCollect = res.data.is_favorite
 						this.videoInfo.share = res.data.shares
+						this.videoInfo.likes = res.data.likes || 0
+						this.videoInfo.comments = res.data.comments || 0
 						
 						if(res.data.episodes_list && res.data.episodes_list.length) {
 							this.prevTime = res.data.view_time
@@ -1050,20 +1053,19 @@
 			getVideoCtx() {
 				return uni.createVideoContext('vplayer'+ this.videoIndex, this)
 			},
-			// 点赞
-			handleLikes(id, index) {
-				const obj = {
-					episode_id: id,
-					type: 'like'
-				}
+			// 点赞（按整部剧计数，操作 videoInfo）
+			handleLikes() {
+				const vid = this.videoInfo.id
+				const action = this.videoInfo.isLike == 0 ? 'like' : 'unlike'
+				const obj = { vid: vid, action: action }
 				this.$request('video.likes', obj).then(res => {
 					if(res.code === 1) {
-						if(this.videoData[index].is_like == 0) {
-							this.videoData[index].is_like = 1
-							this.videoData[index].likes++
+						if(action === 'like') {
+							this.videoInfo.isLike = 1
+							this.videoInfo.likes = (Number(this.videoInfo.likes) || 0) + 1
 						} else {
-							this.videoData[index].is_like = 0
-							this.videoData[index].likes--
+							this.videoInfo.isLike = 0
+							this.videoInfo.likes = Math.max(0, (Number(this.videoInfo.likes) || 0) - 1)
 						}
 					}
 				})
@@ -1157,6 +1159,10 @@
 						}
 					});
 					return;
+				}
+				const vid = this.videoInfo.id
+				if (vid) {
+					this.$request('video.share', { vid: vid }).catch(() => {})
 				}
 				this.genQrcodeValue();
 				// 只替换域名为正式域名，后面路径和参数不变
