@@ -197,6 +197,7 @@ export default {
     watchedTo: 'Watched to',
     watchNow: 'Watch Now',
     unfollowConfirm: 'Unfollow {0}?',
+    unfollowSuccess: 'Unfollowed',
   },
   home: {
     all: 'All',

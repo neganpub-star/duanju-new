@@ -196,6 +196,7 @@ export default {
     watchedTo: '看到',
     watchNow: '立即觀看',
     unfollowConfirm: '確定要取消追劇《{0}》嗎？',
+    unfollowSuccess: '已取消追劇',
   },
   home: {
     all: '全部',

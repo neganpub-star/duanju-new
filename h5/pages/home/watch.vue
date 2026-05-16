@@ -120,17 +120,7 @@
 				if (this.contentCurrent === 0) {
 					this.openVideoDetail(item.video.id, item.video.display_title||item.video.title, item.video.image, item.video.display_desc||item.video.description);
 				} else {
-					uni.showModal({
-						title: this.$t('common.tip'),
-						content: this.$t('watch.unfollowConfirm', [item.video.display_title||item.video.title]),
-						cancelText: this.$t('common.cancel'),
-						confirmText: this.$t('common.confirm'),
-						success: (res) => {
-							if (res.confirm) {
-								this.unfavorite(item, index);
-							}
-						}
-					});
+					this.unfavorite(item, index);
 				}
 			},
 			unfavorite(item, index) {
@@ -138,6 +128,7 @@
 				const obj = { ids: item.vid, type: 'favorite' };
 				this.$request('video.deleteRecord', obj, false).then(res => {
 					if(res.code === 1) {
+						uni.showToast({ title: this.$t('watch.unfollowSuccess'), icon: 'none', duration: 1500 });
 						setTimeout(() => {
 							this.contentList[this.contentCurrent].list.splice(index, 1);
 						}, 400);
