@@ -121,8 +121,8 @@
 					this.openVideoDetail(item.video.id, item.video.title, item.video.image, item.video.description);
 				} else {
 					uni.showModal({
-						title: '提示',
-						content: `确定要取消追剧《${item.video.title}》吗？`,
+						title: this.$t('common.tip'),
+						content: this.$t('watch.unfollowConfirm', [item.video.title]),
 						success: (res) => {
 							if (res.confirm) {
 								this.unfavorite(item, index);

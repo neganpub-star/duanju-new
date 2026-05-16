@@ -13,9 +13,11 @@ export default {
     save: '保存',
     loading: '加载中...',
     noData: '暂无数据',
+    noMore: '没有更多了',
     networkError: '网络连接失败，请稍后重试',
     success: '操作成功',
     loginFirst: '请先登录',
+    tip: '提示',
     copy: '复制',
     copySuccess: '复制成功',
     submit: '提交',
@@ -80,6 +82,9 @@ export default {
     perkFreeEpisodes: 'VIP剧集免费看',
     perkEarlyUnlock: '新剧优先解锁',
     perkNoAds: '无广告体验',
+    notLoggedIn: '未登录',
+    tapToLogin: '点击登录',
+    loginForMore: '登录后享受更多功能',
   },
   // 视频播放
   video: {
@@ -189,6 +194,9 @@ export default {
     noDescription: '暂无简介',
     noRecord: '暂无记录',
     watchedProgress: '已看至 {0}% ({1})',
+    watchedTo: '看到',
+    watchNow: '立即观看',
+    unfollowConfirm: '确定要取消追剧《{0}》吗？',
   },
   home: {
     all: '全部',
@@ -204,6 +212,7 @@ export default {
     history: '历史记录',
     hotSearch: '热门搜索',
     noResults: '暂无相关短剧',
+    clearConfirm: '确定要清空历史记录吗？',
   },
   share: {
     title: '分享赚钱',

@@ -116,8 +116,8 @@
 			},
 			clearHistory() {
 				uni.showModal({
-					title: '提示',
-					content: '确定要清空历史记录吗？',
+					title: this.$t('common.tip'),
+					content: this.$t('search.clearConfirm'),
 					success: (res) => {
 						if (res.confirm) {
 							uni.removeStorageSync('search_history');

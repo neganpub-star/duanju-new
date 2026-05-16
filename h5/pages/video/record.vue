@@ -4,7 +4,7 @@
 	<view class="page_content">
 		<view class="head_content">
 			<!-- #ifndef MP-TOUTIAO -->
-				<CustomNavbar title="观看记录"></CustomNavbar>
+				<CustomNavbar :title="$t('watch.watchHistory')"></CustomNavbar>
 			<!-- #endif -->
 			
 			<view class="tabs_box">
@@ -24,15 +24,15 @@
 									<view class="info">
 										<view class="title u-line-1">{{ lItem.video.title }}</view>
 										<view class="text1 u-line-2">{{ lItem.video.description }}</view>
-										<view class="text2">看到{{ lItem.episode.name }} / 共{{ lItem.video.episodes }}集</view>
+										<view class="text2">{{ $t('watch.watchedTo') }}{{ lItem.episode.name }} / {{ $t('video.totalEpisodes', [lItem.video.episodes]) }}</view>
 										<view class="btns">
 											<view class="button" v-if="item.id == 1" :class="{ collect: lItem.is_favorite == 1 }" hover-class="active" :hover-start-time="0" :hover-stay-time="200" @click.stop="handleCollect(lItem.vid, lItem.is_favorite, lIndex)">
 												<u-icon :name="lItem.is_favorite == 1 ? 'star-fill' : 'star'" color="#eee" size="18"></u-icon>
-												<text class="text">{{ lItem.is_favorite == 1 ? '已追剧' : '追剧' }}</text>
+												<text class="text">{{ lItem.is_favorite == 1 ? $t('home.following') : $t('home.follow') }}</text>
 											</view>
 											<view class="button" v-else hover-class="active" :hover-start-time="0" :hover-stay-time="200">
 												<u-icon name="play-right-fill" color="#eee" size="18"></u-icon>
-												<text class="text">立即观看</text>
+												<text class="text">{{ $t('watch.watchNow') }}</text>
 											</view>
 										</view>
 									</view>

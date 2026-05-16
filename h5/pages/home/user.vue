@@ -23,14 +23,14 @@
 	
 						<view class="msg" style="display: flex;align-items: center;justify-content: center;color: rgba(0, 0, 0, 0.7);width: 100%;">
 							<text class="text"
-								@click.stop="jumpView('/pages/user/integral/index')">{{ userInfoStore.usable || 0 }}积分</text>
+								@click.stop="jumpView('/pages/user/integral/index')">{{ userInfoStore.usable || 0 }}{{ $t('user.myPoints') }}</text>
 							<view style="margin: 0 20rpx; height: 24rpx;width: 1rpx;background-color: rgba(0, 0, 0, 0.2);">
 	
 							</view>
 							<text v-if="userInfoStore.is_vip == 1" class="copy" @click.stop="openVip"
-								style="color: rgba(0, 0, 0, 0.7);text-decoration: none;">我的会员</text>
+								style="color: rgba(0, 0, 0, 0.7);text-decoration: none;">{{ $t('user.myVip') }}</text>
 							<text v-else class="copy" @click.stop="openVip"
-								style="color: rgba(0, 0, 0, 0.7);text-decoration: none;">开通会员</text>
+								style="color: rgba(0, 0, 0, 0.7);text-decoration: none;">{{ $t('user.activateNow') }}</text>
 						</view>
 					</view>
 				</view>
@@ -42,7 +42,7 @@
 					</view>
 					<view class="info" style="margin-left: 0;display: flex;flex-direction: column;align-items: center;width: 100%;">
 						<view class="nickname" style="width: 100%;text-align: center;">
-							<text class="text">未登录</text>
+							<text class="text">{{ $t('user.notLoggedIn') }}</text>
 						</view>
 						<view class="msg" style="width: 100%;"></view>
 					</view>
@@ -61,22 +61,22 @@
 				<view class="vip_box" :style="`background: linear-gradient(141.96deg, #2a3599 0%, #7c3aed 100%)`" v-if="!iosIsPay">
 					<view class="left">
 						<view class="line1">影视通VIP</view>
-						<view class="line2">开通VIP会员 专享剧集立即免费</view>
+						<view class="line2">{{ $t('user.vipBenefitDesc') }}</view>
 					</view>
 					<view class="right">
-						<u-button style="color: rgba(135, 141, 255, 1);" text="我的会员" v-if="userInfoStore.is_vip == 1"
+						<u-button style="color: rgba(135, 141, 255, 1);" :text="$t('user.myVip')" v-if="userInfoStore.is_vip == 1"
 							:customStyle="buttonStyle" @click="openVip" />
-						<u-button style="color: rgba(135, 141, 255, 1);" text="立即开通" v-else :customStyle="buttonStyle"
+						<u-button style="color: rgba(135, 141, 255, 1);" :text="$t('user.activateNow')" v-else :customStyle="buttonStyle"
 							@click="openVip" />
 					</view>
 				</view>
 				<view class="vip_box" :style="`background: linear-gradient(141.96deg, #2a3599 0%, #7c3aed 100%)`" v-else>
 					<view class="left">
 						<view class="line1">影视通VIP</view>
-						<view class="line2"> 开通VIP会员 专享剧集立即免费</view>
+						<view class="line2">{{ $t('user.vipBenefitDesc') }}</view>
 					</view>
 					<view class="right">
-						<u-button style="color: rgba(135, 141, 255, 1);" text="立即开通" :customStyle="buttonStyle"
+						<u-button style="color: rgba(135, 141, 255, 1);" :text="$t('user.activateNow')" :customStyle="buttonStyle"
 							@click="openVip" />
 					</view>
 				</view>
@@ -189,8 +189,8 @@
 						<image class="image" src="https://img.nymaite.com/video_short/images/avatar.png" mode="aspectFill"></image>
 					</view>
 					<view class="hero-info">
-						<view class="hero-nickname">点击登录</view>
-						<view class="hero-uid">登录后享受更多功能</view>
+						<view class="hero-nickname">{{ $t('user.tapToLogin') }}</view>
+						<view class="hero-uid">{{ $t('user.loginForMore') }}</view>
 					</view>
 					<view class="hero-arrow">
 						<u-icon name="arrow-right" color="rgba(255,255,255,0.7)" size="18"></u-icon>
