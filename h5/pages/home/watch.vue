@@ -123,6 +123,8 @@
 					uni.showModal({
 						title: this.$t('common.tip'),
 						content: this.$t('watch.unfollowConfirm', [item.video.display_title||item.video.title]),
+						cancelText: this.$t('common.cancel'),
+						confirmText: this.$t('common.confirm'),
 						success: (res) => {
 							if (res.confirm) {
 								this.unfavorite(item, index);

@@ -1072,9 +1072,11 @@
 			},
 			// 收藏
 			handleCollect() {
+				const vidId = parseInt(this.videoInfo.id)
+				if (!vidId) return
 				if(this.videoInfo.isCollect == 0) {
 					const obj = {
-						vid: this.videoInfo.id,
+						vid: vidId,
 						type: 'favorite'
 					}
 					this.$request('video.addFavorite', obj).then(res => {
@@ -1085,7 +1087,7 @@
 					})
 				} else {
 					const obj = {
-						ids: this.videoInfo.id,
+						ids: vidId,
 						type: 'favorite'
 					}
 					this.$request('video.deleteRecord', obj).then(res => {
