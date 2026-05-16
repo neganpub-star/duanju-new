@@ -22,7 +22,7 @@
 					<view class="left">
 						<text class="text1">{{ videoInfo.title }}</text>
 						<text class="divider">|</text>
-						<text class="text2">{{ videoData[videoIndex].name }}</text>
+						<text class="text2">{{ videoData[videoIndex].display_title || videoData[videoIndex].name }}</text>
 					</view>
 					<view class="right" :style="'color:#ffe066'" @click="isShowMenu = true">{{ $t('video.selectEpisode') }}</view>
 				</view>
@@ -31,7 +31,7 @@
 		<view class="vmask" v-if="isLastPage">
 			<image class="bg" :src="videoInfo.cover" mode="aspectFill"></image>
 			<view class="centerinfo">
-				<view class="text">本集为付费内容 请按剧集顺序点播 <br> 已解锁{{ lockCount }}集</view>
+				<view class="text">{{ $t('video.paidOrderUnlocked', [lockCount]) }}</view>
 				<view class="btn" @click="changeOriginIndex(lockCount)">{{ $t('video.unlockNext') }}</view>
 			</view>
 			<view class="infobox">
@@ -39,9 +39,9 @@
 					<view class="left">
 						<text class="text1">{{ videoInfo.title }}</text>
 						<text class="divider">|</text>
-						<text class="text2">{{ videoData[videoIndex].name }}</text>
+						<text class="text2">{{ videoData[videoIndex].display_title || videoData[videoIndex].name }}</text>
 					</view>
-					<view class="right" :style="'color:#ffe066'" @click="isShowMenu = true">选集</view>
+					<view class="right" :style="'color:#ffe066'" @click="isShowMenu = true">{{ $t('video.selectEpisode') }}</view>
 				</view>
 			</view>
 		</view>
@@ -131,7 +131,6 @@
 						<view class="sidebar" v-if="!isDrag && !isNeedToPay && !isPlayError && videoIndex == index">
 							<view class="item" @click.stop="onCommentClick">
 								<u-icon name="chat" size="40" color="#fff"></u-icon>
-								<text style="color:#fff">{{ $t('video.comment') }}</text>
 							</view>
 							<view class="item" :class="{ 'liked-anim': likeAnim }" @click="handleLikes(item.id, index)">
 								<image class="image" :src="`/static/img/likes_${item.is_like ? 1 : 0 }.png`" mode="widthFix"></image>
@@ -252,7 +251,7 @@
 								<div class="custom-poster-info" style="flex: 1;">
 									<div class="custom-poster-ep-row">
 										<span class="custom-poster-ep-label">剧集</span>
-										<span class="custom-poster-ep-value">{{ videoData[videoIndex].name }}</span>
+										<span class="custom-poster-ep-value">{{ videoData[videoIndex].display_title || videoData[videoIndex].name }}</span>
 									</div>
 									<div class="custom-poster-desc">老有戏邀请你观看精选短剧<br/>体验老有戏观看享受院线级别服务<br/></div>
 								</div>

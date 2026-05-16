@@ -24,7 +24,7 @@
 									<view class="info">
 										<view class="title u-line-1">{{ lItem.video.display_title||lItem.video.title }}</view>
 										<view class="text1 u-line-2">{{ lItem.video.display_desc||lItem.video.description }}</view>
-										<view class="text2">{{ $t('watch.watchedTo') }}{{ lItem.episode.name }} / {{ $t('video.totalEpisodes', [lItem.video.episodes]) }}</view>
+										<view class="text2">{{ $t('watch.watchedTo') }}{{ lItem.episode.display_title || lItem.episode.name }} / {{ $t('video.totalEpisodes', [lItem.video.episodes]) }}</view>
 										<view class="btns">
 											<view class="button" v-if="item.id == 1" :class="{ collect: lItem.is_favorite == 1 }" hover-class="active" :hover-start-time="0" :hover-stay-time="200" @click.stop="handleCollect(lItem.vid, lItem.is_favorite, lIndex)">
 												<u-icon :name="lItem.is_favorite == 1 ? 'star-fill' : 'star'" color="#eee" size="18"></u-icon>
@@ -42,7 +42,7 @@
 								<u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/data.png" :text="$t('common.noData')" />
 							</view>
 							<view class="liststatus" v-else>
-								<u-loadmore :status="item.status" :line="true" :nomoreText="$t('home.noMore')" />
+								<u-loadmore :status="item.status" :line="true" :nomoreText="$t('home.noMore')" :loadmoreText="$t('home.loadMore')" />
 							</view>
 						</view>
 					</scroll-view>
