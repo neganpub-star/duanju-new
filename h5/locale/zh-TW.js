@@ -115,6 +115,7 @@ export default {
     viewMoreEpisodes: '查看更多劇集',
     adCountdown: '看個廣告，休息片刻：{0}',
     adReward: '獎勵已發放',
+    watchInOrder: '請按劇集順序點播！',
   },
   payment: {
     notConfigured: '支付功能配置中，請聯繫客服',

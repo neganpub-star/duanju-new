@@ -102,6 +102,7 @@ export default {
     theater: '剧场',
     paidContent: '本集为付费内容，继续观看请',
     paidOrder: '本集为付费内容，请按剧集顺序点播',
+    paidOrderUnlocked: '本集为付费内容 请按剧集顺序点播 已解锁{0}集',
     unlockEpisode: '解锁剧情',
     unlockNext: '解锁下一集',
     selectEpisode: '选集',
@@ -120,6 +121,7 @@ export default {
     viewMoreEpisodes: '查看更多剧集',
     adCountdown: '看个广告，休息片刻：{0}',
     adReward: '奖励已发放',
+    watchInOrder: '请按剧集顺序点播！',
   },
   // 会员
   payment: {
@@ -211,6 +213,18 @@ export default {
     totalEpisodes: '全{0}集',
     search: '搜索短剧、演员...',
     noMore: '没有更多了',
+    loadMore: '加载更多',
+  },
+  comment: {
+    title: '评论',
+    noComments: '暂无评论，快来抢沙发吧~',
+    anonymousUser: '用户',
+    reply: '回复',
+    replyTo: '回复',
+    viewReplies: '查看全部 {0} 条回复',
+    send: '发送',
+    placeholder: '说点什么吧...',
+    replyPlaceholder: '回复 @{0}',
   },
   search: {
     placeholder: '搜索你感兴趣的短剧',

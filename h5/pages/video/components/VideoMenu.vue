@@ -7,7 +7,7 @@
 			<view class="p_head">
 				<view class="left">
 					<text class="text1">{{ info.title }}</text>
-					<text class="text2">共{{ info.length }}集</text>
+					<text class="text2">{{ $t('video.totalEpisodes', [info.length]) }}</text>
 				</view>
 				<view class="right close-btn" style="color:#fff" @click="$emit('close')">
 					<svg width="36" height="36" viewBox="0 0 36 36" class="close-x">
@@ -20,10 +20,10 @@
 			<view class="p_content">
 				<view class="item" v-if="item.name" :style="currentIndex == index?'border-color:'+isColor :''" :class="[{ active: (currentIndex === index) || (pendingIndex === index) }, { 'flip-anim': popIndex === index }]" v-for="(item, index) in data" :key="index" @click="itemClick(index)">
 					<image class="cover" :src="item.image" mode="aspectFill"></image>
-					<view class="info" v-if="item.url">{{ item.name }}</view>
+					<view class="info" v-if="item.url">{{ item.display_title || item.name }}</view>
 					<view class="lock" v-else>
 						<image class="icon" src="https://img.nymaite.com/video_short/icons/lock.png" mode="widthFix"></image>
-						<text class="text">{{ item.name }}</text>
+						<text class="text">{{ item.display_title || item.name }}</text>
 					</view>
 				</view>
 			</view>
@@ -129,7 +129,7 @@
 				}
 				if(!this.data[index].url && index != this.data.findIndex(item => !item.url)) {
 					if(x != 1) {
-						this.$u.toast("请按剧集顺序点播！")
+						this.$u.toast(this.$t('video.watchInOrder'))
 					} else {
 						this.currentIndex = index
 					}

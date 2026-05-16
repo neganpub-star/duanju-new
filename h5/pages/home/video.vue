@@ -112,7 +112,7 @@
 							<text v-if="(item.video.display_desc||item.video.description) && (item.video.display_desc||item.video.description).length > 13" class="desc-toggle" @click="isUnfold = !isUnfold">{{ isUnfold ? $t('video.collapse') : $t('video.expand') }}</text>
 						</view>
 						<view class="content">
-							<text class="text1">{{ item.name }}{{ $t('video.ofTotal', [item.video.episodes]) }}</text>
+							<text class="text1">{{ item.display_title || item.name }}{{ $t('video.ofTotal', [item.video.episodes]) }}</text>
 							<text class="text2 more-btn" @click="openVideoDetail(item.video.id, item.video.display_title||item.video.title, item.video.image, item.video.display_desc||item.video.description)">{{ $t('video.viewMoreEpisodes') }}</text>
 						</view>
 					</view>

@@ -27,7 +27,7 @@
 								<view class="progress-bar">
 									<view class="progress-value" :style="{ width: getProgress(lItem) + '%' }"></view>
 								</view>
-								<text class="progress-text">{{ $t('watch.watchedProgress', [getProgress(lItem), lItem.episode.name]) }}</text>
+								<text class="progress-text">{{ $t('watch.watchedProgress', [getProgress(lItem), lItem.episode.display_title || lItem.episode.name]) }}</text>
 							</view>
 							<text class="desc u-line-1" v-else>{{ lItem.video.display_desc||lItem.video.description || $t('watch.noDescription') }}</text>
 						</view>
@@ -43,7 +43,7 @@
 				<u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/data.png" :text="$t('watch.noRecord')"></u-empty>
 			</view>
 			<view class="liststatus" v-else>
-				<u-loadmore :status="loadStatus" :line="true" :nomoreText="$t('home.noMore')" />
+				<u-loadmore :status="loadStatus" :line="true" :nomoreText="$t('home.noMore')" :loadmoreText="$t('home.loadMore')" />
 			</view>
 		</scroll-view>
 		<CustomTabBar current="/pages/home/watch" />
