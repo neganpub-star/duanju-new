@@ -13,6 +13,15 @@ const usePermissionStore = defineStore('permission', {
       this.addRoutes = routes
       this.routes = constantRoutes.concat(routes)
     },
+    setSidebarRouters(routes) {
+      this.sidebarRouters = routes
+    },
+    setDefaultRoutes(routes) {
+      this.defaultRoutes = routes
+    },
+    setTopbarRouters(routes) {
+      this.topbarRouters = routes
+    },
     // 使用静态路由，不请求后端菜单接口
     generateRoutes() {
       return new Promise(resolve => {

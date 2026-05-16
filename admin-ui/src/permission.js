@@ -54,9 +54,8 @@ router.beforeEach(async (to, from) => {
         // 重新导航到目标路由，确保动态路由已注册
         return { ...to, replace: true }
       } catch (err) {
-        await useUserStore().logOut()
-        ElMessage.error(err)
-        return { path: '/' }
+        useUserStore().logOut()
+        return `/login?redirect=${to.fullPath}`
       }
     }
     return true

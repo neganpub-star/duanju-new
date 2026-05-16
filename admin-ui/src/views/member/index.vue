@@ -7,6 +7,12 @@
       <el-form-item label="昵称" prop="nickname">
         <el-input v-model="queryParams.nickname" placeholder="昵称" clearable @keyup.enter="handleQuery" />
       </el-form-item>
+      <el-form-item label="VIP" prop="isVip">
+        <el-select v-model="queryParams.isVip" placeholder="全部" clearable style="width:100px">
+          <el-option label="有效VIP" value="1" />
+          <el-option label="非VIP" value="0" />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -21,7 +27,25 @@
         <template #default="{ row }">¥{{ row.money }}</template>
       </el-table-column>
       <el-table-column label="点数" prop="usable" width="80" align="center" />
-      <el-table-column label="VIP到期" prop="vipExpireTime" width="160" />
+      <el-table-column label="VIP状态" width="130" align="center">
+        <template #default="{ row }">
+          <template v-if="row.vipExpireTime">
+            <el-tag v-if="new Date(row.vipExpireTime) > new Date()" type="success">
+              VIP {{ row.vipExpireTime.slice(0,10) }}到期
+            </el-tag>
+            <el-tag v-else type="info">已过期</el-tag>
+          </template>
+          <span v-else style="color:#ccc">—</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="分销商" width="100" align="center">
+        <template #default="{ row }">
+          <template v-if="row.resellerLevel && row.resellerExpireTime && new Date(row.resellerExpireTime) > new Date()">
+            <el-tag type="warning">Lv{{ row.resellerLevel }} 分销商</el-tag>
+          </template>
+          <span v-else style="color:#ccc">—</span>
+        </template>
+      </el-table-column>
       <el-table-column label="注册时间" prop="createTime" width="160" />
       <el-table-column label="操作" width="100" fixed="right">
         <template #default="{ row }">
@@ -64,7 +88,7 @@ import { ElMessage } from 'element-plus'
 const loading = ref(false)
 const list = ref([])
 const total = ref(0)
-const queryParams = reactive({ pageNum: 1, pageSize: 10, siteId: 1, mobile: '', nickname: '' })
+const queryParams = reactive({ pageNum: 1, pageSize: 10, siteId: 1, mobile: '', nickname: '', isVip: '' })
 const queryRef = ref()
 const rechargeVisible = ref(false)
 const currentUser = ref(null)

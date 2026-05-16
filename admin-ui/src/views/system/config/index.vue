@@ -1,316 +1,278 @@
 <template>
-   <div class="app-container">
-      <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-         <el-form-item label="参数名称" prop="configName">
-            <el-input
-               v-model="queryParams.configName"
-               placeholder="请输入参数名称"
-               clearable
-               style="width: 240px"
-               @keyup.enter="handleQuery"
-            />
-         </el-form-item>
-         <el-form-item label="参数键名" prop="configKey">
-            <el-input
-               v-model="queryParams.configKey"
-               placeholder="请输入参数键名"
-               clearable
-               style="width: 240px"
-               @keyup.enter="handleQuery"
-            />
-         </el-form-item>
-         <el-form-item label="系统内置" prop="configType">
-            <el-select v-model="queryParams.configType" placeholder="系统内置" clearable style="width: 240px">
-               <el-option
-                  v-for="dict in sys_yes_no"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-               />
-            </el-select>
-         </el-form-item>
-         <el-form-item label="创建时间" style="width: 308px;">
-            <el-date-picker
-               v-model="dateRange"
-               value-format="YYYY-MM-DD"
-               type="daterange"
-               range-separator="-"
-               start-placeholder="开始日期"
-               end-placeholder="结束日期"
-            ></el-date-picker>
-         </el-form-item>
-         <el-form-item>
-            <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-            <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-         </el-form-item>
+  <div class="app-container">
+    <el-alert type="info" :closable="false" show-icon style="margin-bottom:16px">
+      <template #title>修改后点击"保存配置"生效，无需重启服务。</template>
+    </el-alert>
+
+    <el-tabs v-model="activeTab" v-loading="loading">
+      <el-tab-pane
+        v-for="[group, items] in groupedEntries"
+        :key="group"
+        :label="GROUP_LABELS[group] || group"
+        :name="group"
+      >
+        <!-- 通用配置：表格 + 增删 -->
+        <template v-if="group === 'general'">
+          <div style="margin:16px 0 12px">
+            <el-button type="primary" icon="Plus" @click="openAddDialog">新增配置</el-button>
+          </div>
+          <el-table :data="items" size="small" border style="max-width:900px">
+            <el-table-column label="键名" prop="configKey" width="240" />
+            <el-table-column label="名称" prop="configName" width="140" />
+            <el-table-column label="值">
+              <template #default="{ row }">
+                <el-input v-model="form[row.configKey]" size="small" />
+              </template>
+            </el-table-column>
+            <el-table-column label="备注" prop="remark" width="200" show-overflow-tooltip />
+            <el-table-column label="操作" width="80" align="center">
+              <template #default="{ row }">
+                <el-button link type="danger" @click="handleDelete(row.configKey)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </template>
+
+        <!-- 其他配置：表单 -->
+        <template v-else>
+          <el-form label-width="200px" size="default" style="max-width:750px;margin-top:16px">
+            <template v-for="item in items" :key="item.configKey">
+
+              <!-- 转码提供商 -->
+              <template v-if="item.configKey === 'transcode.provider'">
+                <el-form-item :label="item.configName">
+                  <el-select v-model="form[item.configKey]" style="width:200px">
+                    <el-option label="FFmpeg 本地转码" value="ffmpeg" />
+                    <el-option label="阿里云 VOD" value="aliyun" />
+                  </el-select>
+                </el-form-item>
+                <template v-if="form['transcode.provider'] === 'ffmpeg' || !form['transcode.provider']">
+                  <el-divider content-position="left"><span class="divider-label">FFmpeg 配置</span></el-divider>
+                </template>
+                <template v-if="form['transcode.provider'] === 'aliyun'">
+                  <el-divider content-position="left"><span class="divider-label">阿里云 VOD 配置</span></el-divider>
+                </template>
+              </template>
+
+              <!-- FFmpeg 配置项 -->
+              <el-form-item
+                v-else-if="item.configKey.startsWith('transcode.ffmpeg.')"
+                v-show="form['transcode.provider'] === 'ffmpeg' || !form['transcode.provider']"
+                :label="item.configName"
+              >
+                <el-input v-if="item.configType === 'json'" v-model="form[item.configKey]"
+                  type="textarea" :rows="5" style="width:100%" spellcheck="false" />
+                <el-input v-else v-model="form[item.configKey]" style="width:420px" :placeholder="item.remark" />
+                <div class="config-remark">{{ item.remark }}</div>
+              </el-form-item>
+
+              <!-- 阿里云 VOD 配置项 -->
+              <el-form-item
+                v-else-if="item.configKey.startsWith('transcode.aliyun.')"
+                v-show="form['transcode.provider'] === 'aliyun'"
+                :label="item.configName"
+              >
+                <el-input v-if="item.configType === 'password'" v-model="form[item.configKey]"
+                  type="password" show-password style="width:420px" />
+                <el-input v-else v-model="form[item.configKey]" style="width:420px" :placeholder="item.remark" />
+                <span v-if="item.remark" class="config-remark">{{ item.remark }}</span>
+              </el-form-item>
+
+              <!-- 存储提供商 -->
+              <el-form-item v-else-if="item.configKey === 'storage.provider'" :label="item.configName">
+                <el-select v-model="form[item.configKey]" style="width:200px">
+                  <el-option label="阿里云 OSS" value="alioss" />
+                  <el-option label="MinIO" value="minio" />
+                </el-select>
+              </el-form-item>
+
+              <!-- 平台配置：微信/抖音/快手 AppID 分组 -->
+              <template v-else-if="item.configKey === 'platform.wechat.appid'">
+                <el-divider content-position="left"><span class="divider-label">微信小程序</span></el-divider>
+                <el-form-item :label="item.configName">
+                  <el-input v-model="form[item.configKey]" style="width:320px" :placeholder="item.remark" />
+                </el-form-item>
+              </template>
+              <template v-else-if="item.configKey === 'platform.toutiao.appid'">
+                <el-divider content-position="left"><span class="divider-label">抖音小程序</span></el-divider>
+                <el-form-item :label="item.configName">
+                  <el-input v-model="form[item.configKey]" style="width:320px" :placeholder="item.remark" />
+                </el-form-item>
+              </template>
+              <template v-else-if="item.configKey === 'platform.kuaishou.appid'">
+                <el-divider content-position="left"><span class="divider-label">快手小程序</span></el-divider>
+                <el-form-item :label="item.configName">
+                  <el-input v-model="form[item.configKey]" style="width:320px" :placeholder="item.remark" />
+                </el-form-item>
+              </template>
+              <template v-else-if="item.configKey === 'platform.app.android.download-url'">
+                <el-divider content-position="left"><span class="divider-label">App 下载 / 更新</span></el-divider>
+                <el-form-item :label="item.configName">
+                  <el-input v-model="form[item.configKey]" style="width:420px" :placeholder="item.remark" />
+                </el-form-item>
+              </template>
+
+              <!-- JSON 多行文本 -->
+              <el-form-item v-else-if="item.configType === 'json'" :label="item.configName">
+                <el-input v-model="form[item.configKey]" type="textarea" :rows="5"
+                  style="width:100%" spellcheck="false" />
+                <div class="config-remark">{{ item.remark }}</div>
+              </el-form-item>
+
+              <!-- 密码类 -->
+              <el-form-item v-else-if="item.configType === 'password'" :label="item.configName">
+                <el-input v-model="form[item.configKey]" type="password" show-password style="width:420px" />
+                <span v-if="item.remark" class="config-remark">{{ item.remark }}</span>
+              </el-form-item>
+
+              <!-- 普通文本 -->
+              <el-form-item v-else :label="item.configName">
+                <el-input v-model="form[item.configKey]" style="width:420px" :placeholder="item.remark" />
+                <span v-if="item.remark" class="config-remark">{{ item.remark }}</span>
+              </el-form-item>
+
+            </template>
+          </el-form>
+        </template>
+      </el-tab-pane>
+    </el-tabs>
+
+    <div class="action-bar">
+      <el-button type="primary" :loading="saving" @click="handleSave">保存配置</el-button>
+    </div>
+
+    <!-- 新增配置弹窗 -->
+    <el-dialog title="新增配置项" v-model="addDialogVisible" width="480px" append-to-body>
+      <el-form :model="addForm" :rules="addRules" ref="addFormRef" label-width="90px">
+        <el-form-item label="键名" prop="configKey">
+          <el-input v-model="addForm.configKey" placeholder="如 general.xxx.yyy" />
+        </el-form-item>
+        <el-form-item label="名称" prop="configName">
+          <el-input v-model="addForm.configName" placeholder="配置项说明" />
+        </el-form-item>
+        <el-form-item label="值">
+          <el-input v-model="addForm.configValue" placeholder="配置值" />
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input v-model="addForm.remark" placeholder="用途说明（选填）" />
+        </el-form-item>
       </el-form>
-
-      <el-row :gutter="10" class="mb8">
-         <el-col :span="1.5">
-            <el-button
-               type="primary"
-               plain
-               icon="Plus"
-               @click="handleAdd"
-               v-hasPermi="['system:config:add']"
-            >新增</el-button>
-         </el-col>
-         <el-col :span="1.5">
-            <el-button
-               type="success"
-               plain
-               icon="Edit"
-               :disabled="single"
-               @click="handleUpdate"
-               v-hasPermi="['system:config:edit']"
-            >修改</el-button>
-         </el-col>
-         <el-col :span="1.5">
-            <el-button
-               type="danger"
-               plain
-               icon="Delete"
-               :disabled="multiple"
-               @click="handleDelete"
-               v-hasPermi="['system:config:remove']"
-            >删除</el-button>
-         </el-col>
-         <el-col :span="1.5">
-            <el-button
-               type="warning"
-               plain
-               icon="Download"
-               @click="handleExport"
-               v-hasPermi="['system:config:export']"
-            >导出</el-button>
-         </el-col>
-         <el-col :span="1.5">
-            <el-button
-               type="danger"
-               plain
-               icon="Refresh"
-               @click="handleRefreshCache"
-               v-hasPermi="['system:config:remove']"
-            >刷新缓存</el-button>
-         </el-col>
-         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
-      </el-row>
-
-      <el-table v-loading="loading" :data="configList" @selection-change="handleSelectionChange">
-         <el-table-column type="selection" width="55" align="center" />
-         <el-table-column label="参数主键" align="center" prop="configId" />
-         <el-table-column label="参数名称" align="center" prop="configName" :show-overflow-tooltip="true" />
-         <el-table-column label="参数键名" align="center" prop="configKey" :show-overflow-tooltip="true" />
-         <el-table-column label="参数键值" align="center" prop="configValue" :show-overflow-tooltip="true" />
-         <el-table-column label="系统内置" align="center" prop="configType">
-            <template #default="scope">
-               <dict-tag :options="sys_yes_no" :value="scope.row.configType" />
-            </template>
-         </el-table-column>
-         <el-table-column label="备注" align="center" prop="remark" :show-overflow-tooltip="true" />
-         <el-table-column label="创建时间" align="center" prop="createTime" width="180">
-            <template #default="scope">
-               <span>{{ parseTime(scope.row.createTime) }}</span>
-            </template>
-         </el-table-column>
-         <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
-            <template #default="scope">
-               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:config:edit']" >修改</el-button>
-               <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:config:remove']">删除</el-button>
-            </template>
-         </el-table-column>
-      </el-table>
-
-      <pagination
-         v-show="total > 0"
-         :total="total"
-         v-model:page="queryParams.pageNum"
-         v-model:limit="queryParams.pageSize"
-         @pagination="getList"
-      />
-
-      <!-- 添加或修改参数配置对话框 -->
-      <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-         <el-form ref="configRef" :model="form" :rules="rules" label-width="80px">
-            <el-form-item label="参数名称" prop="configName">
-               <el-input v-model="form.configName" placeholder="请输入参数名称" />
-            </el-form-item>
-            <el-form-item label="参数键名" prop="configKey">
-               <el-input v-model="form.configKey" placeholder="请输入参数键名" />
-            </el-form-item>
-            <el-form-item label="参数键值" prop="configValue">
-               <el-input v-model="form.configValue" type="textarea" placeholder="请输入参数键值" />
-            </el-form-item>
-            <el-form-item label="系统内置" prop="configType">
-               <el-radio-group v-model="form.configType">
-                  <el-radio
-                     v-for="dict in sys_yes_no"
-                     :key="dict.value"
-                     :value="dict.value"
-                  >{{ dict.label }}</el-radio>
-               </el-radio-group>
-            </el-form-item>
-            <el-form-item label="备注" prop="remark">
-               <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
-            </el-form-item>
-         </el-form>
-         <template #footer>
-            <div class="dialog-footer">
-               <el-button type="primary" @click="submitForm">确 定</el-button>
-               <el-button @click="cancel">取 消</el-button>
-            </div>
-         </template>
-      </el-dialog>
-   </div>
+      <template #footer>
+        <el-button @click="addDialogVisible = false">取消</el-button>
+        <el-button type="primary" :loading="addSaving" @click="submitAdd">确定</el-button>
+      </template>
+    </el-dialog>
+  </div>
 </template>
 
-<script setup name="Config">
-import { listConfig, getConfig, delConfig, addConfig, updateConfig, refreshCache } from "@/api/system/config"
+<script setup>
+import { listConfig, batchUpdateConfig, addConfig, deleteConfig } from '@/api/system/config'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
-const { proxy } = getCurrentInstance()
-const { sys_yes_no } = useDict("sys_yes_no")
+const loading = ref(false)
+const saving = ref(false)
+const configs = ref([])
+const form = reactive({})
+const activeTab = ref('')
 
-const configList = ref([])
-const open = ref(false)
-const loading = ref(true)
-const showSearch = ref(true)
-const ids = ref([])
-const single = ref(true)
-const multiple = ref(true)
-const total = ref(0)
-const title = ref("")
-const dateRange = ref([])
+const GROUP_LABELS = {
+  storage:   '存储配置',
+  transcode: '转码配置',
+  platform:  '平台配置',
+  general:   '通用配置',
+}
 
-const data = reactive({
-  form: {},
-  queryParams: {
-    pageNum: 1,
-    pageSize: 10,
-    configName: undefined,
-    configKey: undefined,
-    configType: undefined
-  },
-  rules: {
-    configName: [{ required: true, message: "参数名称不能为空", trigger: "blur" }],
-    configKey: [{ required: true, message: "参数键名不能为空", trigger: "blur" }],
-    configValue: [{ required: true, message: "参数键值不能为空", trigger: "blur" }]
+// tab 排列顺序
+const GROUP_ORDER = ['storage', 'transcode', 'platform', 'general']
+
+const grouped = computed(() => {
+  const map = {}
+  for (const item of configs.value) {
+    const g = item.configGroup || 'other'
+    if (!map[g]) map[g] = []
+    map[g].push(item)
   }
+  return map
 })
 
-const { queryParams, form, rules } = toRefs(data)
+const groupedEntries = computed(() => {
+  const all = Object.entries(grouped.value)
+  all.sort(([a], [b]) => {
+    const ai = GROUP_ORDER.indexOf(a), bi = GROUP_ORDER.indexOf(b)
+    if (ai === -1 && bi === -1) return a.localeCompare(b)
+    if (ai === -1) return 1
+    if (bi === -1) return -1
+    return ai - bi
+  })
+  return all
+})
 
-/** 查询参数列表 */
-function getList() {
+async function loadConfig() {
   loading.value = true
-  listConfig(proxy.addDateRange(queryParams.value, dateRange.value)).then(response => {
-    configList.value = response.rows
-    total.value = response.total
-    loading.value = false
-  })
-}
-
-/** 取消按钮 */
-function cancel() {
-  open.value = false
-  reset()
-}
-
-/** 表单重置 */
-function reset() {
-  form.value = {
-    configId: undefined,
-    configName: undefined,
-    configKey: undefined,
-    configValue: undefined,
-    configType: "Y",
-    remark: undefined
-  }
-  proxy.resetForm("configRef")
-}
-
-/** 搜索按钮操作 */
-function handleQuery() {
-  queryParams.value.pageNum = 1
-  getList()
-}
-
-/** 重置按钮操作 */
-function resetQuery() {
-  dateRange.value = []
-  proxy.resetForm("queryRef")
-  handleQuery()
-}
-
-/** 多选框选中数据 */
-function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.configId)
-  single.value = selection.length != 1
-  multiple.value = !selection.length
-}
-
-/** 新增按钮操作 */
-function handleAdd() {
-  reset()
-  open.value = true
-  title.value = "添加参数"
-}
-
-/** 修改按钮操作 */
-function handleUpdate(row) {
-  reset()
-  const configId = row.configId || ids.value
-  getConfig(configId).then(response => {
-    form.value = response.data
-    open.value = true
-    title.value = "修改参数"
-  })
-}
-
-/** 提交按钮 */
-function submitForm() {
-  proxy.$refs["configRef"].validate(valid => {
-    if (valid) {
-      if (form.value.configId != undefined) {
-        updateConfig(form.value).then(response => {
-          proxy.$modal.msgSuccess("修改成功")
-          open.value = false
-          getList()
-        })
-      } else {
-        addConfig(form.value).then(response => {
-          proxy.$modal.msgSuccess("新增成功")
-          open.value = false
-          getList()
-        })
-      }
+  try {
+    const res = await listConfig()
+    configs.value = res.data || []
+    configs.value.forEach(item => { form[item.configKey] = item.configValue || '' })
+    if (groupedEntries.value.length > 0 && !activeTab.value) {
+      activeTab.value = groupedEntries.value[0][0]
     }
-  })
+  } finally {
+    loading.value = false
+  }
 }
 
-/** 删除按钮操作 */
-function handleDelete(row) {
-  const configIds = row.configId || ids.value
-  proxy.$modal.confirm('是否确认删除参数编号为"' + configIds + '"的数据项？').then(function () {
-    return delConfig(configIds)
-  }).then(() => {
-    getList()
-    proxy.$modal.msgSuccess("删除成功")
-  }).catch(() => {})
+async function handleSave() {
+  saving.value = true
+  try {
+    await batchUpdateConfig({ ...form })
+    ElMessage.success('配置已保存')
+  } finally {
+    saving.value = false
+  }
 }
 
-/** 导出按钮操作 */
-function handleExport() {
-  proxy.download("system/config/export", {
-    ...queryParams.value
-  }, `config_${new Date().getTime()}.xlsx`)
+// ===== 通用配置增删 =====
+const addDialogVisible = ref(false)
+const addSaving = ref(false)
+const addFormRef = ref()
+const addForm = reactive({ configKey: '', configName: '', configValue: '', remark: '', configGroup: 'general', configType: 'text' })
+const addRules = {
+  configKey:  [{ required: true, message: '请输入键名', trigger: 'blur' }],
+  configName: [{ required: true, message: '请输入名称', trigger: 'blur' }],
 }
 
-/** 刷新缓存按钮操作 */
-function handleRefreshCache() {
-  refreshCache().then(() => {
-    proxy.$modal.msgSuccess("刷新缓存成功")
-  })
+function openAddDialog() {
+  Object.assign(addForm, { configKey: '', configName: '', configValue: '', remark: '', configGroup: 'general', configType: 'text' })
+  addDialogVisible.value = true
 }
 
-getList()
+async function submitAdd() {
+  await addFormRef.value?.validate()
+  addSaving.value = true
+  try {
+    await addConfig({ ...addForm })
+    ElMessage.success('新增成功')
+    addDialogVisible.value = false
+    await loadConfig()
+    activeTab.value = 'general'
+  } finally {
+    addSaving.value = false
+  }
+}
+
+async function handleDelete(key) {
+  await ElMessageBox.confirm(`确认删除配置项 "${key}"？`, '警告', { type: 'warning' })
+  await deleteConfig(key)
+  ElMessage.success('删除成功')
+  delete form[key]
+  await loadConfig()
+}
+
+loadConfig()
 </script>
+
+<style scoped>
+.divider-label { font-size: 12px; color: #909399; }
+.config-remark { margin-left: 8px; color: #909399; font-size: 12px; line-height: 1.4; margin-top: 4px; }
+.action-bar { text-align: center; margin-top: 24px; }
+</style>

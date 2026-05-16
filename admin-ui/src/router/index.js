@@ -109,6 +109,12 @@ export const constantRoutes = [
         component: () => import('@/views/drama/category/index'),
         name: 'DramaCategory',
         meta: { title: '分类管理', icon: 'tree' }
+      },
+      {
+        path: 'richtext',
+        component: () => import('@/views/drama/richtext/index'),
+        name: 'DramaRichText',
+        meta: { title: '协议管理', icon: 'documentation' }
       }
     ]
   },
@@ -148,7 +154,7 @@ export const constantRoutes = [
         path: 'reseller',
         component: () => import('@/views/commerce/reseller/index'),
         name: 'CommerceReseller',
-        meta: { title: '分销套餐', icon: 'share' }
+        meta: { title: '分销套餐', icon: 'form' }
       },
       {
         path: 'wallet-log',
@@ -161,6 +167,20 @@ export const constantRoutes = [
         component: () => import('@/views/commerce/wallet/withdraw'),
         name: 'Withdraw',
         meta: { title: '提现审核', icon: 'form' }
+      }
+    ]
+  },
+  {
+    path: '/system-config',
+    component: Layout,
+    redirect: '/system-config/storage',
+    meta: { title: '系统设置', icon: 'system' },
+    children: [
+      {
+        path: 'storage',
+        component: () => import('@/views/system/config/index'),
+        name: 'SystemConfig',
+        meta: { title: '参数配置', icon: 'edit' }
       }
     ]
   }

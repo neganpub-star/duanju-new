@@ -21,10 +21,12 @@
           <el-tag :type="row.status === 'normal' ? 'success' : 'info'">{{ row.status === 'normal' ? '上架' : '下架' }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="150" fixed="right">
+      <el-table-column label="操作" width="160" fixed="right" align="center">
         <template #default="{ row }">
-          <el-button link type="primary" icon="Edit" @click="handleEdit(row)">编辑</el-button>
-          <el-button link type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
+          <el-space :size="4">
+            <el-button size="small" type="primary" icon="Edit" @click="handleEdit(row)">编辑</el-button>
+            <el-button size="small" type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
+          </el-space>
         </template>
       </el-table-column>
     </el-table>

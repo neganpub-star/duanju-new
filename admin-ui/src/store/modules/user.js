@@ -10,7 +10,7 @@ const useUserStore = defineStore('user', {
     name: '',
     nickName: '',
     avatar: '',
-    roles: ['ROLE_DEFAULT'],
+    roles: [],
     permissions: []
   }),
   actions: {
@@ -47,19 +47,14 @@ const useUserStore = defineStore('user', {
       })
     },
 
-    // 退出系统
+    // 退出系统 — 无论后端是否响应成功，都清除本地状态
     logOut() {
-      return new Promise((resolve, reject) => {
-        logout().then(() => {
-          this.token = ''
-          this.roles = []
-          this.permissions = []
-          removeToken()
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
-      })
+      this.token = ''
+      this.roles = []
+      this.permissions = []
+      removeToken()
+      logout().catch(() => {}) // 忽略后端失败（token 已过期时正常）
+      return Promise.resolve()
     }
   }
 })

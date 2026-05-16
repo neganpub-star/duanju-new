@@ -43,30 +43,19 @@ export function delNotice(noticeId) {
   })
 }
 
-// 首页顶部公告列表（带已读状态）
+// 首页顶部公告列表（后管无公告系统，返回空）
 export function listNoticeTop() {
-  return request({
-    url: '/system/notice/listTop',
-    method: 'get'
-  })
+  return Promise.resolve({ data: [], unreadCount: 0 })
 }
 
-// 标记公告已读
-export function markNoticeRead(noticeId) {
-  return request({
-    url: '/system/notice/markRead',
-    method: 'post',
-    params: { noticeId }
-  })
+// 标记公告已读（stub）
+export function markNoticeRead() {
+  return Promise.resolve({})
 }
 
-// 批量标记已读
-export function markNoticeReadAll(ids) {
-  return request({
-    url: '/system/notice/markReadAll',
-    method: 'post',
-    params: { ids }
-  })
+// 批量标记已读（stub）
+export function markNoticeReadAll() {
+  return Promise.resolve({})
 }
 
 // 查询公告已读用户列表

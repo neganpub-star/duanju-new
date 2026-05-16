@@ -42,8 +42,9 @@
         </template>
       </el-table-column>
       <el-table-column label="创建时间" prop="createTime" width="160" />
-      <el-table-column label="操作" width="180" fixed="right">
+      <el-table-column label="操作" width="220" fixed="right">
         <template #default="{ row }">
+          <el-button link type="primary" icon="Film" @click="openEpisodes(row)">分集</el-button>
           <el-button link type="primary" icon="Edit" @click="handleEdit(row)">编辑</el-button>
           <el-button link type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
         </template>
@@ -59,7 +60,22 @@
           <el-input v-model="form.title" placeholder="视频标题" />
         </el-form-item>
         <el-form-item label="封面" prop="cover">
-          <el-input v-model="form.cover" placeholder="封面图URL" />
+          <div class="cover-uploader">
+            <el-upload
+              action="#"
+              :show-file-list="false"
+              :before-upload="beforeUpload"
+              :http-request="(opt) => handleUpload(opt.file)"
+              accept="image/*"
+            >
+              <el-image v-if="form.cover" :src="form.cover" class="cover-preview" fit="cover" />
+              <div v-else class="upload-placeholder">
+                <el-icon class="upload-icon"><Plus /></el-icon>
+                <span>点击上传封面</span>
+              </div>
+            </el-upload>
+            <el-input v-model="form.cover" placeholder="或直接粘贴图片URL" style="margin-top:6px" />
+          </div>
         </el-form-item>
         <el-form-item label="描述" prop="description">
           <el-input v-model="form.description" type="textarea" :rows="3" />
@@ -76,13 +92,148 @@
         <el-button type="primary" @click="submitForm">确定</el-button>
       </template>
     </el-dialog>
-  </div>
+
+    <!-- 分集管理抽屉 -->
+    <el-drawer
+      v-model="epDrawer.visible"
+      :title="`《${epDrawer.videoTitle}》— 分集管理`"
+      size="1060px"
+      destroy-on-close
+    >
+      <div class="ep-toolbar">
+        <el-button type="primary" icon="Plus" @click="openEpForm()">添加分集</el-button>
+      </div>
+
+      <el-table v-loading="epLoading" :data="episodes" size="small">
+        <el-table-column label="集数" prop="episodeNum" width="80" align="center" sortable />
+        <el-table-column label="标题" prop="title" show-overflow-tooltip sortable />
+        <el-table-column label="时长" width="70" align="center">
+          <template #default="{ row }">
+            {{ row.duration ? Math.floor(row.duration/60) + 'min' : '—' }}
+          </template>
+        </el-table-column>
+        <el-table-column label="免费" width="60" align="center">
+          <template #default="{ row }">
+            <el-tag size="small" :type="row.isFree ? 'success' : 'info'">{{ row.isFree ? '免费' : '付费' }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="状态" width="60" align="center">
+          <template #default="{ row }">
+            <el-tag size="small" :type="row.status ? 'success' : 'warning'">{{ row.status ? '显示' : '隐藏' }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="转码" width="100" align="center">
+          <template #default="{ row }">
+            <el-tag v-if="row.transcodeStatus === 'done'" type="success" size="small">已转码</el-tag>
+            <el-tag v-else-if="row.transcodeStatus === 'processing'" type="warning" size="small">转码中</el-tag>
+            <el-tag v-else-if="row.transcodeStatus === 'pending'" type="info" size="small">排队中</el-tag>
+            <el-tooltip v-else-if="row.transcodeStatus === 'failed'" :content="row.transcodeMsg || '转码失败'" placement="top">
+              <el-tag type="danger" size="small">失败</el-tag>
+            </el-tooltip>
+            <span v-else style="color:#ccc">—</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="300" fixed="right" align="center">
+          <template #default="{ row }">
+            <el-space :size="4">
+              <el-button size="small" type="success" icon="VideoPlay" @click="previewEpisode(row)">预览</el-button>
+              <el-button size="small" icon="Cpu" :loading="row._transcoding"
+                :disabled="row.transcodeStatus === 'processing' || row.transcodeStatus === 'pending'"
+                @click="handleTranscode(row)">转码</el-button>
+              <el-button size="small" type="danger" icon="Delete" @click="handleDeleteEp(row)">删除</el-button>
+              <el-button size="small" type="primary" icon="Edit" @click="openEpForm(row)">编辑</el-button>
+            </el-space>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <!-- 分集表单 -->
+      <el-dialog
+        :title="epForm.id ? '编辑分集' : '添加分集'"
+        v-model="epFormVisible"
+        width="520px"
+        append-to-body
+      >
+        <el-form ref="epFormRef" :model="epForm" :rules="epRules" label-width="80px">
+          <el-form-item label="集数" prop="episodeNum">
+            <el-input-number v-model="epForm.episodeNum" :min="1" style="width:140px" />
+          </el-form-item>
+          <el-form-item label="标题" prop="title">
+            <el-input v-model="epForm.title" placeholder="如：第1集" />
+          </el-form-item>
+          <el-form-item label="视频URL" prop="url">
+            <el-input v-model="epForm.url" placeholder="视频播放地址（mp4/m3u8）" />
+          </el-form-item>
+          <el-form-item label="HLS地址">
+            <el-input v-model="epForm.hlsUrl" placeholder="HLS m3u8 地址（可选）" />
+          </el-form-item>
+          <el-form-item label="时长(秒)">
+            <el-input-number v-model="epForm.duration" :min="0" style="width:140px" />
+          </el-form-item>
+          <el-form-item label="是否免费">
+            <el-radio-group v-model="epForm.isFree">
+              <el-radio :value="0">付费</el-radio>
+              <el-radio :value="1">免费</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="状态">
+            <el-radio-group v-model="epForm.status">
+              <el-radio :value="1">显示</el-radio>
+              <el-radio :value="0">隐藏</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button @click="epFormVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitEpForm">确定</el-button>
+        </template>
+      </el-dialog>
+    </el-drawer>
+
+  <!-- 视频预览弹窗 -->
+  <el-dialog
+    v-model="previewVisible"
+    :title="previewTitle"
+    width="780px"
+    append-to-body
+    destroy-on-close
+    @close="destroyPlayer"
+  >
+    <div class="preview-wrap">
+      <!-- 清晰度/格式选择 -->
+      <div v-if="previewQualities.length > 0" class="quality-bar">
+        <span class="quality-label">选择格式：</span>
+        <el-radio-group v-model="previewUrl" size="small" @change="switchQuality">
+          <el-radio-button
+            v-for="q in previewQualities"
+            :key="q.url"
+            :value="q.url"
+          >{{ q.definition }}</el-radio-button>
+        </el-radio-group>
+      </div>
+      <video
+        ref="previewVideoRef"
+        class="preview-video"
+        controls
+        autoplay
+        playsinline
+      />
+      <div class="preview-url">
+        <el-tag size="small" :type="previewUrlType">{{ previewUrlLabel }}</el-tag>
+        <span class="url-text">{{ previewUrl }}</span>
+      </div>
+    </div>
+  </el-dialog>
+</div>
 </template>
 
 <script setup>
 import { listVideo, addVideo, updateVideo, deleteVideo } from '@/api/drama/video'
+import { listEpisodes, addEpisode, updateEpisode, deleteEpisode, transcodeEpisode } from '@/api/drama/episode'
+import { uploadFile } from '@/api/system/config'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
+// ===== 视频列表 =====
 const loading = ref(false)
 const list = ref([])
 const total = ref(0)
@@ -138,5 +289,219 @@ async function submitForm() {
   getList()
 }
 
+function beforeUpload(file) {
+  const isImage = file.type.startsWith('image/')
+  const isLt5M = file.size / 1024 / 1024 < 5
+  if (!isImage) ElMessage.error('只能上传图片文件')
+  if (!isLt5M) ElMessage.error('图片不能超过 5MB')
+  return isImage && isLt5M
+}
+
+async function handleUpload(file) {
+  const res = await uploadFile(file)
+  form.value.cover = res.data
+  ElMessage.success('上传成功')
+}
+
+// ===== 分集管理 =====
+const epDrawer = reactive({ visible: false, videoId: null, videoTitle: '' })
+const epLoading = ref(false)
+const episodes = ref([])
+const epFormVisible = ref(false)
+const epForm = ref({})
+const epFormRef = ref()
+const epRules = {
+  episodeNum: [{ required: true, message: '请输入集数', trigger: 'blur' }],
+  title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
+  url: [{ required: true, message: '请输入视频地址', trigger: 'blur' }],
+}
+
+async function openEpisodes(row) {
+  epDrawer.videoId = row.id
+  epDrawer.videoTitle = row.title
+  epDrawer.visible = true
+  await loadEpisodes()
+}
+
+async function loadEpisodes() {
+  epLoading.value = true
+  try {
+    const res = await listEpisodes(epDrawer.videoId)
+    episodes.value = res.data || []
+  } finally {
+    epLoading.value = false
+  }
+}
+
+function openEpForm(row) {
+  if (row) {
+    epForm.value = { ...row }
+  } else {
+    const nextNum = episodes.value.length > 0
+      ? Math.max(...episodes.value.map(e => e.episodeNum)) + 1
+      : 1
+    epForm.value = { episodeNum: nextNum, isFree: 0, status: 1 }
+  }
+  epFormVisible.value = true
+}
+
+async function submitEpForm() {
+  await epFormRef.value?.validate()
+  if (epForm.value.id) {
+    await updateEpisode(epForm.value.id, epForm.value)
+  } else {
+    await addEpisode(epDrawer.videoId, epForm.value)
+  }
+  ElMessage.success('操作成功')
+  epFormVisible.value = false
+  loadEpisodes()
+}
+
+async function handleDeleteEp(row) {
+  await ElMessageBox.confirm(`确认删除第 ${row.episodeNum} 集《${row.title}》？`, '警告', { type: 'warning' })
+  await deleteEpisode(row.id)
+  ElMessage.success('删除成功')
+  loadEpisodes()
+}
+
+async function handleTranscode(row) {
+  if (!row.url) { ElMessage.warning('请先设置视频地址'); return }
+  row._transcoding = true
+  try {
+    const res = await transcodeEpisode(row.id)
+    if (res.code === 200) {
+      ElMessage.success('转码任务已提交，后台处理中')
+      row.transcodeStatus = 'pending'
+    } else {
+      ElMessage.error(res.msg || '提交失败')
+    }
+  } finally {
+    row._transcoding = false
+  }
+}
+
+// ===== 视频预览 =====
+const previewVisible = ref(false)
+const previewTitle = ref('')
+const previewUrl = ref('')
+const previewQualities = ref([])   // [{definition, url}] 有多个时显示选择器
+const previewVideoRef = ref(null)
+let hlsInstance = null
+
+const previewUrlType = computed(() => previewUrl.value.includes('.m3u8') ? 'warning' : 'success')
+const previewUrlLabel = computed(() => previewUrl.value.includes('.m3u8') ? 'HLS/M3U8' : 'MP4')
+
+function previewEpisode(row) {
+  // 构建清晰度列表
+  let qualities = []
+  if (row.playInfo) {
+    const infos = typeof row.playInfo === 'string' ? JSON.parse(row.playInfo) : row.playInfo
+    if (Array.isArray(infos) && infos.length > 0) qualities = infos
+  }
+  // 没有 playInfo 时，把原始地址也纳入列表
+  if (qualities.length === 0) {
+    if (row.hlsUrl) qualities.push({ definition: 'HLS', url: row.hlsUrl })
+    if (row.url)    qualities.push({ definition: 'MP4', url: row.url })
+  }
+  if (qualities.length === 0) { ElMessage.warning('该集暂无播放地址'); return }
+
+  previewQualities.value = qualities
+  // 默认播最高清晰度（列表末尾）
+  const defaultUrl = qualities[qualities.length - 1].url
+  previewTitle.value = `预览 — 第${row.episodeNum}集《${row.title || ''}》`
+  previewUrl.value = defaultUrl
+  previewVisible.value = true
+  nextTick(() => initPlayer(defaultUrl))
+}
+
+function switchQuality(url) {
+  destroyPlayer()
+  nextTick(() => initPlayer(url))
+}
+
+async function initPlayer(url) {
+  const video = previewVideoRef.value
+  if (!video) return
+
+  const isHls = url.includes('.m3u8')
+
+  if (!isHls) {
+    // MP4 直接赋值
+    video.src = url
+    video.load()
+    return
+  }
+
+  // M3U8：Safari 原生支持，其他浏览器用 HLS.js
+  if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = url
+    video.load()
+    return
+  }
+
+  // 动态加载 HLS.js
+  if (!window.Hls) {
+    await loadScript('https://cdn.bootcdn.net/ajax/libs/hls.js/1.5.8/hls.min.js')
+  }
+  if (!window.Hls.isSupported()) {
+    ElMessage.error('当前浏览器不支持 HLS 播放')
+    return
+  }
+  hlsInstance = new window.Hls()
+  hlsInstance.loadSource(url)
+  hlsInstance.attachMedia(video)
+}
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script')
+    s.src = src
+    s.onload = resolve
+    s.onerror = reject
+    document.head.appendChild(s)
+  })
+}
+
+function destroyPlayer() {
+  if (hlsInstance) {
+    hlsInstance.destroy()
+    hlsInstance = null
+  }
+  const video = previewVideoRef.value
+  if (video) {
+    video.pause()
+    video.src = ''
+    video.load()
+  }
+}
+
 getList()
 </script>
+
+<style scoped>
+.cover-uploader .cover-preview { width: 120px; height: 160px; display: block; }
+.upload-placeholder {
+  width: 120px; height: 160px; border: 1px dashed #d9d9d9; border-radius: 4px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; color: #8c939d; font-size: 12px; gap: 6px;
+}
+.upload-placeholder:hover { border-color: var(--el-color-primary); }
+.upload-icon { font-size: 24px; }
+.ep-toolbar { margin-bottom: 12px; }
+
+/* 视频预览 */
+.preview-wrap { display: flex; flex-direction: column; gap: 10px; }
+.quality-bar { display: flex; align-items: center; gap: 8px; }
+.quality-label { font-size: 13px; color: #606266; white-space: nowrap; }
+.preview-video {
+  width: 100%; max-height: 420px;
+  background: #000; border-radius: 6px;
+  display: block;
+}
+.preview-url {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: #666;
+  background: #f5f7fa; border-radius: 4px; padding: 6px 10px;
+}
+.url-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+</style>
