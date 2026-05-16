@@ -225,6 +225,8 @@ export default {
     send: '发送',
     placeholder: '说点什么吧...',
     replyPlaceholder: '回复 @{0}',
+    deleteTitle: '确认删除',
+    deleteContent: '删除后无法恢复，确认吗？',
   },
   search: {
     placeholder: '搜索你感兴趣的短剧',

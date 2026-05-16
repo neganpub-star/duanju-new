@@ -1597,25 +1597,27 @@
 					.item {
 						margin-bottom: 40rpx;
 						text-align: center;
-						
+						filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
+
 						&:last-child {
 							margin-bottom: 0;
 						}
-						
+
 						.image {
 							width: 44rpx;
 							margin: 0 auto;
-							opacity: 0.9;
+							opacity: 0.95;
 						}
-						
+
 						.text {
 							font-size: 28rpx;
-							
+							text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+
 							&.active {
 								color: #5E72F7;
 							}
 						}
-						
+
 						.btn {
 							display: block;
 							background: transparent;

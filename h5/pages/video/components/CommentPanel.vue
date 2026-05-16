@@ -3,7 +3,7 @@
 		<view class="comment-panel" :class="{ show: show }">
 			<!-- 头部 -->
 			<view class="panel-header">
-				<text class="panel-title">评论 {{ total > 0 ? total : '' }}</text>
+				<text class="panel-title">{{ $t('comment.title') }} {{ total > 0 ? total : '' }}</text>
 				<view class="close-btn" @click="close">
 					<u-icon name="close" color="#999" size="20"></u-icon>
 				</view>
@@ -17,7 +17,7 @@
 				@scrolltolower="loadMore"
 			>
 				<view v-if="!list.length && status === 'nomore'" class="empty-tip">
-					<text>暂无评论，快来抢沙发吧~</text>
+					<text>{{ $t('comment.noComments') }}</text>
 				</view>
 
 				<view
@@ -28,7 +28,7 @@
 					<image class="avatar" :src="item.userAvatar || defaultAvatar" mode="aspectFill"></image>
 					<view class="comment-body">
 						<view class="comment-meta">
-							<text class="nickname">{{ item.userNickname || '用户' }}</text>
+							<text class="nickname">{{ item.userNickname || $t('comment.anonymousUser') }}</text>
 							<text class="time">{{ formatTime(item.createTime) }}</text>
 						</view>
 						<view class="comment-content">{{ item.content }}</view>
@@ -37,7 +37,7 @@
 						<view class="comment-actions">
 							<view class="action-item reply-btn" @click="startReply(item)">
 								<u-icon name="chat" color="#bbb" size="15"></u-icon>
-								<text class="action-text">{{ item.replyCount > 0 ? item.replyCount : '回复' }}</text>
+								<text class="action-text">{{ item.replyCount > 0 ? item.replyCount : $t('comment.reply') }}</text>
 							</view>
 							<view class="action-item like-btn" :class="{ liked: item.isLiked }" @click="toggleLike(item, index)">
 								<u-icon :name="item.isLiked ? 'heart-fill' : 'heart'" :color="item.isLiked ? '#5E72F7' : '#bbb'" size="15"></u-icon>
@@ -52,12 +52,12 @@
 						<view class="replies-box" v-if="item.replyCount > 0">
 							<view class="reply-item" v-for="r in item.replies || []" :key="r.id">
 								<text class="reply-nickname">{{ r.userNickname }}</text>
-								<text v-if="r.replyNickname" class="reply-to"> 回复 <text class="reply-nickname">{{ r.replyNickname }}</text>：</text>
+								<text v-if="r.replyNickname" class="reply-to"> {{ $t('comment.replyTo') }} <text class="reply-nickname">{{ r.replyNickname }}</text>：</text>
 								<text v-else>：</text>
 								<text class="reply-content">{{ r.content }}</text>
 								<view class="reply-actions">
 									<view class="action-item reply-btn" @click="startReply(item, r)">
-										<text class="action-text">回复</text>
+										<text class="action-text">{{ $t('comment.reply') }}</text>
 									</view>
 									<view class="action-item like-btn" :class="{ liked: r.isLiked }" @click="toggleLike(r, -1, index)">
 										<u-icon :name="r.isLiked ? 'heart-fill' : 'heart'" :color="r.isLiked ? '#5E72F7' : '#bbb'" size="13"></u-icon>
@@ -73,7 +73,7 @@
 								v-if="item.replyCount > (item.replies || []).length"
 								@click="loadReplies(item, index)"
 							>
-								<text>查看全部 {{ item.replyCount }} 条回复</text>
+								<text>{{ $t('comment.viewReplies', [item.replyCount]) }}</text>
 								<u-icon name="arrow-down" color="#5E72F7" size="12"></u-icon>
 							</view>
 						</view>
@@ -81,7 +81,7 @@
 				</view>
 
 				<view class="list-status" v-if="list.length">
-					<u-loadmore :status="status" :line="true" :nomoreText="$t('home.noMore')" />
+					<u-loadmore :status="status" :line="true" :nomoreText="$t('home.noMore')" :loadmoreText="$t('home.loadMore')" />
 				</view>
 			</scroll-view>
 
@@ -102,7 +102,7 @@
 					</view>
 				</view>
 				<view class="send-btn" :class="{ active: inputText.trim() }" @click="submitComment">
-					<text>发送</text>
+					<text>{{ $t('comment.send') }}</text>
 				</view>
 			</view>
 		</view>
@@ -132,7 +132,9 @@ export default {
 	},
 	computed: {
 		inputPlaceholder() {
-			return this.replyTarget ? `回复 @${this.replyTarget.nickname}` : '说点什么吧...';
+			return this.replyTarget
+				? this.$t('comment.replyPlaceholder', [this.replyTarget.nickname])
+				: this.$t('comment.placeholder');
 		},
 	},
 	watch: {
@@ -236,8 +238,10 @@ export default {
 		},
 		deleteComment(item, index) {
 			uni.showModal({
-				title: '确认删除',
-				content: '删除后无法恢复，确认吗？',
+				title: this.$t('comment.deleteTitle'),
+				content: this.$t('comment.deleteContent'),
+				cancelText: this.$t('common.cancel'),
+				confirmText: this.$t('common.confirm'),
 				success: res => {
 					if (res.confirm) {
 						this.$request('comment.delete', { comment_id: item.id }).then(r => {
@@ -252,8 +256,10 @@ export default {
 		},
 		deleteReply(reply, parentIndex) {
 			uni.showModal({
-				title: '确认删除',
-				content: '删除后无法恢复，确认吗？',
+				title: this.$t('comment.deleteTitle'),
+				content: this.$t('comment.deleteContent'),
+				cancelText: this.$t('common.cancel'),
+				confirmText: this.$t('common.confirm'),
 				success: res => {
 					if (res.confirm) {
 						this.$request('comment.delete', { comment_id: reply.id }).then(r => {

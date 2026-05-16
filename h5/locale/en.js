@@ -217,6 +217,8 @@ export default {
     send: 'Send',
     placeholder: 'Write a comment...',
     replyPlaceholder: 'Reply to @{0}',
+    deleteTitle: 'Delete Comment',
+    deleteContent: 'This cannot be undone. Confirm?',
   },
   search: {
     placeholder: 'Search dramas, actors...',
