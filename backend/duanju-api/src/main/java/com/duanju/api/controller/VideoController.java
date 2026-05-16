@@ -2,6 +2,7 @@ package com.duanju.api.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.duanju.api.config.I18nUtil;
 import com.duanju.common.core.domain.R;
 import com.duanju.common.core.page.PageQuery;
 import com.duanju.common.core.page.PageResult;
@@ -483,12 +484,12 @@ public class VideoController {
 
         DramaUser user = userMapper.selectById(userId);
         if (user == null || user.getUsable().compareTo(price) < 0) {
-            return R.fail(403, "积分不足，需要" + price.stripTrailingZeros().toPlainString() + "积分解锁本集");
+            return R.fail(403, I18nUtil.msg("error.insufficient.usable", price.stripTrailingZeros().toPlainString()));
         }
         // 原子扣积分（余额不足时 UPDATE 影响行数为0）
         int affected = userMapper.deductUsable(userId, price);
         if (affected == 0) {
-            return R.fail(403, "积分不足，需要" + price.stripTrailingZeros().toPlainString() + "积分解锁本集");
+            return R.fail(403, I18nUtil.msg("error.insufficient.usable", price.stripTrailingZeros().toPlainString()));
         }
         // 记录解锁
         EpisodeUnlock unlock = new EpisodeUnlock();
@@ -508,7 +509,7 @@ public class VideoController {
         log.setBefore(user.getUsable());
         log.setAfter(user.getUsable().subtract(price));
         log.setItemId(String.valueOf(ep.getId()));
-        log.setMemo("解锁第" + ep.getEpisodeNum() + "集");
+        log.setMemo(I18nUtil.msg("wallet.episode.unlock", ep.getEpisodeNum()));
         walletLogMapper.insert(log);
 
         EpisodePlayResp resp = new EpisodePlayResp();

@@ -38,6 +38,7 @@ export default {
 		videoAutoplay: 1,
 		adCountdown: 120,
 		blocks: [],
+		lang: '',
 	},
 	getters: {
 		config: state => state.config,
@@ -53,6 +54,7 @@ export default {
 		videoAutoplay: state => state.videoAutoplay,
 		adCountdown: state => state.adCountdown,
 		blocks: state => state.blocks,
+		lang: state => state.lang,
 	},
 	mutations: {
 		setjfName(state, data) { },
@@ -68,6 +70,7 @@ export default {
 		setUpdateInfo(state, data) { state.updateInfo = data },
 		setVideoAutoplay(state, data) { state.videoAutoplay = data },
 		setBlocks(state, data) { state.blocks = data },
+		setLang(state, data) { state.lang = data },
 		changeAdCountdown(state) {
 			state.adCountdown = uni.getStorageSync("adCountdown") || 120
 		}
@@ -93,6 +96,10 @@ export default {
 			// #ifdef H5
 			try { document.title = DEFAULT_CONFIG.system.name } catch(e) {}
 			// #endif
+
+			// 初始化语言
+			const { getCurrentLang } = await import('@/common/i18n/index.js')
+			commit('setLang', getCurrentLang())
 
 			return DEFAULT_CONFIG
 		},

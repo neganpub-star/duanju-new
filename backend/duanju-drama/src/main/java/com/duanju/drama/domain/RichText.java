@@ -12,5 +12,9 @@ public class RichText extends BaseEntity {
 
     private String title;
 
+    private String lang;
+
+    private String docKey;
+
     private String content;
 }

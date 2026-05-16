@@ -32,6 +32,7 @@ const request = (path, data = {}, error = true) => {
 			header: {
 				'Content-Type': 'application/json',
 				'Authorization': store.state.user.token || '',
+				'Accept-Language': store.state.app.lang || uni.getStorageSync('app_lang') || 'zh-CN',
 			},
 			success: res => {
 				const body = res.data

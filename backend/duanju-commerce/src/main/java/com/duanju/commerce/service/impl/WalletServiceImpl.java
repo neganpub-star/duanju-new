@@ -13,6 +13,9 @@ import com.duanju.system.domain.DramaUser;
 import com.duanju.system.mapper.DramaUserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +30,18 @@ public class WalletServiceImpl implements WalletService {
     private final DramaUserMapper userMapper;
     private final UserWalletLogMapper walletLogMapper;
     private final UserWalletApplyMapper walletApplyMapper;
+
+    @Autowired(required = false)
+    private MessageSource messageSource;
+
+    private String msg(String key, Object... args) {
+        if (messageSource == null) return key;
+        try {
+            return messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
+        } catch (Exception e) {
+            return key;
+        }
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -49,11 +64,11 @@ public class WalletServiceImpl implements WalletService {
             case "money" -> user.getMoney();
             case "score" -> user.getScore();
             case "usable" -> user.getUsable();
-            default -> throw ServiceException.of("不支持的钱包类型");
+            default -> throw ServiceException.of(msg("error.wallet.type"));
         };
         BigDecimal after = before.add(amount);
         if (checkBalance && after.compareTo(BigDecimal.ZERO) < 0) {
-            throw ServiceException.of("余额不足");
+            throw ServiceException.of(msg("error.insufficient.balance"));
         }
 
         DramaUser update = new DramaUser();

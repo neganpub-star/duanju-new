@@ -1,6 +1,7 @@
 
 import Vue from 'vue'
 import App from './App'
+import i18n from '@/common/i18n/index.js'
 
 import { BASE_URL, SIGN } from './env.js'
 Vue.prototype.$BASE_URL = BASE_URL
@@ -114,6 +115,7 @@ Vue.config.productionTip = false
 App.mpType = 'app'
 const app = new Vue({
 	store,
+	i18n,
 	...App
 })
 app.$mount()

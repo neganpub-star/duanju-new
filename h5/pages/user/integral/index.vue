@@ -26,16 +26,15 @@
 						<view class="list_box" v-if="list.length">
 							<view class="item" v-for="(item, index) in list" :key="index">
 								<view class="line">
-									<text>类型：{{ item.type_name }}</text>
-									<text>积分：{{ item.wallet }}</text>
+									<text>{{ walletLogText(item) }}</text>
+									<text>{{ item.wallet > 0 ? '+' : '' }}{{ item.wallet }}</text>
 								</view>
 								<view class="line">
-									<text>备注：{{ item.memo }}</text>
 									<text>{{ $utils.timestampToTime(item.createtime) }}</text>
 								</view>
 							</view>
 						</view>
-						<view class="be_empty" v-else>没有佣金信息</view>
+						<view class="be_empty" v-else>{{ $t('common.noData') }}</view>
 					</view>
 				</view>
 			</scroll-view>
@@ -69,6 +68,27 @@
 			this.page = 1
 		},
 		methods: {
+			walletLogText(log) {
+				const type = log.type || 'default'
+				// 从 item_id 提取参数（episode_unlock 的 item_id 格式为 EP3 或 EP_3 之类）
+				let param = ''
+				if (log.item_id) {
+					const match = String(log.item_id).match(/\d+/)
+					if (match) param = match[0]
+				}
+				// 根据 type 使用 i18n
+				const keyMap = {
+					'episode_unlock': param
+						? this.$t('wallet.type.episode_unlock').replace('{0}', param)
+						: this.$t('wallet.type.default'),
+					'usable_recharge': this.$t('wallet.type.usable_recharge').replace('{0}', Math.abs(log.wallet) || ''),
+					'withdraw': this.$t('wallet.type.withdraw'),
+					'withdraw_reject': this.$t('wallet.type.withdraw_reject'),
+					'vip_recharge': this.$t('wallet.type.vip_recharge'),
+					'reseller_buy': this.$t('wallet.type.reseller_buy'),
+				}
+				return keyMap[type] || log.memo || this.$t('wallet.type.default')
+			},
 			scrollBottom() {
 				this.page++
 				this.integralList()

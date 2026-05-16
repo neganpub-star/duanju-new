@@ -84,11 +84,11 @@
 
 			<view class="menu_box" v-if="userInfoStore.mgg == 1 || !mggStatus"
 				style="background: linear-gradient(141.96deg, #2a3599 0%, #7c3aed 100%);">
-				<view class="title">全部功能</view>
+				<view class="title">{{ $t('user.allFeatures') }}</view>
 				<view class="menu-grid">
-					<view v-if="item.id!=8" 
+					<view v-if="item.id!=8"
 						class="menu-item"
-						v-for="(item, index) in menuListTwo" 
+						v-for="(item, index) in menuListTwoI18n"
 						:key="item.id"
 						@click="menuItemClick(item.rid, item.text, item.path)">
 						<view class="icon">
@@ -98,12 +98,12 @@
 					</view>
 				</view>
 			</view>
-			<view class="menu_box" v-else 
+			<view class="menu_box" v-else
 				style="background: linear-gradient(141.96deg, #2a3599 0%, #7c3aed 100%);">
-				<view class="title">全部功能</view>
+				<view class="title">{{ $t('user.allFeatures') }}</view>
 				<view class="menu-grid">
 					<view class="menu-item"
-						v-for="(item, index) in menuList" 
+						v-for="(item, index) in menuListI18n"
 						:key="item.id"
 						@click="menuItemClick(item.rid, item.text, item.path)">
 						<view class="icon">
@@ -177,7 +177,8 @@
 							<text class="copy-btn" @click.stop="copyText(userInfoStore.user_id)">复制</text>
 						</view>
 					</view>
-					<view class="hero-arrow">
+					<view class="hero-arrow" style="display:flex;align-items:center;">
+						<LangSwitcher style="margin-right: 16rpx;" />
 						<u-icon name="arrow-right" color="rgba(255,255,255,0.7)" size="18"></u-icon>
 					</view>
 				</view>
@@ -197,17 +198,17 @@
 				<view class="hero-shortcuts" v-if="userInfoStore">
 					<view class="shortcut-item" @click="jumpView('/pages/video/record')">
 						<text class="shortcut-num">{{ userInfoStore.watch_count || 0 }}</text>
-						<text class="shortcut-label">观看记录</text>
+						<text class="shortcut-label">{{ $t('user.watchHistory') }}</text>
 					</view>
 					<view class="shortcut-divider"></view>
 					<view class="shortcut-item" @click="jumpView('/pages/user/member/index')">
 						<text class="shortcut-num">{{ userInfoStore.usable || 0 }}</text>
-						<text class="shortcut-label">我的积分</text>
+						<text class="shortcut-label">{{ $t('user.myPoints') }}</text>
 					</view>
 					<view class="shortcut-divider"></view>
 					<view class="shortcut-item" @click="jumpView('/pages/user/share/index')">
 						<text class="shortcut-num">{{ userInfoStore.team_count || 0 }}</text>
-						<text class="shortcut-label">我的团队</text>
+						<text class="shortcut-label">{{ $t('user.myTeam') }}</text>
 					</view>
 				</view>
 			</view>
@@ -216,43 +217,43 @@
 				<!--  -->
 				<view class="vip_box" v-if="iosIsPay">
 					<view class="left">
-						<view class="line1">开通会员尊享多项特权</view>
-						<view class="line2">开通VIP会员 专享剧集立即免费</view>
+						<view class="line1">{{ $t('user.vipBenefitTitle') }}</view>
+						<view class="line2">{{ $t('user.vipBenefitDesc') }}</view>
 					</view>
 					<view class="right">
-						<u-button text="我的会员" v-if="userInfoStore.is_vip == 1" :customStyle="buttonStyle"
+						<u-button :text="$t('user.myVip')" v-if="userInfoStore.is_vip == 1" :customStyle="buttonStyle"
 							@click="openVip" />
-						<u-button text="立即开通" v-else :customStyle="buttonStyle" @click="openVip" />
+						<u-button :text="$t('user.activateNow')" v-else :customStyle="buttonStyle" @click="openVip" />
 					</view>
 				</view>
 				<view class="vip_box" v-else>
 					<view class="left">
-						<view class="line1">开通会员尊享多项特权</view>
-						<view class="line2">开通VIP会员 专享剧集立即免费</view>
+						<view class="line1">{{ $t('user.vipBenefitTitle') }}</view>
+						<view class="line2">{{ $t('user.vipBenefitDesc') }}</view>
 					</view>
 					<view class="right">
-						<u-button text="联系我们" :customStyle="buttonStyle" @click="openVip" />
+						<u-button :text="$t('user.contactUs')" :customStyle="buttonStyle" @click="openVip" />
 					</view>
 				</view>
 				<view class="integral_box" @click=" goMai();jumpView('/pages/user/integral/index')">
 					<view class="right">
-						<text class="text">我的积分</text>
+						<text class="text">{{ $t('user.myPoints') }}</text>
 						<image class="image" src="https://img.nymaite.com/video_short/icons/integral.png"
 							mode="widthFix"></image>
 						<text class="text">{{ userInfoStore.usable || 0 }}</text>
 					</view>
-					<view v-if="iosIsPay" class="left">去充值 ></view>
+					<view v-if="iosIsPay" class="left">{{ $t('user.recharge') }}</view>
 				</view>
 			</view>
 
 			
 			<!-- || !mggStatus -->
 			<view class="menu_box" v-if="userInfoStore.mgg == 1 || !mggStatus">
-				<view class="title">全部功能</view>
+				<view class="title">{{ $t('user.allFeatures') }}</view>
 				<view class="menu-grid">
 					<view v-if="item.id!=8"
 						class="menu-item"
-						v-for="(item, index) in menuListTwo"
+						v-for="(item, index) in menuListTwoI18n"
 						:key="item.id"
 						@click="menuItemClick(item.rid, item.text, item.path)">
 						<view class="icon">
@@ -263,10 +264,10 @@
 				</view>
 			</view>
 			<view class="menu_box" v-else>
-				<view class="title">全部功能</view>
+				<view class="title">{{ $t('user.allFeatures') }}</view>
 				<view class="menu-grid">
 					<view class="menu-item"
-						v-for="(item, index) in menuList"
+						v-for="(item, index) in menuListI18n"
 						:key="item.id"
 						@click="menuItemClick(item.rid, item.text, item.path)">
 						<view class="icon">
@@ -319,7 +320,9 @@
 		mapMutations,
 		mapActions
 	} from "vuex"
+	import LangSwitcher from '@/components/LangSwitcher.vue'
 	export default {
+		components: { LangSwitcher },
 		data() {
 			return {
 				isBgColor: `#5E72F7`,
@@ -542,6 +545,18 @@
 		computed: {
 			...mapGetters("user", ["token", "userInfo"]),
 			...mapGetters("app", ["config", "copyright", "richtext", "iosIsPay"]),
+			menuListTwoI18n() {
+				return this.menuListTwo.map(item => ({
+					...item,
+					text: this.menuItemText(item.id)
+				}))
+			},
+			menuListI18n() {
+				return this.menuList.map(item => ({
+					...item,
+					text: this.menuItemText(item.id)
+				}))
+			},
 		},
 		watch: {
 			config: {
@@ -623,6 +638,19 @@
 		},
 		methods: {
 			...mapActions('user', ['getUserInfo', 'userinfo']),
+			menuItemText(id) {
+				const map = {
+					1: this.$t('user.inviteFriends'),
+					2: this.$t('user.userAgreement'),
+					3: this.$t('user.privacyPolicy'),
+					4: this.$t('user.legalNotice'),
+					5: this.$t('user.contactUs'),
+					6: this.$t('user.aboutUs'),
+					7: this.$t('user.earnPoints'),
+					8: this.$t('user.noAds'),
+				}
+				return map[id] || ''
+			},
 			goMai() {
 				this.$request('common.point', {
 					platform: this.$utils.platforms(),
