@@ -84,6 +84,10 @@ public class Video extends BaseEntity {
 
     private String sourceUrl;
     private Integer weigh;
+
+    @JsonProperty("is_recommend")
+    private Integer isRecommend;
+
     private String remark;
 
     @TableField(exist = false)

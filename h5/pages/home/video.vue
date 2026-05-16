@@ -78,27 +78,47 @@
 						<u-icon v-if="!isPlaying" name="play-right-fill" color="rgba(255, 255, 255, 0.8)" :size="60" @click="videoPlay"></u-icon>
 					</view>
 					<view class="sidebar" v-if="!isDrag && !isPlayError && videoIndex == index">
-						<view class="item" :class="{ 'liked-anim': likeAnimIndex === index }" @click="handleLikes(item.id, index)">
-							<svg v-if="!item.is_like" class="icon-svg like-icon" viewBox="0 0 48 48"><path d="M24 42C13 33 6 27 6 19.5C6 13.7 10.7 9 16.5 9c3.2 0 6.1 1.6 7.5 4.1C25.4 10.6 28.3 9 31.5 9 37.3 9 42 13.7 42 19.5c0 7.5-7 13.5-18 22.5z" fill="rgba(255,255,255,0.0)" stroke="#fff" stroke-width="2.5"/></svg>
-							<svg v-else class="icon-svg like-icon liked-glow" viewBox="0 0 48 48"><defs><linearGradient id="likeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fe2c55"/><stop offset="100%" stop-color="#fd5b36"/></linearGradient></defs><path d="M24 42C13 33 6 27 6 19.5C6 13.7 10.7 9 16.5 9c3.2 0 6.1 1.6 7.5 4.1C25.4 10.6 28.3 9 31.5 9 37.3 9 42 13.7 42 19.5c0 7.5-7 13.5-18 22.5z" fill="url(#likeGrad)" stroke="#fff" stroke-width="2.5"/></svg>
+						<!-- 评论 -->
+						<view class="item" @click="openComment(item.video.id)">
+							<view class="icon-circle">
+								<svg class="icon-svg" viewBox="0 0 48 48" fill="none">
+									<path d="M6 10a4 4 0 0 1 4-4h28a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H15l-9 7V10z" stroke="#fff" stroke-width="2.5" stroke-linejoin="round" fill="rgba(255,255,255,0.08)"/>
+									<circle cx="17" cy="19" r="2" fill="#fff"/>
+									<circle cx="24" cy="19" r="2" fill="#fff"/>
+									<circle cx="31" cy="19" r="2" fill="#fff"/>
+								</svg>
+							</view>
+							<text v-if="item.video.comments > 0" class="text">{{ item.video.comments }}</text>
+						</view>
+						<!-- 点赞 -->
+						<view class="item" :class="{ 'liked-anim': likeAnimIndex === index }" @click="handleLikes(item.vid, index)">
+							<view class="icon-circle">
+								<svg v-if="!item.is_like" class="icon-svg like-icon" viewBox="0 0 48 48"><path d="M24 42C13 33 6 27 6 19.5C6 13.7 10.7 9 16.5 9c3.2 0 6.1 1.6 7.5 4.1C25.4 10.6 28.3 9 31.5 9 37.3 9 42 13.7 42 19.5c0 7.5-7 13.5-18 22.5z" fill="rgba(255,255,255,0.0)" stroke="#fff" stroke-width="2.5"/></svg>
+								<svg v-else class="icon-svg like-icon liked-glow" viewBox="0 0 48 48"><defs><linearGradient id="likeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fe2c55"/><stop offset="100%" stop-color="#fd5b36"/></linearGradient></defs><path d="M24 42C13 33 6 27 6 19.5C6 13.7 10.7 9 16.5 9c3.2 0 6.1 1.6 7.5 4.1C25.4 10.6 28.3 9 31.5 9 37.3 9 42 13.7 42 19.5c0 7.5-7 13.5-18 22.5z" fill="url(#likeGrad)" stroke="#fff" stroke-width="2.5"/></svg>
+							</view>
 							<text class="text like-num" :class="{ active: item.is_like }">{{ item.likes }}</text>
 						</view>
+						<!-- 收藏 -->
 						<view class="item" :class="{ 'collected-anim': collectAnimIndex === index }" @click="handleCollect(item.vid, item.video.is_favorite, index)">
-							<svg v-if="!item.video.is_favorite" class="icon-svg collect-icon" viewBox="0 0 48 48"><polygon points="24,7 29.1,18.2 41.5,19.8 32.5,28.6 35.2,41 24,34.2 12.8,41 15.5,28.6 6.5,19.8 18.9,18.2" fill="rgba(255,255,255,0.0)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/></svg>
-							<svg v-else class="icon-svg collect-icon collected-glow" viewBox="0 0 48 48"><defs><linearGradient id="starGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ffe066"/><stop offset="100%" stop-color="#ffd600"/></linearGradient></defs><polygon points="24,7 29.1,18.2 41.5,19.8 32.5,28.6 35.2,41 24,34.2 12.8,41 15.5,28.6 6.5,19.8 18.9,18.2" fill="url(#starGrad)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/></svg>
+							<view class="icon-circle">
+								<svg v-if="!item.video.is_favorite" class="icon-svg collect-icon" viewBox="0 0 48 48"><polygon points="24,7 29.1,18.2 41.5,19.8 32.5,28.6 35.2,41 24,34.2 12.8,41 15.5,28.6 6.5,19.8 18.9,18.2" fill="rgba(255,255,255,0.0)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/></svg>
+								<svg v-else class="icon-svg collect-icon collected-glow" viewBox="0 0 48 48"><defs><linearGradient id="starGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ffe066"/><stop offset="100%" stop-color="#ffd600"/></linearGradient></defs><polygon points="24,7 29.1,18.2 41.5,19.8 32.5,28.6 35.2,41 24,34.2 12.8,41 15.5,28.6 6.5,19.8 18.9,18.2" fill="url(#starGrad)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/></svg>
+							</view>
 							<text class="text collect-num" :class="{ active: item.video.is_favorite }">{{ item.video.favorites }}</text>
 						</view>
-						<view class="item" @click="openComment(item.video.id)">
-							<svg class="icon-svg" viewBox="0 0 48 48" fill="none">
-								<path d="M8 8h32a2 2 0 012 2v20a2 2 0 01-2 2H16l-8 8V10a2 2 0 012-2z" fill="rgba(255,255,255,0)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
-							</svg>
-							<text class="text">{{ $t('video.comment') }}</text>
-						</view>
+						<!-- 分享 -->
 						<!-- #ifdef MP-WEIXIN -->
 						<view class="item">
-							<button class="btn" open-type="share" >
-								<image class="image" src="https://img.nymaite.com/video_short/icons/share_0.png" mode="widthFix"></image>
-								<text class="text">{{ item.shares }}</text>
+							<button class="btn share-btn" open-type="share">
+								<view class="icon-circle">
+									<svg class="icon-svg" viewBox="0 0 44 44" fill="none">
+										<circle cx="32" cy="12" r="4" fill="#fff"/>
+										<circle cx="12" cy="22" r="4" fill="#fff"/>
+										<circle cx="32" cy="32" r="4" fill="#fff"/>
+										<path d="M15.7 20.6L28.3 13.4" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+										<path d="M15.7 23.4L28.3 30.6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+									</svg>
+								</view>
 							</button>
 						</view>
 						<!-- #endif -->
@@ -112,8 +132,8 @@
 							<text v-if="(item.video.display_desc||item.video.description) && (item.video.display_desc||item.video.description).length > 13" class="desc-toggle" @click="isUnfold = !isUnfold">{{ isUnfold ? $t('video.collapse') : $t('video.expand') }}</text>
 						</view>
 						<view class="content">
-							<text class="text1">{{ item.display_title || item.name }}{{ $t('video.ofTotal', [item.video.episodes]) }}</text>
-							<text class="text2 more-btn" @click="openVideoDetail(item.video.id, item.video.display_title||item.video.title, item.video.image, item.video.display_desc||item.video.description)">{{ $t('video.viewMoreEpisodes') }}</text>
+							<text class="text1">{{ formatEpName(item) }}{{ $t('video.ofTotal', [item.video.episodes]) }}</text>
+							<text class="text2 more-btn" @click="openVideoDetail(item.video.id)">{{ $t('video.viewMoreEpisodes') }}</text>
 						</view>
 					</view>
 					<view class="progress" v-if="duration > 0 && videoIndex == index">
@@ -313,6 +333,11 @@
 		},
 		methods: {
 			...mapActions("user", ["checkAdTask"]),
+			formatEpName(ep) {
+				const nameStr = ep.display_title || ep.name || ''
+				const m = nameStr.match(/\d+/)
+				return m ? this.$t('video.episode', [m[0]]) : nameStr
+			},
 			
 			daoji(){
 				
@@ -598,24 +623,27 @@
 			},
 			// 点击
 			videoClick() {
-				this.clickTimer && clearTimeout(this.clickTimer)
-				this.clickNum++
-				this.clickTimer = setTimeout(() => {
-					if(this.clickNum >= 2) {
-						console.log('你双击了')
-					} else {
-						if(this.chapingAd){
-							this.adIn()
-						}
-						console.log('你单击了')
-						if(this.isPlaying) {
-							this.videoPause()
-						} else {
-							this.videoPlay()
-						}
-					}
-					this.clickNum = 0
-				}, 250)
+				const item = this.videoData[this.videoIndex]
+				if (!item || !item.video) return
+				this.videoPause()
+				const time = Math.floor(this.currentTime)
+				// 把当前播放信息存入 globalData，play.vue 可立即起播，不用等 API
+				getApp().globalData.entryVideo = {
+					url:     item.url,
+					image:   item.image || item.video.image,
+					cover:   item.image || item.video.image,
+					id:      item.id,
+					videoId: item.vid,
+					time,
+					title:   item.video.display_title || item.video.title,
+				}
+				let url = `/pages/video/play?id=${item.video.id}`
+				if (item.id) url += `&episodeId=${item.id}`
+				if (time > 0) url += `&t=${time}`
+				uni.navigateTo({ url })
+			},
+			openVideoDetail(id) {
+				uni.navigateTo({ url: `/pages/video/play?id=${id}` })
 			},
 			// 元数据加载完毕
 			VideoLoadedmetadata(e) {
@@ -661,22 +689,23 @@
 				return uni.createVideoContext('video'+ this.originData[this.originIndex].id, this)
 			},
 			// 点赞
-			handleLikes(id, index) {
+			handleLikes(vid, index) {
 				if (this.likeAnimTimer) clearTimeout(this.likeAnimTimer);
 				this.likeAnimIndex = index;
 				this.likeAnimTimer = setTimeout(() => { this.likeAnimIndex = null }, 350);
+				const isLiked = this.videoData[index].is_like
 				const obj = {
-					episode_id: id,
-					type: 'like'
+					vid: String(vid),
+					action: isLiked ? 'unlike' : 'like'
 				}
 				this.$request('video.likes', obj).then(res => {
 					if(res.code === 1) {
-						if(this.videoData[index].is_like == 0) {
+						if(!isLiked) {
 							this.videoData[index].is_like = 1
 							this.videoData[index].likes++
 						} else {
 							this.videoData[index].is_like = 0
-							this.videoData[index].likes--
+							this.videoData[index].likes = Math.max(0, this.videoData[index].likes - 1)
 						}
 					}
 				})
@@ -687,8 +716,8 @@
 				this.collectAnimIndex = index;
 				this.collectAnimTimer = setTimeout(() => { this.collectAnimIndex = null }, 350);
 				if(this.videoData[index].video.is_favorite == 0) {
-					const obj = { vid: id, type: 'favorite' }
-					this.$request('video.addRecord', obj).then(res => {
+					const obj = { vid: id }
+					this.$request('video.addFavorite', obj).then(res => {
 						if(res.code === 1) {
 							this.videoData[index].video.is_favorite = 1
 							this.videoData[index].video.favorites++
@@ -725,10 +754,6 @@
 		    margin-top:-265rpx;/*高度的一半*/
 		}
 	.page_content {
-		/* #ifdef H5 */
-		padding-bottom: 100rpx;
-		/* #endif */
-
 		.ad_box {
 			position: absolute;
 			bottom: 80rpx;
@@ -749,12 +774,12 @@
 		.main_content {
 			position: relative;
 			background: #000;
-			
+			height: 100vh;
+
 			.swiper {
 				width: 100%;
-				height: 100%;
+				height: 100vh;
 				background: #000;
-				border-radius: 16rpx;
 				overflow: hidden;
 				
 				.swiper_item {
@@ -842,6 +867,17 @@
 								flex-direction: column;
 								gap: 40rpx;
 								align-items: center;
+								.icon-circle {
+									width: 88rpx;
+									height: 88rpx;
+									background: rgba(0, 0, 0, 0.40);
+									border-radius: 50%;
+									display: flex;
+									align-items: center;
+									justify-content: center;
+									border: 1rpx solid rgba(255, 255, 255, 0.20);
+									margin-bottom: 8rpx;
+								}
 								.action-item {
 									display: flex;
 									flex-direction: column;
@@ -930,39 +966,36 @@
 						right: 30rpx;
 						bottom: 260rpx;
 						z-index: 1;
-						
+
 						.item {
-							margin-bottom: 40rpx;
+							margin-bottom: 20rpx;
 							text-align: center;
-							
+							display: flex;
+							flex-direction: column;
+							align-items: center;
+
 							&:last-child {
 								margin-bottom: 0;
 							}
-							
-							.icon-wrapper {
-								width: 80rpx;
-								height: 80rpx;
-								border-radius: 50%;
-								background: rgba(255,255,255,0.2);
-								display: flex;
-								justify-content: center;
-								align-items: center;
-								transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-								.u-icon {
-									color: #fff;
-								}
 
-								&:active {
-									transform: scale(0.9);
-								}
-								&.liked {
-									animation: liked-pop 0.5s ease-out;
-									.u-icon { color: #ff4500; }
-								}
-								&.collected {
-									transform: scale(1.1);
-									.u-icon { color: #ffeb3b; }
-								}
+							.icon-circle {
+								width: 88rpx;
+								height: 88rpx;
+								background: rgba(0, 0, 0, 0.40);
+								border-radius: 50%;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+								border: 1rpx solid rgba(255, 255, 255, 0.20);
+								margin-bottom: 8rpx;
+							}
+
+							.btn.share-btn {
+								background: transparent;
+								padding: 0;
+								margin: 0;
+								line-height: 1;
+								&::after { border: none; }
 							}
 							
 							.text {
@@ -992,6 +1025,9 @@
 						width: 76%;
 						position: absolute;
 						bottom: 60rpx;
+						/* #ifdef H5 */
+						bottom: 180rpx;
+						/* #endif */
 						left: 30rpx;
 						z-index: 1;
 						font-size: 32rpx;
@@ -1139,6 +1175,9 @@
 						width: 100%;
 						position: absolute;
 						bottom: 10rpx;
+						/* #ifdef H5 */
+						bottom: 110rpx;
+						/* #endif */
 						left: 0;
 						z-index: 1;
 						
@@ -1214,10 +1253,9 @@
 		}
 	}
 	.icon-svg {
-		width: 54rpx;
-		height: 54rpx;
+		width: 44rpx;
+		height: 44rpx;
 		display: block;
-		margin: 0 auto 2rpx auto;
 		filter: drop-shadow(0 2px 8px rgba(0,0,0,0.10));
 		transition: filter 0.2s;
 	}

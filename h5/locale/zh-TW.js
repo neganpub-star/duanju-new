@@ -202,6 +202,8 @@ export default {
     selectAll: '全選',
     deleteSelected: '刪除({0})',
     totalEps: '全{0}集',
+    epProgress: '{0}/{1}集',
+    watchedEp: '看到第{0}集',
     deleteSuccess: '已刪除',
   },
   home: {

@@ -232,8 +232,9 @@ public class VideoController {
     @GetMapping("/recommend")
     public R<List<Map<String, Object>>> recommend(@RequestParam(defaultValue = "10") Integer limit) {
         List<Video> videos = videoService.recommend(siteId, limit);
-        // 查当前用户收藏状态与VIP状态
+        // 查当前用户收藏状态、点赞状态与VIP状态
         java.util.Set<Long> favIds = new java.util.HashSet<>();
+        java.util.Set<Long> likeIds = new java.util.HashSet<>();
         boolean userIsVip = false;
         if (StpUtil.isLogin()) {
             long userId = StpUtil.getLoginIdAsLong();
@@ -241,10 +242,15 @@ public class VideoController {
                     .eq(VideoFavorite::getUserId, userId)
                     .select(VideoFavorite::getVideoId))
                     .forEach(f -> favIds.add(f.getVideoId()));
+            videoLikeMapper.selectList(new LambdaQueryWrapper<VideoLike>()
+                    .eq(VideoLike::getUserId, userId)
+                    .select(VideoLike::getVideoId))
+                    .forEach(l -> likeIds.add(l.getVideoId()));
             DramaUser u = userMapper.selectById(userId);
             userIsVip = u != null && u.isVipActive();
         }
         final boolean isVip = userIsVip;
+        final java.util.Set<Long> finalLikeIds = likeIds;
         List<Map<String, Object>> result = videos.stream().map(v -> {
             String cover = v.getCover() != null ? v.getCover() : v.getImage();
             List<VideoEpisodes> eps = episodesMapper.selectByVideoId(v.getId());
@@ -266,13 +272,19 @@ public class VideoController {
             Map<String, Object> video = new LinkedHashMap<>();
             video.put("id", v.getId());
             video.put("title", v.getTitle());
+            video.put("display_title", v.getDisplayTitle());
             video.put("image", cover);
             video.put("cover", cover);
             video.put("description", v.getDescription());
+            video.put("display_desc", v.getDisplayDesc());
             video.put("episodes", v.getSeriesCount());
             video.put("is_favorite", favIds.contains(v.getId()) ? 1 : 0);
             video.put("favorites", favoriteMapper.countByVideoId(v.getId()));
             video.put("shares", v.getShares() != null ? v.getShares() : 0);
+            video.put("comments", commentMapper.countTopComments(v.getId()));
+
+            String ep1Name = ep1 != null ? (ep1.getTitle() != null ? ep1.getTitle() : "第1集") : "第1集";
+            String ep1DisplayTitle = ep1 != null ? ep1.getDisplayTitle() : pickI18n("{\"zh-CN\":\"第1集\",\"zh-TW\":\"第1集\",\"en\":\"Episode 1\"}", "第1集");
 
             // 外层条目（模板通过 item.id / item.vid / item.url / item.name 等访问）
             Map<String, Object> m = new LinkedHashMap<>();
@@ -281,8 +293,9 @@ public class VideoController {
             m.put("url",   ep1Url);
             m.put("hlsUrl", ep1HlsUrl);
             m.put("image", cover);
-            m.put("name",  ep1 != null ? (ep1.getTitle() != null ? ep1.getTitle() : "第1集") : "第1集");
-            m.put("is_like", 0);
+            m.put("name",  ep1Name);
+            m.put("display_title", ep1DisplayTitle);
+            m.put("is_like", finalLikeIds.contains(v.getId()) ? 1 : 0);
             m.put("likes", v.getLikes() != null ? v.getLikes() : 0);
             m.put("shares", v.getShares() != null ? v.getShares() : 0);
             m.put("adsTrue", false);

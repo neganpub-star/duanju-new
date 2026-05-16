@@ -33,7 +33,7 @@
         </template>
       </el-table-column>
       <el-table-column label="标题" prop="title" show-overflow-tooltip />
-      <el-table-column label="集数" prop="episodeCount" width="70" align="center" />
+      <el-table-column label="集数" prop="seriesCount" width="70" align="center" />
       <el-table-column label="状态" width="80" align="center">
         <template #default="{ row }">
           <el-tag :type="row.status === 1 ? 'success' : 'info'">
@@ -41,6 +41,13 @@
           </el-tag>
         </template>
       </el-table-column>
+      <el-table-column label="推荐" width="70" align="center">
+        <template #default="{ row }">
+          <el-tag v-if="row.is_recommend === 1" type="warning" size="small">推荐</el-tag>
+          <span v-else style="color:#ccc">—</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="权重" prop="weigh" width="70" align="center" />
       <el-table-column label="创建时间" prop="createTime" width="160" />
       <el-table-column label="操作" width="220" fixed="right">
         <template #default="{ row }">
@@ -88,6 +95,13 @@
                 <el-radio :value="1">上架</el-radio>
                 <el-radio :value="0">下架</el-radio>
               </el-radio-group>
+            </el-form-item>
+            <el-form-item label="推荐展示">
+              <el-switch v-model="form.is_recommend" :active-value="1" :inactive-value="0" active-text="推荐到发现页" />
+            </el-form-item>
+            <el-form-item label="排序权重">
+              <el-input-number v-model="form.weigh" :min="0" :max="9999" style="width:160px" />
+              <span style="margin-left:8px;color:#999;font-size:12px">数字越大排越前（推荐的排在非推荐前面）</span>
             </el-form-item>
           </el-form>
         </el-tab-pane>

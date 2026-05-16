@@ -203,6 +203,8 @@ export default {
     selectAll: 'Select All',
     deleteSelected: 'Delete({0})',
     totalEps: '{0} eps',
+    epProgress: 'Ep {0}/{1}',
+    watchedEp: 'Up to Ep {0}',
     deleteSuccess: 'Deleted',
   },
   home: {

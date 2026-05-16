@@ -22,7 +22,7 @@
 					<view class="left">
 						<text class="text1">{{ videoInfo.title }}</text>
 						<text class="divider">|</text>
-						<text class="text2">{{ videoData[videoIndex].display_title || videoData[videoIndex].name }}</text>
+						<text class="text2">{{ formatEpName(videoData[videoIndex]) }}</text>
 					</view>
 					<view class="right" :style="'color:#ffe066'" @click="isShowMenu = true">{{ $t('video.selectEpisode') }}</view>
 				</view>
@@ -39,7 +39,7 @@
 					<view class="left">
 						<text class="text1">{{ videoInfo.title }}</text>
 						<text class="divider">|</text>
-						<text class="text2">{{ videoData[videoIndex].display_title || videoData[videoIndex].name }}</text>
+						<text class="text2">{{ formatEpName(videoData[videoIndex]) }}</text>
 					</view>
 					<view class="right" :style="'color:#ffe066'" @click="isShowMenu = true">{{ $t('video.selectEpisode') }}</view>
 				</view>
@@ -131,13 +131,19 @@
 						<view class="sidebar" v-if="!isDrag && !isNeedToPay && !isPlayError && videoIndex == index">
 							<view class="item" @click.stop="onCommentClick">
 								<view class="icon-circle">
-									<u-icon name="chat" size="44" color="#fff"></u-icon>
+									<svg class="icon-svg" viewBox="0 0 48 48" fill="none">
+										<path d="M6 10a4 4 0 0 1 4-4h28a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H15l-9 7V10z" stroke="#fff" stroke-width="2.5" stroke-linejoin="round" fill="rgba(255,255,255,0.08)"/>
+										<circle cx="17" cy="19" r="2" fill="#fff"/>
+										<circle cx="24" cy="19" r="2" fill="#fff"/>
+										<circle cx="31" cy="19" r="2" fill="#fff"/>
+									</svg>
 								</view>
 								<text v-if="videoInfo.comments > 0" class="text">{{ videoInfo.comments }}</text>
 							</view>
 							<view class="item" :class="{ 'liked-anim': likeAnim }" @click="handleLikes()">
 								<view class="icon-circle">
-									<image class="image" :src="`/static/img/likes_${videoInfo.isLike ? 1 : 0}.png`" mode="widthFix"></image>
+									<svg v-if="!videoInfo.isLike" class="icon-svg" viewBox="0 0 48 48"><path d="M24 42C13 33 6 27 6 19.5C6 13.7 10.7 9 16.5 9c3.2 0 6.1 1.6 7.5 4.1C25.4 10.6 28.3 9 31.5 9 37.3 9 42 13.7 42 19.5c0 7.5-7 13.5-18 22.5z" fill="rgba(255,255,255,0.0)" stroke="#fff" stroke-width="2.5"/></svg>
+									<svg v-else class="icon-svg liked-glow" viewBox="0 0 48 48"><defs><linearGradient id="likeGradP" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fe2c55"/><stop offset="100%" stop-color="#fd5b36"/></linearGradient></defs><path d="M24 42C13 33 6 27 6 19.5C6 13.7 10.7 9 16.5 9c3.2 0 6.1 1.6 7.5 4.1C25.4 10.6 28.3 9 31.5 9 37.3 9 42 13.7 42 19.5c0 7.5-7 13.5-18 22.5z" fill="url(#likeGradP)" stroke="#fff" stroke-width="2.5"/></svg>
 								</view>
 								<text v-if="videoInfo.likes > 0" class="text" :class="{ active: videoInfo.isLike }">{{ videoInfo.likes }}</text>
 							</view>
@@ -189,7 +195,7 @@
 					<view class="left">
 						<text class="text1">{{ videoInfo.title }}</text>
 						<text class="divider">|</text>
-						<text class="text2">{{ originData[originIndex].display_title || originData[originIndex].name }}</text>
+						<text class="text2">{{ formatEpName(originData[originIndex]) }}</text>
 					</view>
 					<view class="right" :style="'color:#ffe066'" @click="isShowMenu = true">{{ $t('video.selectEpisode') }}</view>
 				</view>
@@ -259,7 +265,7 @@
 								<div class="custom-poster-info" style="flex: 1;">
 									<div class="custom-poster-ep-row">
 										<span class="custom-poster-ep-label">剧集</span>
-										<span class="custom-poster-ep-value">{{ videoData[videoIndex].display_title || videoData[videoIndex].name }}</span>
+										<span class="custom-poster-ep-value">{{ formatEpName(videoData[videoIndex]) }}</span>
 									</div>
 									<div class="custom-poster-desc">老有戏邀请你观看精选短剧<br/>体验老有戏观看享受院线级别服务<br/></div>
 								</div>
@@ -370,6 +376,8 @@
 				likeAnim: false,
 				collectAnim: false,
 				showComment: false,
+				entryEpisodeId: null,
+				entryTime: 0,
 				showSharePoster: false,
 				shareQrcodeImg: '', // 二维码base64
 				shareUrlForQrcode: '', // 二维码链接
@@ -472,9 +480,28 @@
 			this.winWidth = uni.getSystemInfoSync().windowWidth + 'px'
 			if(option.id) {
 				this.videoInfo.id = option.id
+				if (option.episodeId) this.entryEpisodeId = option.episodeId
+				if (option.t) this.entryTime = Number(option.t)
+
 				await this.getAD()
-				
-				await this.getVideoMenu()
+
+				// 从发现页点击进入时，直接用已有数据立刻起播，不等 API
+				const entry = getApp().globalData.entryVideo
+				if (entry && String(entry.videoId) === String(option.id)) {
+					this.videoInfo.cover = entry.cover
+					this.videoInfo.title = entry.title
+					this.prevTime = entry.time || 0
+					this.originData = [{ id: entry.id, url: entry.url, image: entry.image }]
+					this.originIndex = 0
+					this.initSwiperData(0, 0) // init=0 → 立即自动播放
+					this._fromEntry = true
+					getApp().globalData.entryVideo = null
+					// 后台静默加载完整剧集信息，不阻塞播放
+					this.getVideoMenu()
+				} else {
+					await this.getVideoMenu()
+				}
+
 				// #ifdef MP-WEIXIN
 				await this.token && (this.config?.uniad_switch == '1') && this.config?.adpid && this.adCheck()
 				// #endif
@@ -517,6 +544,12 @@
 		},
 		methods: {
 			...mapActions("user", ["checkAdTask"]),
+			formatEpName(ep) {
+				if (!ep) return ''
+				const nameStr = ep.display_title || ep.name || ''
+				const m = nameStr.match(/\d+/)
+				return m ? this.$t('video.episode', [m[0]]) : nameStr
+			},
 			async adCheck() {
 				// #ifdef MP-WEIXIN
 				
@@ -731,31 +764,41 @@
 						
 						if(res.data.episodes_list && res.data.episodes_list.length) {
 							this.prevTime = res.data.view_time
-							
+
 							const index = res.data.episode_id ? res.data.episodes_list.findIndex(item => item.id == res.data.episode_id) : 0
 							this.originIndex = index != -1 ? index : 0
+
+							// 从发现页跳入时，优先用发现页的播放位置
+							if (this.entryEpisodeId) {
+								const ei = res.data.episodes_list.findIndex(ep => ep.id == this.entryEpisodeId)
+								if (ei !== -1) {
+									this.originIndex = ei
+									this.prevTime = this.entryTime
+								}
+								this.entryEpisodeId = null
+								this.entryTime = 0
+							}
 							this.originData = res.data.episodes_list.map(ep => ({
 								...ep,
 								image: ep.image || res.data.image
 							}))
 
-
-								// this.originData.forEach((item,index)=>{
-								//   that.originData[index].push({adTrue: false});
-							 //        return;
-							 //    })
-							 
 							 if(this.isTzt){
 								 for (var i = 0; i <  this.originData.length-1; i++) {
 								 	if(this.originData[i].name && this.originData[i+1].name){
 								 		this.originData.splice(i+1,0,{adsTrue: true});
 								 	}
 								 }
-								 							
 							 }
-								
-							 // this.videoData.splice(1,0,obj)
-							that.initSwiperData(that.originIndex, 1)
+
+							// 从发现页无缝进入：视频已在播，只更新剧集列表数据，不重启播放器
+							if (that._fromEntry) {
+								that._fromEntry = false
+								// 用完整数据替换当前播放的分集（url 相同，其余字段补全）
+								that.$set(that.videoData, that.videoIndex, that.originData[that.originIndex])
+							} else {
+								that.initSwiperData(that.originIndex, 1)
+							}
 							console.log('节目单',that.originData)
 						}
 					}
@@ -1056,9 +1099,9 @@
 			},
 			// 点赞（按整部剧计数，操作 videoInfo）
 			handleLikes() {
-				const vid = this.videoInfo.id
+				const vid = String(this.videoInfo.id)
 				const action = this.videoInfo.isLike == 0 ? 'like' : 'unlike'
-				const obj = { vid: vid, action: action }
+				const obj = { vid, action }
 				this.$request('video.likes', obj).then(res => {
 					if(res.code === 1) {
 						if(action === 'like') {
@@ -1633,7 +1676,7 @@
 					z-index: 9999 !important;
 
 					.item {
-						margin-bottom: 32rpx;
+						margin-bottom: 20rpx;
 						text-align: center;
 						display: flex;
 						flex-direction: column;
@@ -1655,22 +1698,16 @@
 							margin-bottom: 8rpx;
 						}
 
-						.image {
-							width: 44rpx;
-							height: 44rpx;
-							opacity: 0.95;
-						}
-
-						.star-svg {
-							width: 44rpx;
-							height: 44rpx;
-							display: block;
-						}
-
+						.icon-svg,
+						.star-svg,
 						.share-svg-icon {
-							width: 40rpx;
-							height: 40rpx;
+							width: 44rpx;
+							height: 44rpx;
 							display: block;
+						}
+
+						.liked-glow {
+							filter: drop-shadow(0 0 8px #fe2c55);
 						}
 
 						.text {
@@ -1785,11 +1822,11 @@
 			background: transparent;
 		}
 	}
-	.sidebar .item .image,
+	.sidebar .item .icon-svg,
 	.sidebar .item .star-svg {
 	  transition: transform 0.25s cubic-bezier(0.23, 1.12, 0.32, 1);
 	}
-	.sidebar .item.liked-anim .image,
+	.sidebar .item.liked-anim .icon-svg,
 	.sidebar .item.collected-anim .star-svg {
 	  animation: pop-anim 0.35s cubic-bezier(0.23, 1.12, 0.32, 1);
 	}

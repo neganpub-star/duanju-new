@@ -18,7 +18,7 @@
         <if test="categoryId != null">
             AND FIND_IN_SET(#{categoryId}, category_ids)
         </if>
-        ORDER BY weigh DESC, id DESC
+        ORDER BY is_recommend DESC, weigh DESC, id DESC
     </select>
 
 </mapper>
