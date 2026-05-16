@@ -4,7 +4,7 @@
 	<view class="page_content">
 		<!-- #ifndef MP-TOUTIAO -->
 		<view class="head_content">
-			<CustomNavbar title="分享赚钱"></CustomNavbar>
+			<CustomNavbar :title="$t('share.title')"></CustomNavbar>
 		</view>
 		<!-- #endif -->
 		
@@ -12,7 +12,7 @@
 			<view class="top_card" :class="[levelCount(info.level)]">
 				<view class="line line1">
 					<view class="left">{{ info.total }}元</view>
-					<view class="right" @click="jumpView('/pages/user/share/withdraw')">提现</view>
+					<view class="right" @click="jumpView('/pages/user/share/withdraw')">{{ $t('share.withdraw') }}</view>
 				</view>
 				<view class="line line2">
 					<text>{{ info.levelText || '普通用户' }}</text>
@@ -30,20 +30,20 @@
 					<view class="photo">
 						<image class="image" src="/static/img/分享赚钱.png" mode="aspectFill"></image>
 					</view>
-					<view class="text">分享赚钱</view>
+					<view class="text">{{ $t('share.earnMoney') }}</view>
 				</view>
 				<!-- #endif -->
 				<view class="item" @click="jumpView('/pages/user/share/team')">
 					<view class="photo">
 						<image class="image" src="/static/img/团队管理.png" mode="aspectFill"></image>
 					</view>
-					<view class="text">团队管理</view>
+					<view class="text">{{ $t('share.teamManage') }}</view>
 				</view>
 				<view class="item" @click="jumpView('/pages/user/share/brokerage')">
 					<view class="photo">
 						<image class="image" src="/static/img/佣金明细.png" mode="aspectFill"></image>
 					</view>
-					<view class="text">佣金明细</view>
+					<view class="text">{{ $t('share.commissionDetail') }}</view>
 				</view>
 			</view>
 			<view class="text_box">

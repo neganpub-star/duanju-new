@@ -4,7 +4,7 @@
 		<view class="header_new">
 			<view class="search_bar" @click="jumpView('/pages/video/search')">
 				<u-icon name="search" color="#aaa" size="28"></u-icon>
-				<text class="search_placeholder">搜索短剧、演员...</text>
+				<text class="search_placeholder">{{ $t('home.search') }}</text>
 			</view>
 		</view>
 
@@ -66,7 +66,7 @@
 									<view class="img">
 										<image class="image" :src="lItem.image" mode="aspectFill"></image>
 										<view class="ep-badge" v-if="lItem.seriesCount">
-											{{ lItem.isTv == 1 ? '更新至' : '全' }}{{ lItem.seriesCount }}集
+											{{ lItem.isTv == 1 ? '更新至' + lItem.seriesCount + '集' : $t('home.totalEpisodes', [lItem.seriesCount]) }}
 										</view>
 									</view>
 									<view class="info">

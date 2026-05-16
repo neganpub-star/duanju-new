@@ -4,7 +4,7 @@
 	<view class="page_content">
 		<!-- #ifndef MP-TOUTIAO -->
 		<view class="head_content">
-			<CustomNavbar title="积分任务" color="#fff" bg="#262626"></CustomNavbar>
+			<CustomNavbar :title="$t('points.taskTitle')" color="#fff" bg="#262626"></CustomNavbar>
 		</view>
 		<!-- #endif -->
 		
@@ -12,7 +12,7 @@
 			<view class="task_box box_bg" v-if="status == 1">
 				<view class="title_box">
 					<image class="image1" src="https://img.nymaite.com/video_short/images/arrow.png" mode="widthFix"></image>
-					<text class="text">免费获取次数</text>
+					<text class="text">{{ $t('points.freeCount') }}</text>
 					<image class="image2" src="https://img.nymaite.com/video_short/images/arrow.png" mode="widthFix"></image>
 				</view>
 				<view class="item_box">
@@ -23,20 +23,20 @@
 								<text>+{{ item.usable }}积分</text>
 							</view>
 							<view class="line">
-								<text v-if="item.type == 'day'">每日</text>
-								<text>限{{ item.limit }}次</text>
+								<text v-if="item.type == 'day'">{{ $t('points.daily') }}</text>
+								<text>{{ $t('points.limited') }}{{ item.limit }}次</text>
 								<text>（{{ item.user_count }} / {{ item.limit }}）</text>
 							</view>
 						</view>
-						<view class="button disabled" v-if="item.user_count == item.limit">已完成</view>
-						<view class="button" v-else @click="taskItemClick(item.hook)">去完成</view>
+						<view class="button disabled" v-if="item.user_count == item.limit">{{ $t('points.completed') }}</view>
+						<view class="button" v-else @click="taskItemClick(item.hook)">{{ $t('points.complete') }}</view>
 					</view>
 				</view>
 			</view>
 			<view class="task_box box_bg" v-if="status == 0">
 				<view class="title_box">
 					<image class="image1" src="https://img.nymaite.com/video_short/images/arrow.png" mode="widthFix"></image>
-					<text class="text" :style="'color:'+isColor">免费获取次数</text>
+					<text class="text" :style="'color:'+isColor">{{ $t('points.freeCount') }}</text>
 					<image class="image2" src="https://img.nymaite.com/video_short/images/arrow.png" mode="widthFix"></image>
 				</view>
 				<view class="item_box">
@@ -47,14 +47,14 @@
 								<text>+{{ item.usable }}积分</text>
 							</view>
 							<view class="line">
-								<text v-if="item.type == 'day'">每日</text>
-								<text>限{{ item.limit }}次</text>
+								<text v-if="item.type == 'day'">{{ $t('points.daily') }}</text>
+								<text>{{ $t('points.limited') }}{{ item.limit }}次</text>
 								<text>（{{ item.user_count }} / {{ item.limit }}）</text>
 							</view>
 						</view>
-						<view class="button disabled" :style="'background:'+isColor" v-if="item.user_count == item.limit">已完成</view>
-						<view class="button" :style="'background:'+isColor" v-else @click="taskItemClick(item.hook)">去完成</view>
-						
+						<view class="button disabled" :style="'background:'+isColor" v-if="item.user_count == item.limit">{{ $t('points.completed') }}</view>
+						<view class="button" :style="'background:'+isColor" v-else @click="taskItemClick(item.hook)">{{ $t('points.complete') }}</view>
+
 					</view>
 				</view>
 			</view>

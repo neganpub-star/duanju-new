@@ -3,7 +3,7 @@
 	<view class="page_content">
 		<!-- #ifndef MP-TOUTIAO -->
 		<view class="head_content">
-			<CustomNavbar title="我的积分"></CustomNavbar>
+			<CustomNavbar :title="$t('points.myPoints')"></CustomNavbar>
 		</view>
 		<!-- #endif -->
 		
@@ -14,15 +14,15 @@
 						<view class="left">
 							<view class="line1">
 								<image class="image" src="https://img.nymaite.com/video_short/icons/integral.png" mode="widthFix"></image>
-								<text class="text">当前积分</text>
+								<text class="text">{{ $t('points.currentPoints') }}</text>
 							</view>
 							<view class="line2">{{ userInfo.usable || 0 }}</view>
 						</view>
 						<!-- -->
-						<view class="right"  v-if="iosIsPay" @click="recharge" >充值</view>
+						<view class="right"  v-if="iosIsPay" @click="recharge" >{{ $t('points.recharge') }}</view>
 					</view>
 					<view class="content_box">
-						<view class="title">积分明细</view>
+						<view class="title">{{ $t('points.history') }}</view>
 						<view class="list_box" v-if="list.length">
 							<view class="item" v-for="(item, index) in list" :key="index">
 								<view class="line">

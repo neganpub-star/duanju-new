@@ -16,17 +16,17 @@
 				<u-form ref="uForm" :model="form" :rules="rules">
 					<u-form-item prop="mobile">
 						<view class="input">
-							<u-input v-model="form.mobile" type="number" clearable placeholder="请输入手机号码"></u-input>
+							<u-input v-model="form.mobile" type="number" clearable :placeholder="$t('login.phonePlaceholder')"></u-input>
 						</view>
 					</u-form-item>
 					<u-form-item prop="password" v-if="login.type2 == 1">
 						<view class="input">
-							<u-input v-model="form.password" type="password" clearable placeholder="请输入密码"></u-input>
+							<u-input v-model="form.password" type="password" clearable :placeholder="$t('login.passwordPlaceholder')"></u-input>
 						</view>
 					</u-form-item>
 					<u-form-item prop="code" v-else>
 						<view class="input">
-							<u-input v-model="form.code" type="number" clearable placeholder="请输入验证码">
+							<u-input v-model="form.code" type="number" clearable :placeholder="$t('login.captchaPlaceholder')">
 								<template slot="suffix">
 									<u-code ref="uCode" uniqueKey="login-code" :keepRunning="true" @change="codeChange" seconds="60" changeText="X秒重新获取"></u-code>
 									<view class="codebtn" @click="getCode">{{ login.codeTips }}</view>
@@ -36,18 +36,18 @@
 					</u-form-item>
 					<u-form-item prop="newPassword" v-if="login.type2 == 3">
 						<view class="input">
-							<u-input v-model="form.newPassword" type="password" clearable placeholder="请输入新密码"></u-input>
+							<u-input v-model="form.newPassword" type="password" clearable :placeholder="$t('login.passwordPlaceholder')"></u-input>
 						</view>
 					</u-form-item>
 				</u-form>
 			</view>
 			<view class="mobile_type" v-if="login.type == 2">
 				<view class="text" v-if="login.type2 == 1">
-					<text @click="login.type2 = 2">验证码登录</text>
+					<text @click="login.type2 = 2">{{ $t('login.loginWithCode') }}</text>
 					<text @click="login.type2 = 3">忘记密码？</text>
 				</view>
 				<view class="text" v-else>
-					<text @click="login.type2 = 1">密码登录</text>
+					<text @click="login.type2 = 1">{{ $t('login.loginWithPassword') }}</text>
 					<text v-if="login.platform == 'H5'" @click="goToRegister">还没有账号？注册</text>
 				</view>
 			</view>
@@ -60,9 +60,9 @@
 				<u-checkbox-group @change="labelChange">
 					<u-checkbox :name="true" label="阅读并同意" labelSize="28rpx" labelColor="#333"></u-checkbox>
 				</u-checkbox-group>
-				<text class="text" @click="agreementClick(1, '用户协议')">《用户协议》</text>
-				<text>和</text>
-				<text class="text" @click="agreementClick(2, '隐私协议')">《隐私协议》</text>
+				<text class="text" @click="agreementClick(1, $t('login.userAgreement'))">《{{ $t('login.userAgreement') }}》</text>
+				<text>{{ $t('login.and') }}</text>
+				<text class="text" @click="agreementClick(2, $t('login.privacyPolicy'))">《{{ $t('login.privacyPolicy') }}》</text>
 			</view>
 			<!-- <view class="mode_text" v-if="login.platform != 'H5' && !login.bind">
 				<view class="line left"></view>

@@ -7,10 +7,10 @@
 			</view>
 			<view class="search_box">
 				<u-icon name="search" color="#999" size="22"></u-icon>
-				<input class="search_input" type="text" v-model="contents.keyword" placeholder="搜索你感兴趣的短剧" @confirm="searchHandle" />
+				<input class="search_input" type="text" v-model="contents.keyword" :placeholder="$t('search.placeholder')" @confirm="searchHandle" />
 			</view>
 			<view class="search_btn" @click="searchHandle">
-				<text>搜索</text>
+				<text>{{ $t('search.btn') }}</text>
 			</view>
 		</view>
 
@@ -18,7 +18,7 @@
 			<template v-if="!isSearch">
 				<view class="history_section" v-if="historyList.length > 0">
 					<view class="section_header">
-						<text class="section_title">历史记录</text>
+						<text class="section_title">{{ $t('search.history') }}</text>
 						<u-icon name="trash" color="#aaa" size="20" @click="clearHistory"></u-icon>
 					</view>
 					<view class="tags_box">
@@ -28,7 +28,7 @@
 
 				<view class="hot_section">
 					<view class="section_header">
-						<text class="section_title">热门搜索</text>
+						<text class="section_title">{{ $t('search.hotSearch') }}</text>
 					</view>
 					<view class="hot_list">
 						<view class="hot_item" v-for="(item, index) in recommendList" :key="index" @click="openVideoDetail(item.id, item.title, item.image, item.description)" :style="{ 'animation-delay': (index * 0.05 + 0.1) + 's' }">
@@ -53,7 +53,7 @@
 						</view>
 					</view>
 					<view class="nodata" v-if="!contents.list.length && contents.status == 'nomore'">
-						<u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/data.png" text="暂无相关短剧"></u-empty>
+						<u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/data.png" :text="$t('search.noResults')"></u-empty>
 					</view>
 					<view class="liststatus" v-if="contents.list.length">
 						<u-loadmore :status="contents.status" :line="true" />

@@ -4,13 +4,13 @@
 	<view class="page_content">
 		<!-- #ifndef MP-TOUTIAO -->
 		<view class="head_content">
-			<CustomNavbar title="用户信息"></CustomNavbar>
+			<CustomNavbar :title="$t('profile.userInfo')"></CustomNavbar>
 		</view>
 		<!-- #endif -->
 	
 		<view class="main_content">
 			<view class="wrapper">
-				<view class="label">头像</view>
+				<view class="label">{{ $t('profile.avatar') }}</view>
 				<view class="content">
 					<button class="avatar" type="default" open-type="chooseAvatar" @chooseavatar="onChooseAvatar" @click="changeAvatar">
 						<image class="image" :src="user.avatar" mode="aspectFill"></image>
@@ -19,35 +19,35 @@
 				</view>
 			</view>
 			<view class="wrapper">
-				<view class="label">昵称</view>
+				<view class="label">{{ $t('profile.nickname') }}</view>
 				<view class="content">
-					<input class="nickname" v-model="user.nickname" type="nickname" placeholder="请输入昵称" placeholder-class="placeholder"/>
+					<input class="nickname" v-model="user.nickname" type="nickname" :placeholder="$t('profile.nicknamePlaceholder')" placeholder-class="placeholder"/>
 					<image class="arrow" src="https://img.nymaite.com/video_short/icons/arrow.png" mode="widthFix"></image>
 				</view>
 			</view>
 			<view class="wrapper">
-				<view class="label">手机号</view>
+				<view class="label">{{ $t('profile.phone') }}</view>
 				<view class="content" v-if="user.mobile">
 					<input class="mobile" :value="user.mobile" type="number" disabled />
 				</view>
 				<view class="content" v-else @click="mobilePopup = true">
-					<input class="mobile" type="number" placeholder="绑定手机号" placeholder-class="placeholder" disabled />
+					<input class="mobile" type="number" :placeholder="$t('profile.bindPhone')" placeholder-class="placeholder" disabled />
 					<image class="arrow" src="https://img.nymaite.com/video_short/icons/arrow.png" mode="widthFix"></image>
 				</view>
 			</view>
 			<view class="wrapper">
-				<view class="label">推荐人</view>
+				<view class="label">{{ $t('profile.referrer') }}</view>
 				<view class="content" v-if="user.parent_id">
 					<input class="mobile" :value="user.parent_id" type="number" disabled />
 				</view>
 				<view class="content" v-else @click="referrer = true">
-					<input class="mobile" type="number" placeholder="绑定推荐人" placeholder-class="placeholder" disabled />
+					<input class="mobile" type="number" :placeholder="$t('profile.bindReferrer')" placeholder-class="placeholder" disabled />
 					<image class="arrow" src="https://img.nymaite.com/video_short/icons/arrow.png" mode="widthFix"></image>
 				</view>
 			</view>
 			
 			<view class="button" style="margin-top: 40rpx;">
-				<u-button type="error" :plain="true" text="退出登录" @click="logoutClick"></u-button>
+				<u-button type="error" :plain="true" :text="$t('user.logout')" @click="logoutClick"></u-button>
 			</view>
 			
 			<!-- <view class="button" style="margin-top: 40rpx;">
@@ -193,8 +193,8 @@
 			// 退出登录
 			logoutClick() {
 				uni.showModal({
-					title: '退出登录',
-					content: '确认要退出登录吗？',
+					title: this.$t('user.logout'),
+					content: this.$t('user.logoutConfirm'),
 					success: res => {
 						if (res.confirm) {
 							console.log('用户点击确定');

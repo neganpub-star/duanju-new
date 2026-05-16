@@ -3,7 +3,7 @@
 	<view class="page_content">
 		<!-- #ifndef MP-TOUTIAO -->
 			<view class="head_content">
-			<CustomNavbar title="邀请海报"></CustomNavbar>
+			<CustomNavbar :title="$t('share.invitePoster')"></CustomNavbar>
 		</view>
 		<!-- #endif -->
 		
@@ -28,13 +28,13 @@
 			
 			<view class="rule_box">
 				<view class="info">
-					<view class="title">邀请说明</view>
+					<view class="title">{{ $t('share.inviteDesc') }}</view>
 					<view class="msg">
 						1、好友通过您分享的邀请海报注册登录后，Ta永久成为您的下级;  <br>
 						2、如果您是分销商的话，未来Ta产生的订单您都获得佣金奖励，会自动计入您的账号中!!
 					</view>
 				</view>
-				<view class="button" :style="'background:'+isColor">长按图片保存</view>
+				<view class="button" :style="'background:'+isColor">{{ $t('share.saveImage') }}</view>
 			</view>
 		</view>
 	</view>

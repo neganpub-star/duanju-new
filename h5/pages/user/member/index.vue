@@ -3,7 +3,7 @@
 	<view class="page_content">
 		<!-- #ifndef MP-TOUTIAO -->
 		<view class="head_content">
-			<CustomNavbar title="会员中心" color="#fff" bg="#8B9BFA"></CustomNavbar>
+			<CustomNavbar :title="$t('vip.center')" color="#fff" bg="#8B9BFA"></CustomNavbar>
 		</view>
 		<!-- #endif -->
 	
@@ -14,12 +14,12 @@
 					<view class="vip_tag">
 						<text class="tag_icon">♛</text>
 						<text class="tag_text" v-if="userInfo.is_vip == 1">VIP会员</text>
-						<text class="tag_text" v-else>开通会员</text>
+						<text class="tag_text" v-else>{{ $t('vip.activateVip') }}</text>
 					</view>
-					<view class="vip_title" v-if="userInfo.is_vip == 1">尊贵的VIP用户</view>
-					<view class="vip_title" v-else>畅享全站精彩内容</view>
+					<view class="vip_title" v-if="userInfo.is_vip == 1">{{ $t('vip.nobleMember') }}</view>
+					<view class="vip_title" v-else>{{ $t('vip.enjoyAll') }}</view>
 					<view class="vip_sub" v-if="userInfo.is_vip == 1">有效期至 {{ userInfo.vip_expiretime_text }}</view>
-					<view class="vip_sub" v-else>开通会员，专属剧集随心看</view>
+					<view class="vip_sub" v-else>{{ $t('vip.activateSlogan') }}</view>
 					<view class="vip_perks">
 						<view class="perk"><text class="perk_icon">✓</text><text>VIP剧集免费看</text></view>
 						<view class="perk"><text class="perk_icon">✓</text><text>新剧优先解锁</text></view>
@@ -31,7 +31,7 @@
 
 			<!-- 套餐选择 -->
 			<view class="pay_box">
-				<view class="section_title">选择套餐</view>
+				<view class="section_title">{{ $t('vip.selectPlan') }}</view>
 				<view class="card_box">
 					<view
 						class="item"
@@ -40,7 +40,7 @@
 						:key="item.id"
 						@click="openVip(item.id, item.price)"
 					>
-						<view class="hot_badge" v-if="index === hotIndex">推荐</view>
+						<view class="hot_badge" v-if="index === hotIndex">{{ $t('vip.recommended') }}</view>
 						<view class="item_name">{{ item.title }}</view>
 						<view class="item_days">{{ item.days }}天</view>
 						<view class="item_price">
@@ -48,7 +48,7 @@
 							<text class="price_num">{{ item.price }}</text>
 						</view>
 						<view class="item_oprice">原价 ¥{{ item.original_price }}</view>
-						<view class="item_btn" :class="{ hot_btn: index === hotIndex }">立即开通</view>
+						<view class="item_btn" :class="{ hot_btn: index === hotIndex }">{{ $t('vip.activateNow') }}</view>
 					</view>
 				</view>
 			</view>

@@ -2,19 +2,19 @@
 	<view class="page_content">
 		<!-- #ifndef MP-TOUTIAO -->
 			<view class="head_content" v-if="!isDrag">
-			<CustomNavbar lText="剧场" color="#fff"></CustomNavbar>
+			<CustomNavbar :lText="$t('video.theater')" color="#fff"></CustomNavbar>
 		</view>
 		<!-- #endif -->
 		
 		<view class="vmask" v-if="isNeedToPay">
 			<image class="bg" :src="videoInfo.cover" mode="aspectFill"></image>
 			<view class="centerinfo">
-				<view class="text">本集为付费内容 继续收看请</view>
+				<view class="text">{{ $t('video.paidContent') }}</view>
 				 <!-- #ifdef MP-WEIXIN -->
-				<view class="btn" :style="'background:'+isColor" @click="beforePlay">解锁剧情</view>
+				<view class="btn" :style="'background:'+isColor" @click="beforePlay">{{ $t('video.unlockEpisode') }}</view>
 				<!-- #endif -->
 				<!-- #ifndef MP-WEIXIN -->
-				<view class="btn" :style="'background:'+isColor" @click="beforePlay">解锁剧情</view>
+				<view class="btn" :style="'background:'+isColor" @click="beforePlay">{{ $t('video.unlockEpisode') }}</view>
 				<!-- #endif -->
 			</view>
 			<view class="infobox">
@@ -24,7 +24,7 @@
 						<text class="divider">|</text>
 						<text class="text2">{{ videoData[videoIndex].name }}</text>
 					</view>
-					<view class="right" :style="'color:#ffe066'" @click="isShowMenu = true">选集</view>
+					<view class="right" :style="'color:#ffe066'" @click="isShowMenu = true">{{ $t('video.selectEpisode') }}</view>
 				</view>
 			</view>
 		</view>
@@ -32,7 +32,7 @@
 			<image class="bg" :src="videoInfo.cover" mode="aspectFill"></image>
 			<view class="centerinfo">
 				<view class="text">本集为付费内容 请按剧集顺序点播 <br> 已解锁{{ lockCount }}集</view>
-				<view class="btn" @click="changeOriginIndex(lockCount)">解锁下一集剧情</view>
+				<view class="btn" @click="changeOriginIndex(lockCount)">{{ $t('video.unlockNext') }}</view>
 			</view>
 			<view class="infobox">
 				<view class="content">
@@ -80,7 +80,7 @@
 								<view  v-else class="video" style="background-color: #fff;position: relative;z-index: 2;padding: 40px 0;">
 									
 									<view v-if=" daoTime!=0" style="display: flex;flex-direction: column;align-items: center;" >
-										<view style="font-size: 16px;font-weight: 700;color: #5E72F7;margin-bottom: 60rpx;">下集更精彩</view>
+										<view style="font-size: 16px;font-weight: 700;color: #5E72F7;margin-bottom: 60rpx;">{{ $t('video.nextBetter') }}</view>
 										<view style="font-size: 14px; color: #5E72F7;margin-bottom: 40rpx;">
 											看个广告，休息片刻：{{daoTime}}
 										</view>
@@ -88,7 +88,7 @@
 										
 									</view>
 									<view v-else style="display: flex;flex-direction: column;align-items: center;" >
-										<view style="font-size: 65rpx;font-weight: 700;color: #5E72F7;margin-bottom: 60rpx;padding-top: 36rpx;">精彩继续</view>
+										<view style="font-size: 65rpx;font-weight: 700;color: #5E72F7;margin-bottom: 60rpx;padding-top: 36rpx;">{{ $t('video.continueWatch') }}</view>
 										
 									</view>
 									<view class="dwCenter">
@@ -109,7 +109,7 @@
 								<image class="image" :src="videoInfo.cover" mode="aspectFill"></image>
 								<view class="content">
 									<u-icon name="info-circle-fill" color="#fff" size="50"></u-icon>
-									<text class="text">非常抱歉，视频播放出错啦！</text>
+									<text class="text">{{ $t('video.playError') }}</text>
 								</view>
 							</view>
 						</view>
@@ -121,7 +121,7 @@
 							<image class="bg" :src="videoInfo.cover" mode="aspectFill"></image>
 							<view class="centerinfo">
 								<u-loading-icon mode="circle" :size="30"></u-loading-icon>
-								<view class="text">努力加载中....</view>
+								<view class="text">{{ $t('video.loading') }}</view>
 							</view>
 						</view>
 						<!-- #endif -->
@@ -131,7 +131,7 @@
 						<view class="sidebar" v-if="!isDrag && !isNeedToPay && !isPlayError && videoIndex == index">
 							<view class="item" @click.stop="onCommentClick">
 								<u-icon name="chat" size="40" color="#fff"></u-icon>
-								<text style="color:#fff">评论</text>
+								<text style="color:#fff">{{ $t('video.comment') }}</text>
 							</view>
 							<view class="item" :class="{ 'liked-anim': likeAnim }" @click="handleLikes(item.id, index)">
 								<image class="image" :src="`/static/img/likes_${item.is_like ? 1 : 0 }.png`" mode="widthFix"></image>
@@ -157,7 +157,7 @@
 										<path d="M15.7 23.4L28.3 30.6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
 									</svg>
 								</button>
-								<text class="share-label">分享</text>
+								<text class="share-label">{{ $t('video.share') }}</text>
 							</view>
 						</view>
 						<view class="progress" v-if="!isNeedToPay && duration > 0 && videoIndex == index">
@@ -184,7 +184,7 @@
 						<text class="divider">|</text>
 						<text class="text2">{{ originData[originIndex].name }}</text>
 					</view>
-					<view class="right" :style="'color:#ffe066'" @click="isShowMenu = true">选集</view>
+					<view class="right" :style="'color:#ffe066'" @click="isShowMenu = true">{{ $t('video.selectEpisode') }}</view>
 				</view>
 			</view>
 			<VideoMenu 
