@@ -8,7 +8,7 @@
 			<!-- #endif -->
 			
 			<view class="tabs_box">
-				<u-tabs :scrollable="false" :lineWidth="0" :list="contentList" :current="contentCurrent" :activeStyle="tabsActiveStyle" :inactiveStyle="tabsInactiveStyle" lineColor="#5E72F7" @change="changeContent($event, 1)" />
+				<u-tabs :scrollable="false" :lineWidth="0" :list="tabList" :current="contentCurrent" :activeStyle="tabsActiveStyle" :inactiveStyle="tabsInactiveStyle" lineColor="#5E72F7" @change="changeContent($event, 1)" />
 			</view>
 		</view>
 		<view class="main_content" v-if="contentList && contentList.length">
@@ -66,12 +66,17 @@
 					color: '#666666'
 				},
 				contentList: [
-					{ id: 1, name: '最近观看记录', type: 'log', list: [], page: 1, pagesize: 10, status: 'loadmore' },
-					{ id: 2, name: '我的追剧记录', type: 'favorite', list: [], page: 1, pagesize: 10, status: 'loadmore' },
+					{ id: 1, nameKey: 'watch.watchHistory', type: 'log', list: [], page: 1, pagesize: 10, status: 'loadmore' },
+					{ id: 2, nameKey: 'watch.myFollowing', type: 'favorite', list: [], page: 1, pagesize: 10, status: 'loadmore' },
 				],
 				contentCurrent: 0,
 				refreshStatus: true,
 				isRefresh: false,
+			}
+		},
+		computed: {
+			tabList() {
+				return this.contentList.map(item => ({ ...item, name: this.$t(item.nameKey) }))
 			}
 		},
 		onLoad() {
