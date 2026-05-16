@@ -15,21 +15,21 @@
 					class="item-card"
 					v-for="(lItem, lIndex) in currentList"
 					:key="lItem.id"
-					@click="openVideoDetail(lItem.video.id, lItem.video.title, lItem.video.image, lItem.video.description)"
+					@click="openVideoDetail(lItem.video.id, lItem.video.display_title||lItem.video.title, lItem.video.image, lItem.video.display_desc||lItem.video.description)"
 					:class="{ 'is-removing': lItem.isRemoving }"
 					:style="{ animationDelay: `${lIndex * 0.08}s` }"
 				>
 					<image class="cover-image" :src="lItem.video.image" mode="aspectFill"></image>
 					<view class="info-wrapper">
 						<view class="info-content">
-							<text class="title u-line-1">{{ lItem.video.title }}</text>
+							<text class="title u-line-1">{{ lItem.video.display_title||lItem.video.title }}</text>
 							<view class="progress-box" v-if="contentCurrent === 0">
 								<view class="progress-bar">
 									<view class="progress-value" :style="{ width: getProgress(lItem) + '%' }"></view>
 								</view>
 								<text class="progress-text">{{ $t('watch.watchedProgress', [getProgress(lItem), lItem.episode.name]) }}</text>
 							</view>
-							<text class="desc u-line-1" v-else>{{ lItem.video.description || $t('watch.noDescription') }}</text>
+							<text class="desc u-line-1" v-else>{{ lItem.video.display_desc||lItem.video.description || $t('watch.noDescription') }}</text>
 						</view>
 						<view class="actions">
 							<view class="action-btn" @click.stop="handleAction(lItem, lIndex)">
@@ -118,11 +118,11 @@
 			},
 			handleAction(item, index) {
 				if (this.contentCurrent === 0) {
-					this.openVideoDetail(item.video.id, item.video.title, item.video.image, item.video.description);
+					this.openVideoDetail(item.video.id, item.video.display_title||item.video.title, item.video.image, item.video.display_desc||item.video.description);
 				} else {
 					uni.showModal({
 						title: this.$t('common.tip'),
-						content: this.$t('watch.unfollowConfirm', [item.video.title]),
+						content: this.$t('watch.unfollowConfirm', [item.video.display_title||item.video.title]),
 						success: (res) => {
 							if (res.confirm) {
 								this.unfavorite(item, index);

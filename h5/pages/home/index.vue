@@ -17,7 +17,7 @@
 					@click="changeTabs(tab)"
 					:class="{ active: tab.id === tabsActive.id }"
 				>
-					{{ tab.name }}
+					{{ tab.display_name || tab.name }}
 				</view>
 			</scroll-view>
 		</view>
@@ -35,13 +35,13 @@
 			<view class="content_box">
 				<view class="list">
 					<block v-for="(lItem, lIndex) in videoList" :key="lIndex">
-						<view class="sitem" v-if="lIndex % 10 == 0" @click="maidian(lItem.id);openVideoDetail(lItem.id, lItem.title, lItem.image, lItem.description)">
+						<view class="sitem" v-if="lIndex % 10 == 0" @click="maidian(lItem.id);openVideoDetail(lItem.id, lItem.display_title||lItem.title, lItem.image, lItem.display_desc||lItem.description)">
 							<image class="sitem_bg" :src="lItem.image" mode="aspectFill"></image>
 							<view class="sitem_overlay"></view>
 							<view class="sitem_content">
 								<view class="sitem_info">
-									<view class="title u-line-2">{{ lItem.title }}</view>
-									<view class="text u-line-3">{{ lItem.description }}</view>
+									<view class="title u-line-2">{{ lItem.display_title || lItem.title }}</view>
+									<view class="text u-line-3">{{ lItem.display_desc || lItem.description }}</view>
 								</view>
 								<view class="button" :class="{ collect: lItem.is_favorite == 1, animating: lItem.isAnimating }" @click.stop="handleCollect(lItem.id, lItem.is_favorite, lIndex)">
 									<u-icon class="star_icon" :name="lItem.is_favorite == 1 ? 'star-fill' : 'star'" color="#fff" size="22"></u-icon>
@@ -61,7 +61,7 @@
 									</view>
 								</view>
 							</view>
-							<view v-else class="item item1" :id="'item-' + lIndex" :class="{ 'visible': lItem.isInView }" :style="{ 'animation-delay': (lItem.animationIndex * 100) + 'ms' }" @click="maidian(lItem.id);openVideoDetail(lItem.id, lItem.title, lItem.image, lItem.description)">
+							<view v-else class="item item1" :id="'item-' + lIndex" :class="{ 'visible': lItem.isInView }" :style="{ 'animation-delay': (lItem.animationIndex * 100) + 'ms' }" @click="maidian(lItem.id);openVideoDetail(lItem.id, lItem.display_title||lItem.title, lItem.image, lItem.display_desc||lItem.description)">
 								<view>
 									<view class="img">
 										<image class="image" :src="lItem.image" mode="aspectFill"></image>
@@ -70,7 +70,7 @@
 										</view>
 									</view>
 									<view class="info">
-										<view class="title u-line-1">{{ lItem.title }}</view>
+										<view class="title u-line-1">{{ lItem.display_title || lItem.title }}</view>
 										<view class="tags-row" v-if="lItem.tags">
 											<text class="tag-pill" v-for="(tag, ti) in lItem.tags.split(',').filter(t => t.trim()).slice(0, 3)" :key="ti">{{ tag.trim() }}</text>
 										</view>

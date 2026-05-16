@@ -104,16 +104,16 @@
 						<!-- #endif -->
 					</view>
 					<view class="infobox" v-if="!isDrag && videoIndex == index">
-						<view class="title">{{ item.video.title }}</view>
+						<view class="title">{{ item.video.display_title || item.video.title }}</view>
 						<view class="desc-box">
 							<view class="desc-text" :class="{ 'desc-unfold': isUnfold }">
-								{{ isUnfold ? item.video.description : (item.video.description ? item.video.description.slice(0, 13) + (item.video.description.length > 13 ? '...' : '') : '') }}
+								{{ isUnfold ? (item.video.display_desc||item.video.description) : ((item.video.display_desc||item.video.description) ? (item.video.display_desc||item.video.description).slice(0, 13) + ((item.video.display_desc||item.video.description).length > 13 ? '...' : '') : '') }}
 							</view>
-							<text v-if="item.video.description && item.video.description.length > 13" class="desc-toggle" @click="isUnfold = !isUnfold">{{ isUnfold ? $t('video.collapse') : $t('video.expand') }}</text>
+							<text v-if="(item.video.display_desc||item.video.description) && (item.video.display_desc||item.video.description).length > 13" class="desc-toggle" @click="isUnfold = !isUnfold">{{ isUnfold ? $t('video.collapse') : $t('video.expand') }}</text>
 						</view>
 						<view class="content">
 							<text class="text1">{{ item.name }}{{ $t('video.ofTotal', [item.video.episodes]) }}</text>
-							<text class="text2 more-btn" @click="openVideoDetail(item.video.id, item.video.title, item.video.image, item.video.description)">{{ $t('video.viewMoreEpisodes') }}</text>
+							<text class="text2 more-btn" @click="openVideoDetail(item.video.id, item.video.display_title||item.video.title, item.video.image, item.video.display_desc||item.video.description)">{{ $t('video.viewMoreEpisodes') }}</text>
 						</view>
 					</view>
 					<view class="progress" v-if="duration > 0 && videoIndex == index">
@@ -305,7 +305,7 @@
 		onShareAppMessage(res) {
 			// #ifdef MP-WEIXIN
 			return {
-				title: this.videoData[this.videoIndex].video.title,
+				title: this.videoData[this.videoIndex].video.display_title || this.videoData[this.videoIndex].video.title,
 				path: `/pages/video/play?scene=${this.shareData.spm}&id=${this.videoData[this.videoIndex].vid}`,
 				imageUrl: this.videoData[this.videoIndex].image
 			}

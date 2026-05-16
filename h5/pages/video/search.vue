@@ -31,9 +31,9 @@
 						<text class="section_title">{{ $t('search.hotSearch') }}</text>
 					</view>
 					<view class="hot_list">
-						<view class="hot_item" v-for="(item, index) in recommendList" :key="index" @click="openVideoDetail(item.id, item.title, item.image, item.description)" :style="{ 'animation-delay': (index * 0.05 + 0.1) + 's' }">
+						<view class="hot_item" v-for="(item, index) in recommendList" :key="index" @click="openVideoDetail(item.id, item.display_title||item.title, item.image, item.display_desc||item.description)" :style="{ 'animation-delay': (index * 0.05 + 0.1) + 's' }">
 							<text class="hot_index" :class="['top-' + (index + 1)]">{{ index + 1 }}</text>
-							<text class="hot_title u-line-1">{{ item.title }}</text>
+							<text class="hot_title u-line-1">{{ item.display_title || item.title }}</text>
 						</view>
 					</view>
 				</view>
@@ -42,13 +42,13 @@
 			<template v-else>
 				<view class="content_box">
 					<view class="list">
-						<view class="item" v-for="(lItem, lIndex) in contents.list" :key="lIndex" @click="openVideoDetail(lItem.id, lItem.title, lItem.image, lItem.description)" :style="{ 'animation-delay': (lIndex * 0.07) + 's' }">
+						<view class="item" v-for="(lItem, lIndex) in contents.list" :key="lIndex" @click="openVideoDetail(lItem.id, lItem.display_title||lItem.title, lItem.image, lItem.display_desc||lItem.description)" :style="{ 'animation-delay': (lIndex * 0.07) + 's' }">
 							<view class="img">
 								<image class="image" :src="lItem.image" mode="aspectFill"></image>
 							</view>
 							<view class="info">
-								<view class="title u-line-1">{{ lItem.title }}</view>
-								<view class="text u-line-1">{{ lItem.description }}</view>
+								<view class="title u-line-1">{{ lItem.display_title || lItem.title }}</view>
+								<view class="text u-line-1">{{ lItem.display_desc || lItem.description }}</view>
 							</view>
 						</view>
 					</view>

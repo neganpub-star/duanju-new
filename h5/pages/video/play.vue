@@ -712,7 +712,7 @@
 				
 				this.$request('video.menu', { id: this.videoInfo.id ,platform: status == 'mp-weixin'? 2 :1,}).then(res => {
 					if(res.code === 1) {
-						this.videoInfo.title = res.data.title
+						this.videoInfo.title = res.data.display_title || res.data.title
 						this.videoInfo.cover = res.data.image
 						this.videoInfo.length = res.data.episodes
 						this.videoInfo.collect = res.data.favorites
