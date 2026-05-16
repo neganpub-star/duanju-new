@@ -114,6 +114,12 @@ export default {
     totalEpisodes: '全{0}集',
     updatedTo: '更新至{0}集',
     unlocked: '已解锁',
+    expand: '展开',
+    collapse: '收起',
+    ofTotal: '（共{0}集）',
+    viewMoreEpisodes: '查看更多剧集',
+    adCountdown: '看个广告，休息片刻：{0}',
+    adReward: '奖励已发放',
   },
   // 会员
   payment: {

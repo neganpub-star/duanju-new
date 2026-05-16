@@ -32,15 +32,15 @@
 						<view  v-else class="video" style="background-color: #fff;position: relative;z-index: 2;padding: 40px 0;">
 							
 							<view v-if=" daoTime!=0" style="display: flex;flex-direction: column;align-items: center;" >
-								<view style="font-size: 16px;font-weight: 700;color: #5E72F7;margin-bottom: 60rpx;">下集更精彩</view>
+								<view style="font-size: 16px;font-weight: 700;color: #5E72F7;margin-bottom: 60rpx;">{{ $t('video.nextBetter') }}</view>
 								<view style="font-size: 14px; color: #5E72F7;margin-bottom: 40rpx;">
-									看个广告，休息片刻：{{daoTime}}
+									{{ $t('video.adCountdown', [daoTime]) }}
 								</view>
 								
 								
 							</view>
 							<view v-else style="display: flex;flex-direction: column;align-items: center;" >
-								<view style="font-size: 65rpx;font-weight: 700;color: #5E72F7;margin-bottom: 60rpx;padding-top: 36rpx;">精彩继续</view>
+								<view style="font-size: 65rpx;font-weight: 700;color: #5E72F7;margin-bottom: 60rpx;padding-top: 36rpx;">{{ $t('video.continueWatch') }}</view>
 								
 							</view>
 							<!-- <view style="width: 100%;height: 200rpx;"> -->
@@ -67,7 +67,7 @@
 							<image class="image" :src="item.image" mode="aspectFill"></image>
 							<view class="content">
 								<u-icon name="info-circle-fill" color="#fff" size="50"></u-icon>
-								<text class="text">非常抱歉，视频播放出错啦！</text>
+								<text class="text">{{ $t('video.playError') }}</text>
 							</view>
 						</view>
 					</view>
@@ -92,7 +92,7 @@
 							<svg class="icon-svg" viewBox="0 0 48 48" fill="none">
 								<path d="M8 8h32a2 2 0 012 2v20a2 2 0 01-2 2H16l-8 8V10a2 2 0 012-2z" fill="rgba(255,255,255,0)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
 							</svg>
-							<text class="text">评论</text>
+							<text class="text">{{ $t('video.comment') }}</text>
 						</view>
 						<!-- #ifdef MP-WEIXIN -->
 						<view class="item">
@@ -109,11 +109,11 @@
 							<view class="desc-text" :class="{ 'desc-unfold': isUnfold }">
 								{{ isUnfold ? item.video.description : (item.video.description ? item.video.description.slice(0, 13) + (item.video.description.length > 13 ? '...' : '') : '') }}
 							</view>
-							<text v-if="item.video.description && item.video.description.length > 13" class="desc-toggle" @click="isUnfold = !isUnfold">{{ isUnfold ? '收起' : '展开' }}</text>
+							<text v-if="item.video.description && item.video.description.length > 13" class="desc-toggle" @click="isUnfold = !isUnfold">{{ isUnfold ? $t('video.collapse') : $t('video.expand') }}</text>
 						</view>
 						<view class="content">
-							<text class="text1">{{ item.name }}（共{{ item.video.episodes }}集）</text>
-							<text class="text2 more-btn" @click="openVideoDetail(item.video.id, item.video.title, item.video.image, item.video.description)">查看更多剧集</text>
+							<text class="text1">{{ item.name }}{{ $t('video.ofTotal', [item.video.episodes]) }}</text>
+							<text class="text2 more-btn" @click="openVideoDetail(item.video.id, item.video.title, item.video.image, item.video.description)">{{ $t('video.viewMoreEpisodes') }}</text>
 						</view>
 					</view>
 					<view class="progress" v-if="duration > 0 && videoIndex == index">
@@ -251,8 +251,8 @@
 		onLoad() {
 			if (!this.token) {
 				uni.showModal({
-					title: '系统提示',
-					content: '请先登录后再使用全部功能',
+					title: this.$t('common.tip'),
+					content: this.$t('common.loginFirst'),
 					showCancel: false,
 					success: res => {
 						uni.navigateTo({ url: '/pages/login/login' });
@@ -433,7 +433,7 @@
 						
 						if(res && res.isEnded) {
 							this.$request('task.finish', { type: 'uniad_success' }).then(res => {
-								res.code == 1 && (this.$u.toast("奖励已发放"), this.checkAdTask())
+								res.code == 1 && (this.$u.toast(this.$t('video.adReward')), this.checkAdTask())
 							})
 						}
 						this.videoPlay()

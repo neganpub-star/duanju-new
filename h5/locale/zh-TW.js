@@ -109,6 +109,12 @@ export default {
     totalEpisodes: '全{0}集',
     updatedTo: '更新至{0}集',
     unlocked: '已解鎖',
+    expand: '展開',
+    collapse: '收起',
+    ofTotal: '（共{0}集）',
+    viewMoreEpisodes: '查看更多劇集',
+    adCountdown: '看個廣告，休息片刻：{0}',
+    adReward: '獎勵已發放',
   },
   payment: {
     notConfigured: '支付功能配置中，請聯繫客服',

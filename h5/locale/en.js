@@ -109,6 +109,12 @@ export default {
     totalEpisodes: '{0} eps',
     updatedTo: 'Updated to ep {0}',
     unlocked: 'Unlocked',
+    expand: 'More',
+    collapse: 'Less',
+    ofTotal: ' (of {0} eps)',
+    viewMoreEpisodes: 'More Episodes',
+    adCountdown: 'Ad break: {0}s left',
+    adReward: 'Reward credited',
   },
   payment: {
     notConfigured: 'Payment not configured, please contact support',
