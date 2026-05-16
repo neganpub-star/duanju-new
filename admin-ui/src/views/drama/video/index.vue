@@ -54,39 +54,70 @@
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
 
     <!-- 新增/编辑弹窗 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="600px" append-to-body>
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="标题" prop="title">
-          <el-input v-model="form.title" placeholder="视频标题" />
-        </el-form-item>
-        <el-form-item label="封面" prop="cover">
-          <div class="cover-uploader">
-            <el-upload
-              action="#"
-              :show-file-list="false"
-              :before-upload="beforeUpload"
-              :http-request="(opt) => handleUpload(opt.file)"
-              accept="image/*"
-            >
-              <el-image v-if="form.cover" :src="form.cover" class="cover-preview" fit="cover" />
-              <div v-else class="upload-placeholder">
-                <el-icon class="upload-icon"><Plus /></el-icon>
-                <span>点击上传封面</span>
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="620px" append-to-body>
+      <el-tabs v-model="activeTab">
+        <!-- 基本信息 -->
+        <el-tab-pane label="基本信息" name="basic">
+          <el-form ref="formRef" :model="form" :rules="rules" label-width="80px" style="margin-top:8px">
+            <el-form-item label="默认标题" prop="title">
+              <el-input v-model="form.title" placeholder="中文标题（必填，作为默认回退）" />
+            </el-form-item>
+            <el-form-item label="封面" prop="cover">
+              <div class="cover-uploader">
+                <el-upload
+                  action="#"
+                  :show-file-list="false"
+                  :before-upload="beforeUpload"
+                  :http-request="(opt) => handleUpload(opt.file)"
+                  accept="image/*"
+                >
+                  <el-image v-if="form.cover" :src="form.cover" class="cover-preview" fit="cover" />
+                  <div v-else class="upload-placeholder">
+                    <el-icon class="upload-icon"><Plus /></el-icon>
+                    <span>点击上传封面</span>
+                  </div>
+                </el-upload>
+                <el-input v-model="form.cover" placeholder="或直接粘贴图片URL" style="margin-top:6px" />
               </div>
-            </el-upload>
-            <el-input v-model="form.cover" placeholder="或直接粘贴图片URL" style="margin-top:6px" />
-          </div>
-        </el-form-item>
-        <el-form-item label="描述" prop="description">
-          <el-input v-model="form.description" type="textarea" :rows="3" />
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-radio-group v-model="form.status">
-            <el-radio value="normal">上架</el-radio>
-            <el-radio value="hidden">下架</el-radio>
-          </el-radio-group>
-        </el-form-item>
-      </el-form>
+            </el-form-item>
+            <el-form-item label="默认描述">
+              <el-input v-model="form.description" type="textarea" :rows="3" placeholder="中文描述（作为默认回退）" />
+            </el-form-item>
+            <el-form-item label="状态">
+              <el-radio-group v-model="form.status">
+                <el-radio value="normal">上架</el-radio>
+                <el-radio value="hidden">下架</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+
+        <!-- 每个语言 tab -->
+        <el-tab-pane
+          v-for="lang in supportedLangs"
+          :key="lang.code"
+          :label="lang.label"
+          :name="lang.code"
+        >
+          <el-form label-width="80px" style="margin-top:8px">
+            <el-form-item label="标题">
+              <el-input
+                v-model="i18nForm[lang.code].title"
+                :placeholder="`${lang.label}标题`"
+              />
+            </el-form-item>
+            <el-form-item label="描述">
+              <el-input
+                v-model="i18nForm[lang.code].desc"
+                type="textarea"
+                :rows="4"
+                :placeholder="`${lang.label}描述`"
+              />
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+      </el-tabs>
+
       <template #footer>
         <el-button @click="dialog.visible = false">取消</el-button>
         <el-button type="primary" @click="submitForm">确定</el-button>
@@ -230,8 +261,10 @@
 <script setup>
 import { listVideo, addVideo, updateVideo, deleteVideo } from '@/api/drama/video'
 import { listEpisodes, addEpisode, updateEpisode, deleteEpisode, transcodeEpisode } from '@/api/drama/episode'
-import { uploadFile } from '@/api/system/config'
+import { uploadFile, listConfig } from '@/api/system/config'
 import { ElMessage, ElMessageBox } from 'element-plus'
+
+const LANG_LABELS = { 'zh-CN': '简体中文', 'zh-TW': '繁體中文', en: 'English' }
 
 // ===== 视频列表 =====
 const loading = ref(false)
@@ -242,7 +275,34 @@ const dialog = reactive({ visible: false, title: '' })
 const form = ref({})
 const formRef = ref()
 const queryRef = ref()
+const activeTab = ref('basic')
 const rules = { title: [{ required: true, message: '请输入标题', trigger: 'blur' }] }
+
+// 支持的语种
+const supportedLangs = ref([{ code: 'zh-CN', label: '简体中文' }, { code: 'en', label: 'English' }])
+const i18nForm = reactive({})
+
+function parseJson(str) {
+  try { return str ? JSON.parse(str) : {} } catch { return {} }
+}
+
+function initI18nForm(langs) {
+  langs.forEach(l => { if (!i18nForm[l.code]) i18nForm[l.code] = { title: '', desc: '' } })
+}
+
+async function loadSupportedLangs() {
+  try {
+    const res = await listConfig()
+    const configs = res.data || []
+    const entry = configs.find(c => c.configKey === 'i18n.supported_langs')
+    if (entry) {
+      let codes = []
+      try { codes = JSON.parse(entry.configValue) } catch { codes = entry.configValue.split(',').map(s => s.trim()) }
+      supportedLangs.value = codes.filter(Boolean).map(code => ({ code, label: LANG_LABELS[code] || code }))
+    }
+  } catch { /* 使用默认值 */ }
+  initI18nForm(supportedLangs.value)
+}
 
 async function getList() {
   loading.value = true
@@ -260,12 +320,20 @@ function resetQuery() { queryRef.value?.resetFields(); handleQuery() }
 
 function handleAdd() {
   form.value = { status: 'normal', siteId: 1 }
+  supportedLangs.value.forEach(l => { i18nForm[l.code] = { title: '', desc: '' } })
+  activeTab.value = 'basic'
   dialog.title = '新增视频'
   dialog.visible = true
 }
 
 function handleEdit(row) {
   form.value = { ...row }
+  const titleMap = parseJson(row.titleI18n)
+  const descMap  = parseJson(row.descI18n)
+  supportedLangs.value.forEach(l => {
+    i18nForm[l.code] = { title: titleMap[l.code] || '', desc: descMap[l.code] || '' }
+  })
+  activeTab.value = 'basic'
   dialog.title = '编辑视频'
   dialog.visible = true
 }
@@ -279,10 +347,21 @@ async function handleDelete(row) {
 
 async function submitForm() {
   await formRef.value?.validate()
-  if (form.value.id) {
-    await updateVideo(form.value.id, form.value)
+  const titleI18n = {}
+  const descI18n  = {}
+  supportedLangs.value.forEach(l => {
+    if (i18nForm[l.code].title) titleI18n[l.code] = i18nForm[l.code].title
+    if (i18nForm[l.code].desc)  descI18n[l.code]  = i18nForm[l.code].desc
+  })
+  const payload = {
+    ...form.value,
+    titleI18n: Object.keys(titleI18n).length ? JSON.stringify(titleI18n) : null,
+    descI18n:  Object.keys(descI18n).length  ? JSON.stringify(descI18n)  : null,
+  }
+  if (payload.id) {
+    await updateVideo(payload.id, payload)
   } else {
-    await addVideo(form.value)
+    await addVideo(payload)
   }
   ElMessage.success('操作成功')
   dialog.visible = false
@@ -475,6 +554,7 @@ function destroyPlayer() {
   }
 }
 
+loadSupportedLangs()
 getList()
 </script>
 
