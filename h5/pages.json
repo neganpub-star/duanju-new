@@ -1,0 +1,252 @@
+{
+	"easycom": {
+		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
+	},
+	"pages": [
+		{
+			"path": "pages/home/index",
+			"style": {
+				"navigationBarTitleText": "首页",
+				"enablePullDownRefresh": false,
+				"disableScroll": true
+			}
+		},
+		{
+			"path": "pages/home/video",
+			"style": {
+				"navigationBarTitleText": "推荐",
+				"enablePullDownRefresh": false,
+				"disableScroll": true
+			}
+		},
+		{
+			"path": "pages/home/fuli",
+			"style": {
+				"navigationBarTitleText": "福利",
+				"enablePullDownRefresh": false,
+				"disableScroll": true
+			}
+		},
+		{
+			"path": "pages/home/watch",
+			"style": {
+				"navigationBarTitleText": "追剧",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/home/user",
+			"style": {
+				"navigationBarTitleText": "我的",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/home/update",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
+				"app-plus": {
+					"animationType": "fade-in",
+					"background": "transparent",
+					"backgroundColor": "rgba(0, 0, 0, 0)",
+					"popGesture": "none"
+				}
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/login/register",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		}
+	],
+	"subPackages": [
+		{
+			"root": "pages/video",
+			"pages": [
+				{
+					"path": "play",
+					"style": {
+						"navigationBarTitleText": "剧场",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "recharge",
+					"style": {
+						"navigationBarTitleText": "",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "record",
+					"style": {
+						"navigationBarTitleText": "观看记录",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "search",
+					"style": {
+						"navigationBarTitleText": "",
+						"enablePullDownRefresh": false
+					}
+				}
+			]
+		},
+		{
+			"root": "pages/user",
+			"pages": [
+				{
+					"path": "integral/index",
+					"style": {
+						"navigationBarTitleText": "积分",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "integral/recharge",
+					"style": {
+						"navigationBarTitleText": "积分充值",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "integral/task",
+					"style": {
+						"navigationBarTitleText": "积分任务",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "dealer/index",
+					"style": {
+						"navigationBarTitleText": "开通经销商",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "member/index",
+					"style": {
+						"navigationBarTitleText": "开通会员",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "info/index",
+					"style": {
+						"navigationBarTitleText": "用户信息",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "info/richtext",
+					"style": {
+						"navigationBarTitleText": "关于我们",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "info/contact",
+					"style": {
+						"navigationBarTitleText": "",
+						"enablePullDownRefresh": false,
+						"navigationBarTextStyle": "white"
+					}
+				},
+				{
+					"path": "share/index",
+					"style": {
+						"navigationBarTitleText": "分享赚钱",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "share/team",
+					"style": {
+						"navigationBarTitleText": "",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "share/brokerage",
+					"style": {
+						"navigationBarTitleText": "",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "share/withdraw",
+					"style": {
+						"navigationBarTitleText": "",
+						"enablePullDownRefresh": false,
+						"navigationBarTextStyle": "white"
+					}
+				},
+				{
+					"path": "share/payee",
+					"style": {
+						"navigationBarTitleText": "",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "share/poster",
+					"style": {
+						"navigationBarTitleText": "邀请海报",
+						"enablePullDownRefresh": false
+					}
+				}
+			]
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#FFF",
+		"backgroundColor": "#FFF",
+		"navigationStyle": "custom"
+	},
+	"uniIdRouter": {},
+	"tabBar": {
+		"color": "#999",
+		"selectedColor": "#9354FF",
+		"backgroundColor": "#ffffff",
+		"borderStyle": "black",
+		"list": [
+			{
+				"pagePath": "pages/home/index",
+				"text": "首页",
+				"iconPath": "static/tabbar/home_default.png",
+				"selectedIconPath": "static/tabbar/home_selected.png"
+			},
+			{
+				"pagePath": "pages/home/watch",
+				"text": "追剧",
+				"iconPath": "static/tabbar/watch_default.png",
+				"selectedIconPath": "static/tabbar/watch_selected.png"
+			},
+			{
+				"pagePath": "pages/home/video",
+				"text": "推荐",
+				"iconPath": "static/tabbar/recommend_default.png",
+				"selectedIconPath": "static/tabbar/recommend_selected.png"
+			},
+			{
+				"pagePath": "pages/home/user",
+				"text": "我的",
+				"iconPath": "static/tabbar/user_default.png",
+				"selectedIconPath": "static/tabbar/user_selected.png"
+			}
+		]
+	}
+}

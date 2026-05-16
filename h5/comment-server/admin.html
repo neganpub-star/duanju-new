@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>评论管理后台</title>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+    th { background: #f5f5f5; }
+    input, textarea { width: 100%; }
+    .actions button { margin-right: 5px; }
+  </style>
+</head>
+<body>
+  <h2>评论管理后台</h2>
+  <button onclick="loadComments()">刷新</button>
+  <button onclick="showForm()">新增评论</button>
+  <table id="commentTable">
+    <thead>
+      <tr>
+        <th>ID</th><th>视频ID</th><th>用户ID</th><th>昵称</th><th>内容</th><th>父评论</th><th>时间</th><th>操作</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div id="formDiv" style="display:none; margin-top:20px;">
+    <h3 id="formTitle">新增/编辑评论</h3>
+    <form onsubmit="return saveComment()">
+      <input type="hidden" id="id">
+      <label>视频ID: <input id="video_id" required></label><br>
+      <label>用户ID: <input id="user_id" required></label><br>
+      <label>昵称: <input id="user_nick"></label><br>
+      <label>内容: <textarea id="content" required></textarea></label><br>
+      <label>父评论ID: <input id="parent_id"></label><br>
+      <label>时间戳: <input id="create_time"></label><br>
+      <button type="submit">保存</button>
+      <button type="button" onclick="hideForm()">取消</button>
+    </form>
+  </div>
+
+  <script>
+    function loadComments() {
+      fetch('/admin/all').then(r=>r.json()).then(data=>{
+        const tbody = document.querySelector('#commentTable tbody');
+        tbody.innerHTML = '';
+        data.forEach(c=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${c.id}</td>
+            <td>${c.video_id}</td>
+            <td>${c.user_id}</td>
+            <td>${c.user_nick||''}</td>
+            <td>${c.content}</td>
+            <td>${c.parent_id||''}</td>
+            <td>${c.create_time}</td>
+            <td class="actions">
+              <button onclick='editComment(${JSON.stringify(c)})'>编辑</button>
+              <button onclick='deleteComment("${c.id}")'>删除</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+    }
+    function showForm(c={}) {
+      document.getElementById('formDiv').style.display = '';
+      document.getElementById('formTitle').innerText = c.id ? '编辑评论' : '新增评论';
+      document.getElementById('id').value = c.id||'';
+      document.getElementById('video_id').value = c.video_id||'';
+      document.getElementById('user_id').value = c.user_id||'';
+      document.getElementById('user_nick').value = c.user_nick||'';
+      document.getElementById('content').value = c.content||'';
+      document.getElementById('parent_id').value = c.parent_id||'';
+      document.getElementById('create_time').value = c.create_time||'';
+    }
+    function hideForm() {
+      document.getElementById('formDiv').style.display = 'none';
+    }
+    function saveComment() {
+      const c = {
+        id: document.getElementById('id').value,
+        video_id: document.getElementById('video_id').value,
+        user_id: document.getElementById('user_id').value,
+        user_nick: document.getElementById('user_nick').value,
+        content: document.getElementById('content').value,
+        parent_id: document.getElementById('parent_id').value,
+        create_time: document.getElementById('create_time').value
+      };
+      fetch('/admin/save', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(c)
+      }).then(r=>r.json()).then(res=>{
+        if(res.code===1){
+          alert('保存成功');
+          hideForm();
+          loadComments();
+        }else{
+          alert(res.msg||'保存失败');
+        }
+      });
+      return false;
+    }
+    function editComment(c) {
+      showForm(c);
+    }
+    function deleteComment(id) {
+      if(!confirm('确定删除？')) return;
+      fetch('/admin/delete', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({id})
+      }).then(r=>r.json()).then(res=>{
+        if(res.code===1){
+          alert('删除成功');
+          loadComments();
+        }else{
+          alert(res.msg||'删除失败');
+        }
+      });
+    }
+    loadComments();
+  </script>
+</body>
+</html> 
