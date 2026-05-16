@@ -116,6 +116,23 @@ export default {
       default: '帳戶變動',
     },
   },
+  watch: {
+    watchHistory: '觀看記錄',
+    myFollowing: '我的追劇',
+    continueWatching: '繼續觀看',
+    unfollow: '取消追劇',
+    noDescription: '暫無簡介',
+    noRecord: '暫無記錄',
+    watchedProgress: '已看至 {0}% ({1})',
+  },
+  home: {
+    all: '全部',
+    following: '已追劇',
+    follow: '追劇',
+    totalEpisodes: '全{0}集',
+    search: '搜尋短劇、演員...',
+    noMore: '沒有更多了',
+  },
   lang: {
     title: '語言設置',
     zhCN: '简体中文',

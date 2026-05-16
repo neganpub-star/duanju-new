@@ -4,8 +4,8 @@
 	<view class="page_content">
 		<view class="header-fixed">
 			<view class="header-tabs">
-				<view class="tab-item" :class="{ active: contentCurrent === 0 }" @click="changeContent(0)">观看记录</view>
-				<view class="tab-item" :class="{ active: contentCurrent === 1 }" @click="changeContent(1)">我的追剧</view>
+				<view class="tab-item" :class="{ active: contentCurrent === 0 }" @click="changeContent(0)">{{ $t('watch.watchHistory') }}</view>
+				<view class="tab-item" :class="{ active: contentCurrent === 1 }" @click="changeContent(1)">{{ $t('watch.myFollowing') }}</view>
 			</view>
 		</view>
 
@@ -27,20 +27,20 @@
 								<view class="progress-bar">
 									<view class="progress-value" :style="{ width: getProgress(lItem) + '%' }"></view>
 								</view>
-								<text class="progress-text">已看至 {{ getProgress(lItem) }}% ({{ lItem.episode.name }})</text>
+								<text class="progress-text">{{ $t('watch.watchedProgress', [getProgress(lItem), lItem.episode.name]) }}</text>
 							</view>
-							<text class="desc u-line-1" v-else>{{ lItem.video.description || '暂无简介' }}</text>
+							<text class="desc u-line-1" v-else>{{ lItem.video.description || $t('watch.noDescription') }}</text>
 						</view>
 						<view class="actions">
 							<view class="action-btn" @click.stop="handleAction(lItem, lIndex)">
-								{{ contentCurrent === 0 ? '继续观看' : '取消追剧' }}
+								{{ contentCurrent === 0 ? $t('watch.continueWatching') : $t('watch.unfollow') }}
 							</view>
 						</view>
 					</view>
 				</view>
 			</view>
 			<view class="nodata" v-if="!currentList.length && loadStatus == 'nomore'">
-				<u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/data.png" text="暂无记录"></u-empty>
+				<u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/data.png" :text="$t('watch.noRecord')"></u-empty>
 			</view>
 			<view class="liststatus" v-else>
 				<u-loadmore :status="loadStatus" :line="true" />

@@ -45,7 +45,7 @@
 								</view>
 								<view class="button" :class="{ collect: lItem.is_favorite == 1, animating: lItem.isAnimating }" @click.stop="handleCollect(lItem.id, lItem.is_favorite, lIndex)">
 									<u-icon class="star_icon" :name="lItem.is_favorite == 1 ? 'star-fill' : 'star'" color="#fff" size="22"></u-icon>
-									<text class="text">{{ lItem.is_favorite == 1 ? '已追剧' : '追剧' }}</text>
+									<text class="text">{{ lItem.is_favorite == 1 ? $t('home.following') : $t('home.follow') }}</text>
 								</view>
 							</view>
 						</view>
@@ -290,7 +290,7 @@
 				this.$request('video.classify', {}, false).then(res => {
 					if (res.code === 1 && Array.isArray(res.data) && res.data.length) {
 						// 新后端直接返回平铺分类列表，加一个”全部”选项
-						const allTab = { id: '', name: '全部' }
+						const allTab = { id: '', name: this.$t('home.all') }
 						this.tabsList = [allTab, ...res.data]
 						this.tabsActive = this.tabsList[0]
 						this.getVideoList(true)

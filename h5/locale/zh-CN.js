@@ -124,6 +124,23 @@ export default {
       default: '账户变动',
     },
   },
+  watch: {
+    watchHistory: '观看记录',
+    myFollowing: '我的追剧',
+    continueWatching: '继续观看',
+    unfollow: '取消追剧',
+    noDescription: '暂无简介',
+    noRecord: '暂无记录',
+    watchedProgress: '已看至 {0}% ({1})',
+  },
+  home: {
+    all: '全部',
+    following: '已追剧',
+    follow: '追剧',
+    totalEpisodes: '全{0}集',
+    search: '搜索短剧、演员...',
+    noMore: '没有更多了',
+  },
   // 语言设置
   lang: {
     title: '语言设置',

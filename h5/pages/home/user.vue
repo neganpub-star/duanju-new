@@ -90,7 +90,7 @@
 						class="menu-item"
 						v-for="(item, index) in menuListTwoI18n"
 						:key="item.id"
-						@click="menuItemClick(item.rid, item.text, item.path)">
+						@click="menuItemClick(item.rid, item.text, item.path, item.docKey)">
 						<view class="icon">
 							<image class="image" :src="item.img" :style="{ width: item.width }" mode="widthFix" />
 						</view>
@@ -105,7 +105,7 @@
 					<view class="menu-item"
 						v-for="(item, index) in menuListI18n"
 						:key="item.id"
-						@click="menuItemClick(item.rid, item.text, item.path)">
+						@click="menuItemClick(item.rid, item.text, item.path, item.docKey)">
 						<view class="icon">
 							<image class="image" :src="item.img" :style="{ width: item.width }" mode="widthFix" />
 						</view>
@@ -174,7 +174,7 @@
 						<view class="hero-nickname">{{ userInfoStore.nickname || '用户' }}</view>
 						<view class="hero-uid">
 							<text>ID: {{ userInfoStore.user_id }}</text>
-							<text class="copy-btn" @click.stop="copyText(userInfoStore.user_id)">复制</text>
+							<text class="copy-btn" @click.stop="copyText(userInfoStore.user_id)">{{ $t('common.copy') }}</text>
 						</view>
 					</view>
 					<view class="hero-arrow" style="display:flex;align-items:center;">
@@ -257,7 +257,7 @@
 						class="menu-item"
 						v-for="(item, index) in menuListTwoI18n"
 						:key="item.id"
-						@click="menuItemClick(item.rid, item.text, item.path)">
+						@click="menuItemClick(item.rid, item.text, item.path, item.docKey)">
 						<view class="icon">
 							<image class="image" :src="item.img" :style="{ width: item.width }" mode="widthFix" />
 						</view>
@@ -271,7 +271,7 @@
 					<view class="menu-item"
 						v-for="(item, index) in menuListI18n"
 						:key="item.id"
-						@click="menuItemClick(item.rid, item.text, item.path)">
+						@click="menuItemClick(item.rid, item.text, item.path, item.docKey)">
 						<view class="icon">
 							<image class="image" :src="item.img" :style="{ width: item.width }" mode="widthFix" />
 						</view>
@@ -396,7 +396,8 @@
 						img: 'https://img.nymaite.com/video_short/images/Agreement.png',
 						width: '32rpx',
 						text: '用户协议',
-						rid: 1
+						rid: 1,
+						docKey: 'user_protocol'
 					},
 
 					{
@@ -404,7 +405,8 @@
 						img: 'https://img.nymaite.com/video_short/images/Contact.png',
 						width: '28rpx',
 						text: '联系我们',
-						rid: 4
+						rid: 4,
+						docKey: 'contact_us'
 					},
 					{
 						id: 1,
@@ -429,7 +431,8 @@
 						img: 'https://img.nymaite.com/video_short/images/About.png',
 						width: '28rpx',
 						text: '关于我们',
-						rid: 5
+						rid: 5,
+						docKey: 'about_us'
 					},
 					{
 						id: 7,
@@ -444,14 +447,16 @@
 						img: 'https://img.nymaite.com/video_short/images/Notice.png',
 						width: '32rpx',
 						text: '法律声明',
-						rid: 3
+						rid: 3,
+						docKey: 'legal_notice'
 					},
 					{
 						id: 3,
 						img: 'https://img.nymaite.com/video_short/images/Privacy.png',
 						width: '28rpx',
 						text: '隐私协议',
-						rid: 2
+						rid: 2,
+						docKey: 'privacy_policy'
 					},
 				],
 				menuList: [
@@ -487,35 +492,40 @@
 						img: 'https://img.nymaite.com/video_short/icons/list_4.png',
 						width: '28rpx',
 						text: '用户协议',
-						rid: 1
+						rid: 1,
+						docKey: 'user_protocol'
 					},
 					{
 						id: 3,
 						img: 'https://img.nymaite.com/video_short/icons/list_2.png',
 						width: '28rpx',
 						text: '隐私协议',
-						rid: 2
+						rid: 2,
+						docKey: 'privacy_policy'
 					},
 					{
 						id: 4,
 						img: 'https://img.nymaite.com/video_short/icons/list_3.png',
 						width: '28rpx',
 						text: '法律声明',
-						rid: 3
+						rid: 3,
+						docKey: 'legal_notice'
 					},
 					{
 						id: 5,
 						img: 'https://img.nymaite.com/video_short/icons/list_5.png',
 						width: '32rpx',
 						text: '联系我们',
-						rid: 4
+						rid: 4,
+						docKey: 'contact_us'
 					},
 					{
 						id: 6,
 						img: 'https://img.nymaite.com/video_short/icons/list_3.png',
 						width: '28rpx',
 						text: '关于我们',
-						rid: 5
+						rid: 5,
+						docKey: 'about_us'
 					},
 				],
 				copyrightData: this.$store.state.app.copyright || [], // 版权说明
@@ -769,7 +779,7 @@
 
 			},
 			// 菜单列表点击
-			menuItemClick(id, title, url) {
+			menuItemClick(id, title, url, docKey) {
 
 				if (url) {
 					if (!this.token) return this.$u.toast('请先登录!')
@@ -802,7 +812,8 @@
 						if (!id) return this.$u.toast('请先在后台-剧场管理-系统配置-协议配置中编辑协议，然后在剧场配置-基础配置中选择各个协议对应所编辑的协议')
 						const obj = {
 							id,
-							title
+							title,
+							docKey: docKey || ''
 						}
 						this.jumpView(`/pages/user/info/richtext?d=${encodeURIComponent(JSON.stringify(obj))}`)
 					}

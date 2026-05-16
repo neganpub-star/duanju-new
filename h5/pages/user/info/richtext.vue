@@ -31,9 +31,14 @@
 		},
 		methods: {
 			getRichText() {
-				this.$request('common.richtext', {
-					id: this.options.id
-				}).then(res => {
+				const params = {}
+				if (this.options.docKey) {
+					params.key = this.options.docKey
+					params.lang = uni.getStorageSync('app_lang') || 'zh-CN'
+				} else {
+					params.id = this.options.id
+				}
+				this.$request('common.richtext', params).then(res => {
 					if(res.code === 1) {
 						this.info = res.data
 					}

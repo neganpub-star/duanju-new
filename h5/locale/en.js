@@ -116,6 +116,23 @@ export default {
       default: 'Account Change',
     },
   },
+  watch: {
+    watchHistory: 'Watch History',
+    myFollowing: 'My Following',
+    continueWatching: 'Continue',
+    unfollow: 'Unfollow',
+    noDescription: 'No description',
+    noRecord: 'No records',
+    watchedProgress: 'Watched {0}% ({1})',
+  },
+  home: {
+    all: 'All',
+    following: 'Following',
+    follow: 'Follow',
+    totalEpisodes: '{0} eps',
+    search: 'Search dramas, actors...',
+    noMore: 'No more',
+  },
   lang: {
     title: 'Language Settings',
     zhCN: '简体中文',
