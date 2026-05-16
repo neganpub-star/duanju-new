@@ -5,16 +5,16 @@
 		<view class="popup" @click.stop="">
 			<view class="p_head">
 				<view class="left">
-					<text class="text1">支持作者创作，解锁后继续阅读</text>
+					<text class="text1">{{ $t('videopay.supportAuthor') }}</text>
 				</view>
-				<view class="right" :style="'color:'+isColor" @click="$emit('close')">关闭</view>
+				<view class="right" :style="'color:'+isColor" @click="$emit('close')">{{ $t('common.close') }}</view>
 			</view>
 			<view class="p_text">
 				<view class="left">
-					<text class="text1">解锁本集：</text>
-					<text class="text2" :style="'color:'+isColor">{{ price }}积分</text>
+					<text class="text1">{{ $t('videopay.unlockEp') }}</text>
+					<text class="text2" :style="'color:'+isColor">{{ $t('videopay.pricePoints', [price]) }}</text>
 				</view>
-				<view class="right">账号余额：{{ userInfoStore.usable || 0 }}积分</view>
+				<view class="right">{{ $t('videopay.balance', [userInfoStore.usable || 0]) }}</view>
 			</view>
 			<view class="p_list">
 				<!-- <view class="item">
@@ -48,12 +48,12 @@
 					<view class="content">
 						<view class="line1">
 							<text class="text1">{{ item.price }}</text>
-							<text class="text2">元</text>
+							<text class="text2">{{ $t('videopay.yuan') }}</text>
 						</view>
 						<view class="line2">
 							<text class="text1">{{ item.original_usable }}</text>
 							<text class="text2" v-if="item.give_usable">+{{ item.give_usable }}</text>
-							<text class="text2">积分</text>
+							<text class="text2">{{ $t('videopay.pointsUnit') }}</text>
 						</view>
 					</view>
 					<view class="badge" v-if="item.flag">{{ item.flag }}</view>
@@ -64,18 +64,18 @@
 							<text class="text1">{{ item.price }}/{{ item.type_text }}</text>
 						</view>
 						<view class="line2">
-							<text class="text2">全站爽剧免费看</text>
+							<text class="text2">{{ $t('videopay.vipBenefit') }}</text>
 						</view>
 					</view>
-					<view class="tips">开通会员</view>
+					<view class="tips">{{ $t('vip.activateVip') }}</view>
 				</view>
 				<view class="item item2" :style="'background:'+isColor" @click="gotoPage('/pages/user/integral/task')">
 					<view class="content">
 						<view class="line1">
-							<text class="text1">免费积分</text>
+							<text class="text1">{{ $t('videopay.freePoints') }}</text>
 						</view>
 						<view class="line2">
-							<text class="text1">做任务获取积分</text>
+							<text class="text1">{{ $t('videopay.earnByTask') }}</text>
 						</view>
 					</view>
 				</view>
@@ -83,10 +83,10 @@
 				<view class="item item2" :style="'background:'+isColor" v-if="token && ad" @click="$emit('showAd'), $emit('close')">
 					<view class="content">
 						<view class="line1">
-							<text class="text1">每日任务</text>
+							<text class="text1">{{ $t('videopay.dailyTask') }}</text>
 						</view>
 						<view class="line2">
-							<text class="text1">看视频获取积分</text>
+							<text class="text1">{{ $t('videopay.watchToEarn') }}</text>
 						</view>
 					</view>
 				</view>
@@ -94,12 +94,12 @@
 				<view class="item item2" :style="'background:'+isColor" @click="jumpView('/pages/user/info/contact')">
 					<view class="content">
 						<view class="line1">
-							<text class="text1">联系我们</text>
+							<text class="text1">{{ $t('user.contactUs') }}</text>
 						</view>
 					</view>
 				</view>
 			</view>
-			<view class="p_info">虚拟商品购买后不可退换，青少年请在家长陪同下充值</view>
+			<view class="p_info">{{ $t('videopay.disclaimer') }}</view>
 		</view>
 	</view>
 </template>
@@ -159,7 +159,7 @@
 		methods: {
 			...mapActions('user', ['getUserInfo']),
 			gotoPage(url) {
-				if(!this.token) return this.$u.toast('请先登录!')
+				if(!this.token) return this.$u.toast(this.$t('common.loginFirst'))
 				// #ifdef MP-WEIXIN
 				if(!this.iosIsPay) return this.jumpView('/pages/user/info/contact')
 				// #endif
@@ -183,7 +183,7 @@
 			},
 			// 充值
 			recharge(type, id, price) {
-				if(!this.token) return this.$u.toast('请先登录!')
+				if(!this.token) return this.$u.toast(this.$t('common.loginFirst'))
 				
 				// #ifdef MP-WEIXIN
 				if(!this.iosIsPay) return this.jumpView('/pages/user/info/contact')
@@ -192,7 +192,7 @@
 				if(this.buttonLoading) {
 					this.buttonLoading = false
 					uni.showLoading({
-						title: '开通中...',
+						title: this.$t('payment.activating'),
 						mask: true
 					})
 					// #ifdef MP-TOUTIAO
@@ -239,7 +239,7 @@
 								if(res.code === 1) {
 									this.handlePayResult(res.data)
 								} else {
-									uni.showToast({ title: res.msg || '下单失败', icon: 'none' })
+									uni.showToast({ title: res.msg || this.$t('payment.orderFailed'), icon: 'none' })
 								}
 							}).catch(() => {
 								uni.hideLoading()
@@ -256,7 +256,7 @@
 								if(res.code === 1) {
 									this.handlePayResult(res.data)
 								} else {
-									uni.showToast({ title: res.msg || '下单失败', icon: 'none' })
+									uni.showToast({ title: res.msg || this.$t('payment.orderFailed'), icon: 'none' })
 								}
 							}).catch(() => {
 								uni.hideLoading()
@@ -282,11 +282,11 @@
 						paySign: data.paySign
 					}, (res) => {
 						if(res.err_msg === 'get_brand_wcpay_request:ok') {
-							uni.showToast({ title: '支付成功', icon: 'success' })
+							uni.showToast({ title: this.$t('payment.success'), icon: 'success' })
 							this.getUserInfo()
 							this.$emit('close')
 						} else {
-							uni.showToast({ title: '支付取消', icon: 'none' })
+							uni.showToast({ title: this.$t('payment.payCancel'), icon: 'none' })
 						}
 					})
 					return
@@ -373,7 +373,7 @@
 										 orderId:res.orderId,
 										 success: (res) => {
 											uni.showToast({
-												  title: '支付成功',
+												  title: this.$t('payment.success'),
 												icon: 'none',
 												duration: 2000
 											  });
@@ -384,7 +384,7 @@
 										 },
 										 fail: (res) => {
 										  uni.showToast({
-										  		     title: '当前用户的客户端版本不支持小程序虚拟支付',
+										  		     title: this.$t('videopay.virtualPayNotSupported'),
 										  		 	icon: 'none',
 										  		 	duration: 2000
 										  		 });
@@ -416,7 +416,7 @@
 									// 	  console.log(res,'success')
 									//     if (res.code == 0) {
 									// 		uni.showToast({
-									// 		      title: '支付成功',
+									// 		      title: this.$t('payment.success'),
 									// 		  	icon: 'none',
 									// 		  	duration: 2000
 									// 		  });
@@ -429,7 +429,7 @@
 									//       // 但是最终状态要以商户后端结果为准
 									//     }else{
 									// 		uni.showToast({
-									// 		     title: '当前用户的客户端版本不支持小程序虚拟支付',
+									// 		     title: this.$t('videopay.virtualPayNotSupported'),
 									// 		 	icon: 'none',
 									// 		 	duration: 2000
 									// 		 });
@@ -439,7 +439,7 @@
 									//   },
 									//   fail(res) {
 									// 	 uni.showToast({
-									// 	      title: '当前用户的客户端版本不支持小程序虚拟支付',
+									// 	      title: this.$t('videopay.virtualPayNotSupported'),
 									// 	  	icon: 'none',
 									// 	  	duration: 2000
 									// 	  });
@@ -503,7 +503,7 @@
 				    success(res) {
 				      //console.log('requestVirtualPayment success', res)
 					  uni.showToast({
-					      title: '支付成功',
+					      title: this.$t('payment.success'),
 					  	icon: 'none',
 					  	duration: 2000
 					  });
@@ -516,7 +516,7 @@
 				    fail({ errMsg, errCode }) {
 				      //console.error(errMsg, errCode)
 					  uni.showToast({
-					      title: '支付失败',
+					      title: this.$t('payment.failed'),
 					  	icon: 'none',
 					  	duration: 2000
 					  });
@@ -528,7 +528,7 @@
 				  //console.log('当前用户的客户端版本不支持 wx.requestVirtualPayment')
 				  
 				  uni.showToast({
-				      title: '当前用户的客户端版本不支持小程序虚拟支付',
+				      title: this.$t('videopay.virtualPayNotSupported'),
 				  	icon: 'none',
 				  	duration: 2000
 				  });
@@ -552,7 +552,7 @@
 				// 	res => {
 				// 		if (res.err_msg == "get_brand_wcpay_request:ok") {
 				// 			uni.showToast({
-				// 			    title: '支付成功',
+				// 			    title: this.$t('payment.success'),
 				// 				icon: 'none',
 				// 				duration: 2000
 				// 			});
@@ -562,7 +562,7 @@
 				// 			uni.hideLoading()
 				// 		} else {
 				// 			uni.showToast({
-				// 			    title: '支付失败',
+				// 			    title: this.$t('payment.failed'),
 				// 				icon: 'none',
 				// 				duration: 2000
 				// 			});
@@ -583,7 +583,7 @@
 				// 				"orderInfo": pay,
 				// 				success: success => {
 				// 					uni.showToast({
-				// 						title: '支付成功',
+				// 						title: this.$t('payment.success'),
 				// 						icon: 'none',
 				// 						duration: 2000
 				// 					});
@@ -596,7 +596,7 @@
 				// 				fail: fail => {
 				// 					if(fail.errCode === -8) {
 				// 						uni.showToast({
-				// 							title: '未安装微信客户端',
+				// 							title: this.$t('videopay.wxNotInstalled'),
 				// 							icon: 'none',
 				// 							duration: 2000
 				// 						});
@@ -604,7 +604,7 @@
 				// 						uni.hideLoading()
 				// 					} else {
 				// 						uni.showToast({
-				// 							title: '支付失败',
+				// 							title: this.$t('payment.failed'),
 				// 							icon: 'none',
 				// 							duration: 2000
 				// 						});
@@ -630,7 +630,7 @@
 							paySign: pay.paySign,
 							success: success => {
 								uni.showToast({
-								    title: '支付成功',
+								    title: this.$t('payment.success'),
 									icon: 'none',
 									duration: 2000
 								});
@@ -641,7 +641,7 @@
 							},
 							fail: fail => {
 								uni.showToast({
-								    title: '支付失败',
+								    title: this.$t('payment.failed'),
 									icon: 'none',
 									duration: 2000
 								});
@@ -664,7 +664,7 @@
 							res => {
 								if (res.err_msg == "get_brand_wcpay_request:ok") {
 									uni.showToast({
-									    title: '支付成功',
+									    title: this.$t('payment.success'),
 										icon: 'none',
 										duration: 2000
 									});
@@ -674,7 +674,7 @@
 									uni.hideLoading()
 								} else {
 									uni.showToast({
-									    title: '支付失败',
+									    title: this.$t('payment.failed'),
 										icon: 'none',
 										duration: 2000
 									});
@@ -694,7 +694,7 @@
 										"orderInfo": pay,
 										success: success => {
 											uni.showToast({
-												title: '支付成功',
+												title: this.$t('payment.success'),
 												icon: 'none',
 												duration: 2000
 											});
@@ -707,7 +707,7 @@
 										fail: fail => {
 											if(fail.errCode === -8) {
 												uni.showToast({
-													title: '未安装微信客户端',
+													title: this.$t('videopay.wxNotInstalled'),
 													icon: 'none',
 													duration: 2000
 												});
@@ -715,7 +715,7 @@
 												uni.hideLoading()
 											} else {
 												uni.showToast({
-													title: '支付失败',
+													title: this.$t('payment.failed'),
 													icon: 'none',
 													duration: 2000
 												});

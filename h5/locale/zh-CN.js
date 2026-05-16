@@ -274,4 +274,21 @@ export default {
     zhTW: '繁體中文',
     en: 'English',
   },
+  // 解锁/付费弹窗
+  videopay: {
+    supportAuthor: '支持作者创作，解锁后继续阅读',
+    unlockEp: '解锁本集：',
+    pricePoints: '{0}积分',
+    balance: '账号余额：{0}积分',
+    yuan: '元',
+    vipBenefit: '全站爽剧免费看',
+    freePoints: '免费积分',
+    earnByTask: '做任务获取积分',
+    dailyTask: '每日任务',
+    watchToEarn: '看视频获取积分',
+    disclaimer: '虚拟商品购买后不可退换，青少年请在家长陪同下充值',
+    virtualPayNotSupported: '当前客户端版本不支持小程序虚拟支付',
+    wxNotInstalled: '未安装微信客户端',
+    pointsUnit: '积分',
+  },
 }
