@@ -90,6 +90,21 @@ mysql -uroot -p < backend/sql/init.sql
 ### Maven 编译参数
 父 pom.xml 已配置 `-parameters`，否则 `@RequestParam` 无法自动推断参数名（Spring Boot 3.x 不再默认保留参数名）。
 
+## 前端开发规范（强制执行）
+
+### 多语言（i18n）规则
+- H5 前端支持 zh-CN / zh-TW / en 三个语言包，文件位于 `h5/locale/`
+- **所有新增 UI 文案必须同步添加到三个语言包**，缺一不可
+- 模板中禁止硬编码中文字符串，一律使用 `$t('xxx.yyy')` 引用
+- 新增 key 命名规则：`模块名.功能名`，如 `watch.edit`、`comment.send`
+- 带参数的文案使用 `{0}` 占位，如 `watch.deleteSelected: '删除({0})'`
+
+### 横向可扩展规则
+- Tab 数量、内容类型、语言种类等不得硬编码数字判断（如 `if tab === 0`），应使用有语义的常量或配置驱动
+- 组件 props 设计应允许外部传入类型列表，而不是在组件内写死枚举值
+- API 路径、分页大小等配置项不写死在业务逻辑里，通过 data/config 统一管理
+- 新增功能时优先评估是否影响现有横向扩展点（如新增 Tab 是否只需改数据而不改模板）
+
 ## 待完成
 
 - [ ] 填入真实微信支付凭证（`backend/duanju-api/src/main/resources/application.yml` 中 `duanju.wxpay.*`）

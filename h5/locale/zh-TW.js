@@ -197,6 +197,12 @@ export default {
     watchNow: '立即觀看',
     unfollowConfirm: '確定要取消追劇《{0}》嗎？',
     unfollowSuccess: '已取消追劇',
+    edit: '編輯',
+    done: '完成',
+    selectAll: '全選',
+    deleteSelected: '刪除({0})',
+    totalEps: '全{0}集',
+    deleteSuccess: '已刪除',
   },
   home: {
     all: '全部',

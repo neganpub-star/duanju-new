@@ -211,6 +211,16 @@ const api = {
 			method: 'POST',
 			desc: '记录分享'
 		},
+		batchRemoveFavorite: {
+			url: '/api/video/favorite/batch-remove',
+			method: 'POST',
+			desc: '批量取消收藏'
+		},
+		deleteHistory: {
+			url: '/api/video/history/delete',
+			method: 'POST',
+			desc: '批量删除观看历史'
+		},
 	},
 	// 评论
 	comment: {

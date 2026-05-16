@@ -198,6 +198,12 @@ export default {
     watchNow: 'Watch Now',
     unfollowConfirm: 'Unfollow {0}?',
     unfollowSuccess: 'Unfollowed',
+    edit: 'Edit',
+    done: 'Done',
+    selectAll: 'Select All',
+    deleteSelected: 'Delete({0})',
+    totalEps: '{0} eps',
+    deleteSuccess: 'Deleted',
   },
   home: {
     all: 'All',

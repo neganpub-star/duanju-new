@@ -1,385 +1,419 @@
 
-
 <template>
-	<view class="page_content">
+	<view class="page">
+		<!-- 固定头部 -->
 		<view class="header-fixed">
-			<view class="header-tabs">
-				<view class="tab-item" :class="{ active: contentCurrent === 0 }" @click="changeContent(0)">{{ $t('watch.watchHistory') }}</view>
-				<view class="tab-item" :class="{ active: contentCurrent === 1 }" @click="changeContent(1)">{{ $t('watch.myFollowing') }}</view>
+			<view class="tab-row">
+				<view class="tabs">
+					<view class="tab" :class="{ active: tab === 0 }" @click="changeTab(0)">{{ $t('watch.watchHistory') }}</view>
+					<view class="tab" :class="{ active: tab === 1 }" @click="changeTab(1)">{{ $t('watch.myFollowing') }}</view>
+				</view>
+				<view class="edit-btn" @click="toggleEdit">
+					{{ editing ? $t('watch.done') : $t('watch.edit') }}
+				</view>
 			</view>
 		</view>
 
-		<scroll-view class="main_content" :style="{ paddingTop: headerHeight + 'px' }" :scroll-y="true" :refresher-enabled="true" :refresher-threshold="100" :refresher-triggered="refreshStatus" @refresherrefresh="refreshHandle" @scrolltolower="bottomHandle">
-			<view class="list">
+		<!-- 内容区 -->
+		<scroll-view
+			class="content"
+			:style="{ paddingTop: headerH + 'px' }"
+			scroll-y
+			:refresher-enabled="true"
+			:refresher-triggered="refreshing"
+			@refresherrefresh="onRefresh"
+			@scrolltolower="onLoadMore"
+		>
+			<view class="grid" v-if="currentList.length">
 				<view
-					class="item-card"
-					v-for="(lItem, lIndex) in currentList"
-					:key="lItem.id"
-					@click="openVideoDetail(lItem.video.id, lItem.video.display_title||lItem.video.title, lItem.video.image, lItem.video.display_desc||lItem.video.description)"
-					:class="{ 'is-removing': lItem.isRemoving }"
-					:style="{ animationDelay: `${lIndex * 0.08}s` }"
+					class="grid-item"
+					v-for="(item, i) in currentList"
+					:key="item.vid || i"
+					@click="onItemClick(item, i)"
 				>
-					<image class="cover-image" :src="lItem.video.image" mode="aspectFill"></image>
-					<view class="info-wrapper">
-						<view class="info-content">
-							<text class="title u-line-1">{{ lItem.video.display_title||lItem.video.title }}</text>
-							<view class="progress-box" v-if="contentCurrent === 0">
-								<view class="progress-bar">
-									<view class="progress-value" :style="{ width: getProgress(lItem) + '%' }"></view>
-								</view>
-								<text class="progress-text">{{ $t('watch.watchedProgress', [getProgress(lItem), lItem.episode.display_title || lItem.episode.name]) }}</text>
-							</view>
-							<text class="desc u-line-1" v-else>{{ lItem.video.display_desc||lItem.video.description || $t('watch.noDescription') }}</text>
+					<view class="cover-wrap">
+						<image class="cover" :src="item.video.image" mode="aspectFill" />
+						<!-- 集数角标 -->
+						<view class="ep-badge">
+							<text v-if="tab === 0">{{ getEpNum(item) }}/{{ item.video.episodes }}</text>
+							<text v-else>{{ $t('watch.totalEps', [item.video.episodes]) }}</text>
 						</view>
-						<view class="actions">
-							<view class="action-btn" @click.stop="handleAction(lItem, lIndex)">
-								{{ contentCurrent === 0 ? $t('watch.continueWatching') : $t('watch.unfollow') }}
+						<!-- 编辑模式勾选框 -->
+						<view v-if="editing" class="checkbox-wrap" @click.stop="toggleSelect(i)">
+							<view class="checkbox" :class="{ checked: item._selected }">
+								<u-icon v-if="item._selected" name="checkmark" color="#fff" size="14" />
 							</view>
 						</view>
 					</view>
+					<text class="item-title">{{ item.video.display_title || item.video.title }}</text>
+					<text class="item-sub" v-if="tab === 0">{{ getEpLabel(item) }}</text>
+					<text class="item-sub" v-else>{{ $t('watch.totalEps', [item.video.episodes]) }}</text>
 				</view>
 			</view>
-			<view class="nodata" v-if="!currentList.length && loadStatus == 'nomore'">
+
+			<view class="nodata" v-if="!currentList.length && loadStatus === 'nomore'">
 				<u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/data.png" :text="$t('watch.noRecord')"></u-empty>
 			</view>
-			<view class="liststatus" v-else>
+			<view class="list-status" v-if="currentList.length">
 				<u-loadmore :status="loadStatus" :line="true" :nomoreText="$t('home.noMore')" :loadmoreText="$t('home.loadMore')" />
 			</view>
+			<!-- 编辑模式底部留白 -->
+			<view v-if="editing" style="height: 120rpx;"></view>
 		</scroll-view>
+
+		<!-- 编辑模式底部操作栏 -->
+		<view class="edit-bar" v-if="editing">
+			<view class="select-all-wrap" @click="toggleSelectAll">
+				<view class="checkbox sm" :class="{ checked: isAllSelected }">
+					<u-icon v-if="isAllSelected" name="checkmark" color="#fff" size="12" />
+				</view>
+				<text class="select-all-text">{{ $t('watch.selectAll') }}</text>
+			</view>
+			<view
+				class="delete-btn"
+				:class="{ disabled: selectedCount === 0 }"
+				@click="deleteSelected"
+			>
+				{{ $t('watch.deleteSelected', [selectedCount]) }}
+			</view>
+		</view>
+
 		<CustomTabBar current="/pages/home/watch" />
 	</view>
 </template>
 
 <script>
-	import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
+	import { mapGetters } from 'vuex'
 	import CustomTabBar from '@/components/CustomTabBar.vue'
 
 	export default {
 		components: { CustomTabBar },
 		data() {
 			return {
-				headerHeight: 0,
+				headerH: 0,
+				tab: 1,
+				editing: false,
+				refreshing: false,
 				contentList: [
-					{ id: 1, name: '最近观看记录', type: 'log', list: [], page: 1, pagesize: 10, status: 'loadmore' },
-					{ id: 2, name: '我的追剧记录', type: 'favorite', list: [], page: 1, pagesize: 10, status: 'loadmore' },
+					{ type: 'log',      list: [], page: 1, pagesize: 12, status: 'loadmore' },
+					{ type: 'favorite', list: [], page: 1, pagesize: 12, status: 'loadmore' },
 				],
-				contentCurrent: 1,
-				refreshStatus: false,
-				isRefresh: false,
 			}
 		},
 		computed: {
-			...mapGetters("user", ["userInfo"]),
-			currentList() {
-				return this.contentList[this.contentCurrent].list;
-			},
-			loadStatus() {
-				return this.contentList[this.contentCurrent].status;
-			}
+			...mapGetters('user', ['userInfo']),
+			currentTab() { return this.contentList[this.tab] },
+			currentList() { return this.currentTab.list },
+			loadStatus() { return this.currentTab.status },
+			selectedCount() { return this.currentList.filter(i => i._selected).length },
+			isAllSelected() { return this.currentList.length > 0 && this.currentList.every(i => i._selected) },
 		},
 		onReady() {
-			const query = uni.createSelectorQuery().in(this);
-			query.select('.header-fixed').boundingClientRect(data => {
-				if (data) {
-					this.headerHeight = data.height;
-				}
-			}).exec();
+			uni.createSelectorQuery().in(this).select('.header-fixed').boundingClientRect(d => {
+				if (d) this.headerH = d.height
+			}).exec()
 		},
 		onShow() {
-			this.refreshHandle();
+			this.onRefresh()
 		},
 		methods: {
-			getProgress(item) {
-				if (!item || !item.video || !item.episode || !item.episode.name || !item.video.episodes || item.video.episodes <= 0) {
-					return 0;
-				}
-				
-				// 从 "第X集" 或 "更新至X集" 这样的字符串中提取数字
-				const match = item.episode.name.match(/\d+/);
-				if (!match) {
-					return 0;
-				}
-				
-				const episodeNumber = parseInt(match[0], 10);
-				const totalEpisodes = item.video.episodes;
-				
-				if (isNaN(episodeNumber) || episodeNumber <= 0) {
-					return 0;
-				}
-				
-				const percentage = Math.floor((episodeNumber / totalEpisodes) * 100);
-				// 确保百分比在 0-100 之间
-				return Math.max(0, Math.min(percentage, 100));
+			// ──────────── 数据 ────────────
+			fetchList(isRefresh = false) {
+				const tab = this.currentTab
+				if (tab.status === 'loading' && !isRefresh) return
+				tab.status = 'loading'
+				if (isRefresh) tab.page = 1
+
+				this.$request('video.getRecord', {
+					type: tab.type,
+					page: tab.page,
+					pagesize: tab.pagesize,
+				}).then(res => {
+					const data = (res.code === 1 ? res.data : []) || []
+					const rows = data.map(item => ({ ...item, _selected: false }))
+					tab.list = isRefresh ? rows : tab.list.concat(rows)
+					tab.status = data.length < tab.pagesize ? 'nomore' : 'loadmore'
+				}).catch(() => {
+					tab.status = 'nomore'
+				}).finally(() => {
+					this.refreshing = false
+				})
 			},
-			openVideoDetail(id, title, image, description) {
-				uni.navigateTo({
-					url: `/pages/video/play?id=${id}&title=${title}&image=${image}&desc=${description}`
-				});
+			onRefresh() {
+				this.refreshing = true
+				this.fetchList(true)
 			},
-			handleAction(item, index) {
-				if (this.contentCurrent === 0) {
-					this.openVideoDetail(item.video.id, item.video.display_title||item.video.title, item.video.image, item.video.display_desc||item.video.description);
-				} else {
-					this.unfavorite(item, index);
+			onLoadMore() {
+				if (this.currentTab.status === 'loadmore') {
+					this.currentTab.page++
+					this.fetchList()
 				}
+			},
+			changeTab(index) {
+				if (this.tab === index) return
+				this.tab = index
+				this.editing = false
+				if (!this.currentList.length) this.fetchList(true)
+			},
+
+			// ──────────── 编辑 ────────────
+			toggleEdit() {
+				this.editing = !this.editing
+				if (!this.editing) {
+					this.currentList.forEach(item => { item._selected = false })
+				}
+			},
+			toggleSelect(index) {
+				const item = this.currentList[index]
+				this.$set(item, '_selected', !item._selected)
+			},
+			toggleSelectAll() {
+				const next = !this.isAllSelected
+				this.currentList.forEach(item => { this.$set(item, '_selected', next) })
+			},
+			deleteSelected() {
+				if (this.selectedCount === 0) return
+				const ids = this.currentList.filter(i => i._selected).map(i => i.vid).join(',')
+				const api = this.tab === 0 ? 'video.deleteHistory' : 'video.batchRemoveFavorite'
+				this.$request(api, { ids }, false).then(res => {
+					if (res.code === 1) {
+						this.currentTab.list = this.currentList.filter(i => !i._selected)
+						uni.showToast({ title: this.$t('watch.deleteSuccess'), icon: 'none', duration: 1500 })
+						if (!this.currentList.length) this.editing = false
+					}
+				})
+			},
+
+			// ──────────── 点击 ────────────
+			onItemClick(item, index) {
+				if (this.editing) {
+					this.toggleSelect(index)
+					return
+				}
+				uni.navigateTo({ url: `/pages/video/play?id=${item.vid}` })
 			},
 			unfavorite(item, index) {
-				this.$set(item, 'isRemoving', true);
-				const obj = { ids: item.vid, type: 'favorite' };
+				const obj = { ids: item.vid, type: 'favorite' }
 				this.$request('video.deleteRecord', obj, false).then(res => {
-					if(res.code === 1) {
-						uni.showToast({ title: this.$t('watch.unfollowSuccess'), icon: 'none', duration: 1500 });
-						setTimeout(() => {
-							this.contentList[this.contentCurrent].list.splice(index, 1);
-						}, 400);
-					} else {
-						this.$set(item, 'isRemoving', false);
+					if (res.code === 1) {
+						uni.showToast({ title: this.$t('watch.unfollowSuccess'), icon: 'none', duration: 1500 })
+						this.currentTab.list.splice(index, 1)
 					}
-				});
+				})
 			},
-			changeContent(index) {
-				if (this.contentCurrent === index) return;
-				this.contentCurrent = index;
-				if (this.contentList[this.contentCurrent].list.length === 0) {
-					this.getPlayRecordList();
-				}
-			},
-			getPlayRecordList(isRefresh = false) {
-				const currentTab = this.contentList[this.contentCurrent];
-				if (currentTab.status === 'loading' && !isRefresh) return;
-				
-				currentTab.status = 'loading';
-				if (isRefresh) {
-					currentTab.page = 1;
-				}
 
-				const obj = {
-					type: currentTab.type,
-					page: currentTab.page,
-					pagesize: currentTab.pagesize,
-					platform: uni.getSystemInfoSync().uniPlatform === 'mp-weixin' ? 2 : 1,
-				};
-				
-				this.$request('video.getRecord', obj).then(res => {
-					if(res.code === 1) {
-						const data = res.data || [];
-						if (isRefresh) {
-							currentTab.list = data.map(item => ({ ...item, isRemoving: false }));
-						} else {
-							currentTab.list.push(...data.map(item => ({ ...item, isRemoving: false })));
-						}
-						if(data.length < currentTab.pagesize) {
-							currentTab.status = 'nomore';
-						} else {
-							currentTab.status = 'loadmore';
-						}
-					} else {
-						currentTab.status = 'nomore';
-					}
-					if (isRefresh) {
-						this.refreshStatus = false;
-					}
-				}).catch(() => {
-					currentTab.status = 'nomore';
-					if (isRefresh) {
-						this.refreshStatus = false;
-					}
-				});
+			// ──────────── 工具 ────────────
+			getEpNum(item) {
+				if (!item.episode) return '-'
+				const m = (item.episode.display_title || item.episode.name || '').match(/\d+/)
+				return m ? m[0] : '-'
 			},
-			refreshHandle() {
-				this.refreshStatus = true;
-				this.getPlayRecordList(true);
+			getEpLabel(item) {
+				if (!item.episode) return ''
+				const name = item.episode.display_title || item.episode.name || ''
+				const total = item.video.episodes
+				return total ? `${name}/共${total}集` : name
 			},
-			bottomHandle() {
-				const currentTab = this.contentList[this.contentCurrent];
-				if (currentTab.status === 'loadmore') {
-					currentTab.page++;
-					this.getPlayRecordList();
-				}
-			},
-		}
+		},
 	}
 </script>
 
 <style lang="scss" scoped>
-	.page_content {
-		background-color: #f8f9fa;
-		height: 100vh;
-		display: flex;
-		flex-direction: column;
-		/* #ifdef H5 */
-		padding-bottom: 100rpx;
-		/* #endif */
-	}
+.page {
+	background: #f4f5f7;
+	min-height: 100vh;
+	/* #ifdef H5 */
+	padding-bottom: 100rpx;
+	/* #endif */
+}
 
-	.header-fixed {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		z-index: 100;
-		background-color: #fff;
-		box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
-		
-		/* 拆分 padding 避免覆盖问题 */
-		padding-left: 30rpx;
-		padding-right: 30rpx;
-		padding-bottom: 20rpx;
-		
-		/* 默认 H5 或其他环境 */
-		padding-top: 20rpx; 
-		
-		/* #ifndef H5 */
-		padding-top: calc(20rpx + var(--status-bar-height));
-		/* #endif */
-	}
+// ── 头部 ──────────────────────────────────────
+.header-fixed {
+	position: fixed;
+	top: 0; left: 0; right: 0;
+	z-index: 100;
+	background: #fff;
+	box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+	padding: 20rpx 30rpx;
+	/* #ifndef H5 */
+	padding-top: calc(20rpx + var(--status-bar-height));
+	/* #endif */
+}
 
-	.header-tabs {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		gap: 80rpx;
-	}
+.tab-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
 
-	.tab-item {
-		font-size: 30rpx;
-		color: #666;
-		padding: 15rpx 0;
-		position: relative;
-		transition: all 0.3s ease;
-		
-		&.active {
-			font-size: 34rpx;
-			font-weight: 600;
-			color: #333;
+.tabs {
+	display: flex;
+	gap: 48rpx;
+}
 
-			&::after {
-				content: '';
-				position: absolute;
-				bottom: 0;
-				left: 50%;
-				transform: translateX(-50%);
-				width: 50rpx;
-				height: 8rpx;
-				background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
-				border-radius: 4rpx;
-			}
-		}
-	}
+.tab {
+	font-size: 30rpx;
+	color: #888;
+	padding-bottom: 10rpx;
+	position: relative;
+	transition: all 0.2s;
 
-	.main_content {
-		flex: 1;
-		overflow-y: auto;
-	}
-
-	.list {
-		padding: 30rpx;
-		display: flex;
-		flex-direction: column;
-		gap: 30rpx;
-	}
-	
-	.item-card {
-		display: flex;
-		background-color: #fff;
-		border-radius: 20rpx;
-		padding: 25rpx;
-		box-shadow: 0 8rpx 30rpx rgba(0,0,0,0.06);
-		opacity: 0;
-		transform: translateY(20px);
-		animation: item-fade-in 0.5s ease-out forwards;
-		transition: all 0.4s ease;
-
-		&.is-removing {
-			transform: scale(0.95);
-			opacity: 0;
-			max-height: 0;
-			padding-top: 0;
-			padding-bottom: 0;
-			margin-top: -30rpx;
-			overflow: hidden;
-		}
-	}
-
-	@keyframes item-fade-in {
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-
-	.cover-image {
-		width: 180rpx;
-		height: 240rpx;
-		border-radius: 15rpx;
-		margin-right: 25rpx;
-		background-color: #f0f0f0;
-	}
-
-	.info-wrapper {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-	}
-
-	.title {
+	&.active {
 		font-size: 32rpx;
-		font-weight: 600;
-		color: #333;
-		margin-bottom: 15rpx;
+		font-weight: 700;
+		color: #111;
+
+		&::after {
+			content: '';
+			position: absolute;
+			bottom: 0; left: 50%;
+			transform: translateX(-50%);
+			width: 40rpx; height: 6rpx;
+			background: linear-gradient(90deg, #5E72F7, #9354FF);
+			border-radius: 3rpx;
+		}
+	}
+}
+
+.edit-btn {
+	font-size: 28rpx;
+	color: #5E72F7;
+	padding: 6rpx 16rpx;
+}
+
+// ── 内容网格 ───────────────────────────────────
+.content {
+	height: 100vh;
+	box-sizing: border-box;
+}
+
+.grid {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 20rpx 16rpx 0;
+	gap: 16rpx;
+}
+
+.grid-item {
+	width: calc((100% - 32rpx) / 3);
+	display: flex;
+	flex-direction: column;
+}
+
+.cover-wrap {
+	position: relative;
+	width: 100%;
+	padding-top: 140%; // 竖版海报比例 ~5:7
+	border-radius: 12rpx;
+	overflow: hidden;
+	background: #e8e8e8;
+}
+
+.cover {
+	position: absolute;
+	top: 0; left: 0;
+	width: 100%; height: 100%;
+}
+
+.ep-badge {
+	position: absolute;
+	bottom: 0; left: 0; right: 0;
+	background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
+	padding: 10rpx 10rpx 8rpx;
+	text {
+		font-size: 20rpx;
+		color: #fff;
+	}
+}
+
+.checkbox-wrap {
+	position: absolute;
+	top: 8rpx; right: 8rpx;
+}
+
+.checkbox {
+	width: 36rpx; height: 36rpx;
+	border-radius: 50%;
+	border: 3rpx solid rgba(255,255,255,0.9);
+	background: rgba(0,0,0,0.3);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	&.checked {
+		background: #5E72F7;
+		border-color: #5E72F7;
 	}
 
-	.progress-box {
-		display: flex;
-		align-items: center;
-		gap: 15rpx;
-		margin-bottom: 15rpx;
-		.progress-bar {
-			flex: 1;
-			height: 12rpx;
-			background-color: #eee;
-			border-radius: 6rpx;
-			overflow: hidden;
-		}
-		.progress-value {
-			height: 100%;
-			background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
-			border-radius: 6rpx;
-		}
-		.progress-text {
-			font-size: 24rpx;
-			color: #999;
-		}
+	&.sm {
+		width: 32rpx; height: 32rpx;
+		border-color: #5E72F7;
+		background: #fff;
+		&.checked { background: #5E72F7; }
 	}
-	
-	.desc {
-		font-size: 26rpx;
-		color: #666;
-		margin-bottom: 15rpx;
+}
+
+.item-title {
+	font-size: 24rpx;
+	color: #222;
+	font-weight: 500;
+	margin-top: 10rpx;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	display: block;
+}
+
+.item-sub {
+	font-size: 20rpx;
+	color: #999;
+	margin-top: 4rpx;
+	display: block;
+}
+
+// ── 编辑底部操作栏 ─────────────────────────────
+.edit-bar {
+	position: fixed;
+	bottom: 0; left: 0; right: 0;
+	/* #ifdef H5 */
+	bottom: 100rpx;
+	/* #endif */
+	background: #fff;
+	border-top: 1rpx solid #eee;
+	padding: 20rpx 30rpx;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	z-index: 200;
+}
+
+.select-all-wrap {
+	display: flex;
+	align-items: center;
+	gap: 14rpx;
+}
+
+.select-all-text {
+	font-size: 28rpx;
+	color: #333;
+}
+
+.delete-btn {
+	font-size: 28rpx;
+	font-weight: 600;
+	color: #fff;
+	background: linear-gradient(90deg, #5E72F7, #9354FF);
+	padding: 16rpx 40rpx;
+	border-radius: 40rpx;
+	box-shadow: 0 4rpx 12rpx rgba(94,114,247,0.3);
+
+	&.disabled {
+		background: #ccc;
+		box-shadow: none;
 	}
-	
-	.actions {
-		align-self: flex-end;
-	}
-	
-	.action-btn {
-		font-size: 26rpx;
-		font-weight: 500;
-		color: #fff;
-		padding: 12rpx 30rpx;
-		border-radius: 30rpx;
-		background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
-		transition: all 0.2s ease;
-		box-shadow: 0 4rpx 12rpx rgba(94, 114, 247, 0.2);
-		
-		&:active {
-			transform: scale(0.96);
-			box-shadow: 0 2rpx 8rpx rgba(94, 114, 247, 0.2);
-		}
-	}
-	
-	.nodata {
-		padding-top: 20vh;
-	}
+}
+
+// ── 其他 ───────────────────────────────────────
+.nodata { padding-top: 20vh; }
+.list-status { padding: 20rpx 0 30rpx; }
 </style>

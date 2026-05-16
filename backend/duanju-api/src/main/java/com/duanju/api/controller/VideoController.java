@@ -444,6 +444,44 @@ public class VideoController {
         return R.ok();
     }
 
+    @Operation(summary = "批量删除收藏")
+    @PostMapping("/favorite/batch-remove")
+    public R<Void> batchRemoveFavorite(@RequestBody Map<String, Object> req) {
+        if (!StpUtil.isLogin()) return R.ok();
+        long userId = StpUtil.getLoginIdAsLong();
+        Object idsObj = req.get("ids");
+        if (idsObj == null) return R.ok();
+        List<Long> videoIds = java.util.Arrays.stream(idsObj.toString().split(","))
+                .map(String::trim).filter(s -> !s.isEmpty())
+                .map(s -> { try { return Long.parseLong(s); } catch (Exception e) { return null; } })
+                .filter(java.util.Objects::nonNull).collect(Collectors.toList());
+        if (!videoIds.isEmpty()) {
+            favoriteMapper.delete(new LambdaQueryWrapper<VideoFavorite>()
+                    .eq(VideoFavorite::getUserId, userId)
+                    .in(VideoFavorite::getVideoId, videoIds));
+        }
+        return R.ok();
+    }
+
+    @Operation(summary = "批量删除观看历史")
+    @PostMapping("/history/delete")
+    public R<Void> deleteHistory(@RequestBody Map<String, Object> req) {
+        if (!StpUtil.isLogin()) return R.ok();
+        long userId = StpUtil.getLoginIdAsLong();
+        Object idsObj = req.get("ids");
+        if (idsObj == null) return R.ok();
+        List<Long> videoIds = java.util.Arrays.stream(idsObj.toString().split(","))
+                .map(String::trim).filter(s -> !s.isEmpty())
+                .map(s -> { try { return Long.parseLong(s); } catch (Exception e) { return null; } })
+                .filter(java.util.Objects::nonNull).collect(Collectors.toList());
+        if (!videoIds.isEmpty()) {
+            watchLogMapper.delete(new LambdaQueryWrapper<WatchLog>()
+                    .eq(WatchLog::getUserId, userId)
+                    .in(WatchLog::getVideoId, videoIds));
+        }
+        return R.ok();
+    }
+
     @Data
     public static class FavoriteReq {
         private Object vid;
