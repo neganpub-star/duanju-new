@@ -198,8 +198,8 @@
 				</view>
 				<!-- 快捷入口 -->
 				<view class="hero-shortcuts" v-if="userInfoStore">
-					<view class="shortcut-item" @click="jumpView('/pages/video/record')">
-						<text class="shortcut-num">{{ userInfoStore.watch_count || 0 }}</text>
+					<view class="shortcut-item" @click="jumpView('/pages/home/watch')">
+						<u-icon name="eye" color="#fff" size="22"></u-icon>
 						<text class="shortcut-label">{{ $t('user.watchHistory') }}</text>
 					</view>
 					<view class="shortcut-divider"></view>
@@ -345,7 +345,7 @@
 						id: 1,
 						img: 'https://img.nymaite.com/video_short/images/watched.png',
 						text: '最近观看',
-						path: '/pages/video/record'
+						path: '/pages/home/watch'
 					},
 					{
 						id: 4,
@@ -370,7 +370,7 @@
 						id: 1,
 						img: '/static/img/观看记录.png',
 						text: '观看记录',
-						path: '/pages/video/record'
+						path: '/pages/home/watch'
 					},
 					{
 						id: 2,
