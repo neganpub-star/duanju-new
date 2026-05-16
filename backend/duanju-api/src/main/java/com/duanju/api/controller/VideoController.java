@@ -22,11 +22,14 @@ import com.duanju.system.domain.DramaUser;
 import com.duanju.system.mapper.DramaUserMapper;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -37,11 +40,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Tag(name = "短剧接口")
 @RestController
 @RequestMapping("/api/video")
 @RequiredArgsConstructor
 public class VideoController {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    private static String pickI18n(Object jsonObj, Object fallback) {
+        String json = jsonObj != null ? jsonObj.toString() : null;
+        String fb = fallback != null ? fallback.toString() : "";
+        if (json == null || json.isBlank()) return fb;
+        try {
+            String lang = LocaleContextHolder.getLocale().toLanguageTag();
+            @SuppressWarnings("unchecked")
+            Map<String, String> map = MAPPER.readValue(json, Map.class);
+            if (map.containsKey(lang)) return map.get(lang);
+            String prefix = lang.split("-")[0];
+            for (Map.Entry<String, String> e : map.entrySet()) {
+                if (e.getKey().startsWith(prefix)) return e.getValue();
+            }
+            return map.getOrDefault("zh-CN", map.values().stream().findFirst().orElse(fb));
+        } catch (Exception e) {
+            log.warn("pickI18n parse failed: {}", jsonObj);
+            return fb;
+        }
+    }
 
     private final VideoService videoService;
     private final VideoEpisodesMapper episodesMapper;
@@ -110,10 +136,12 @@ public class VideoController {
         VideoDetailResp resp = new VideoDetailResp();
         resp.setId(video.getId());
         resp.setTitle(video.getTitle());
+        resp.setDisplayTitle(video.getDisplayTitle());
         String coverUrl = video.getCover() != null ? video.getCover() : video.getImage();
         resp.setImage(coverUrl);
         resp.setCover(coverUrl);
         resp.setDescription(video.getDescription());
+        resp.setDisplayDesc(video.getDisplayDesc());
         resp.setEpisodes(video.getSeriesCount());
         resp.setEpisodeCount(video.getSeriesCount());
         resp.setFavorites(0);
@@ -272,12 +300,15 @@ public class VideoController {
                 Map<String, Object> video = new LinkedHashMap<>();
                 video.put("id", item.get("videoId"));
                 video.put("title", item.get("title"));
+                video.put("display_title", pickI18n(item.get("titleI18n"), item.get("title")));
                 video.put("image", cover);
                 video.put("cover", cover);
                 video.put("description", item.get("description"));
+                video.put("display_desc", pickI18n(item.get("descI18n"), item.get("description")));
                 video.put("episodes", item.get("seriesCount"));
                 Map<String, Object> episode = new LinkedHashMap<>();
                 episode.put("name", "第1集");
+                episode.put("display_title", pickI18n("{\"zh-CN\":\"第1集\",\"zh-TW\":\"第1集\",\"en\":\"Episode 1\"}", "第1集"));
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("vid", item.get("videoId"));
                 row.put("video", video);
@@ -293,13 +324,16 @@ public class VideoController {
                 Map<String, Object> video = new LinkedHashMap<>();
                 video.put("id", item.get("videoId"));
                 video.put("title", item.get("title"));
+                video.put("display_title", pickI18n(item.get("titleI18n"), item.get("title")));
                 video.put("image", cover);
                 video.put("cover", cover);
                 video.put("description", item.get("description"));
+                video.put("display_desc", pickI18n(item.get("descI18n"), item.get("description")));
                 video.put("episodes", item.get("seriesCount"));
                 Map<String, Object> episode = new LinkedHashMap<>();
                 String epName = item.get("episodeName") != null ? item.get("episodeName").toString() : "第1集";
                 episode.put("name", epName);
+                episode.put("display_title", pickI18n(item.get("episodeTitleI18n"), epName));
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("vid", item.get("videoId"));
                 row.put("video", video);
@@ -525,6 +559,8 @@ public class VideoController {
         private Long videoId;
         private String name;            // 旧前端用 name
         private String title;
+        @JsonProperty("display_title")
+        private String displayTitle;
         private String url;
         private String hlsUrl;
         @JsonRawValue
@@ -545,6 +581,7 @@ public class VideoController {
             vo.videoId = ep.getVideoId();
             vo.name = ep.getTitle();
             vo.title = ep.getTitle();
+            vo.displayTitle = ep.getDisplayTitle();
             vo.playInfo = ep.getPlayInfo();
             // 播放 URL 优先级：playInfo 最高清晰度 → hlsUrl → url
             vo.url = resolveBestUrl(ep.getPlayInfo(), ep.getHlsUrl(), ep.getUrl());
@@ -586,9 +623,13 @@ public class VideoController {
     public static class VideoDetailResp {
         private Long id;
         private String title;
+        @JsonProperty("display_title")
+        private String displayTitle;
         private String image;
         private String cover;
         private String description;
+        @JsonProperty("display_desc")
+        private String displayDesc;
         private Integer episodes;
         private Integer episodeCount;
         private Integer favorites;

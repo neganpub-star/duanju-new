@@ -12,7 +12,8 @@ import java.util.Map;
 @Mapper
 public interface VideoFavoriteMapper extends BaseMapper<VideoFavorite> {
 
-    @Select("SELECT vf.video_id as videoId, v.title, v.cover, v.image, v.description, v.series_count as seriesCount " +
+    @Select("SELECT vf.video_id as videoId, v.title, v.title_i18n as titleI18n, " +
+            "v.cover, v.image, v.description, v.desc_i18n as descI18n, v.series_count as seriesCount " +
             "FROM vs_drama_video_favorite vf " +
             "JOIN vs_drama_video v ON v.id = vf.video_id AND v.delete_time IS NULL " +
             "WHERE vf.user_id = #{userId} AND vf.delete_time IS NULL " +
