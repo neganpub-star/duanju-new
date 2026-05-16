@@ -88,13 +88,6 @@
 					}
 				},
 				{
-					"path": "record",
-					"style": {
-						"navigationBarTitleText": "观看记录",
-						"enablePullDownRefresh": false
-					}
-				},
-				{
 					"path": "search",
 					"style": {
 						"navigationBarTitleText": "",
