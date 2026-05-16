@@ -217,7 +217,7 @@
 
 				if(collect == 0) {
 					const obj = { vid: id, type: 'favorite' }
-					this.$request('video.addRecord', obj, false).then(res => {
+					this.$request('video.addFavorite', obj, false).then(res => {
 						if(res.code === 1) {
 							this.$set(this.videoList[index], 'is_favorite', 1)
 						}
