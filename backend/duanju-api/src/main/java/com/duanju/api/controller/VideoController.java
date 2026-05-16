@@ -402,17 +402,20 @@ public class VideoController {
         VideoFavorite existing = favoriteMapper.selectOne(new LambdaQueryWrapper<VideoFavorite>()
                 .eq(VideoFavorite::getUserId, userId)
                 .eq(VideoFavorite::getVideoId, videoId));
-        Map<String, Object> resp = new LinkedHashMap<>();
         if (existing == null) {
-            VideoFavorite fav = new VideoFavorite();
-            fav.setSiteId(siteId);
-            fav.setUserId(userId);
-            fav.setVideoId(videoId);
-            favoriteMapper.insert(fav);
-            resp.put("is_favorite", 1);
-        } else {
-            resp.put("is_favorite", 1);
+            try {
+                VideoFavorite fav = new VideoFavorite();
+                fav.setSiteId(siteId);
+                fav.setUserId(userId);
+                fav.setVideoId(videoId);
+                favoriteMapper.insert(fav);
+            } catch (org.springframework.dao.DuplicateKeyException e) {
+                // 软删除记录存在，恢复它
+                favoriteMapper.restoreByUserAndVideo(userId, videoId);
+            }
         }
+        Map<String, Object> resp = new LinkedHashMap<>();
+        resp.put("is_favorite", 1);
         return R.ok(resp);
     }
 
