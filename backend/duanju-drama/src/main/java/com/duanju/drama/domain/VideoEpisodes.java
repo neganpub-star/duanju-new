@@ -2,6 +2,7 @@ package com.duanju.drama.domain;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.duanju.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -39,4 +40,14 @@ public class VideoEpisodes extends BaseEntity {
 
     /** 0=隐藏 1=显示 */
     private Integer status;
+
+    /** 多清晰度播放信息，JSON数组：[{definition,url},...] */
+    @JsonRawValue
+    private String playInfo;
+
+    /** 转码状态: pending / processing / done / failed */
+    private String transcodeStatus;
+
+    /** 转码失败原因 */
+    private String transcodeMsg;
 }

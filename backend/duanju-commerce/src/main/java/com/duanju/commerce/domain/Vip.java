@@ -2,6 +2,7 @@ package com.duanju.commerce.domain;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.duanju.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -27,4 +28,15 @@ public class Vip extends BaseEntity {
 
     /** normal / hidden */
     private String status;
+
+    /** 前端展示用：根据天数生成文字 */
+    @JsonGetter("type_text")
+    public String getTypeText() {
+        if (days == null) return "";
+        if (days <= 3)  return "体验";
+        if (days <= 7)  return "周";
+        if (days <= 31) return "月";
+        if (days <= 93) return "季";
+        return "年";
+    }
 }

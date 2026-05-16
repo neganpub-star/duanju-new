@@ -1,5 +1,6 @@
 package com.duanju.commerce.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.duanju.common.core.domain.BaseEntity;
 import lombok.Data;
@@ -24,7 +25,10 @@ public class UserWalletLog extends BaseEntity {
     /** 变动类型标识 */
     private String type;
 
+    @TableField("`before`")
     private BigDecimal before;
+
+    @TableField("`after`")
     private BigDecimal after;
 
     /** 关联业务ID */

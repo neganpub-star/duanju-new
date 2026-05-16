@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -48,6 +49,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public R<?> handleIllegalArgumentException(IllegalArgumentException e) {
         return R.fail(ResultCode.PARAM_ERROR, e.getMessage());
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public R<?> handleNoResource(NoResourceFoundException e) {
+        log.debug("接口不存在: {}", e.getResourcePath());
+        return R.fail(404, "接口不存在: " + e.getResourcePath());
     }
 
     @ExceptionHandler(Exception.class)

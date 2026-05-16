@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.duanju.common.core.domain.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -63,9 +64,11 @@ public class DramaUser extends BaseEntity {
     private String status;
 
     @TableField(exist = false)
+    @JsonIgnore
     private Boolean isVip;
 
     @TableField(exist = false)
+    @JsonIgnore
     private Boolean isReseller;
 
     public boolean isVipActive() {
@@ -75,5 +78,17 @@ public class DramaUser extends BaseEntity {
     public boolean isResellerActive() {
         return resellerLevel != null && resellerLevel > 0
                 && resellerExpireTime != null && resellerExpireTime.isAfter(LocalDateTime.now());
+    }
+
+    /** 前端判断VIP状态：1=有效VIP，0=非VIP */
+    @JsonGetter("is_vip")
+    public Integer getIsVipInt() {
+        return isVipActive() ? 1 : 0;
+    }
+
+    /** 前端判断分销商状态：1=有效分销商，0=非分销商 */
+    @JsonGetter("is_reseller")
+    public Integer getIsResellerInt() {
+        return isResellerActive() ? 1 : 0;
     }
 }

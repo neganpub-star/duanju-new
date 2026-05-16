@@ -407,6 +407,23 @@ CREATE TABLE IF NOT EXISTS `vs_drama_reseller_order` (
 -- ============================================================
 -- 分销绑定关系
 -- ============================================================
+CREATE TABLE IF NOT EXISTS `vs_drama_richtext` (
+    `id`          BIGINT   NOT NULL AUTO_INCREMENT COMMENT 'ID（1=用户协议 2=隐私协议 3=法律声明 4=联系我们 5=关于我们）',
+    `title`       VARCHAR(100) NOT NULL DEFAULT '' COMMENT '标题',
+    `content`     MEDIUMTEXT COMMENT '富文本内容（HTML）',
+    `create_time` DATETIME DEFAULT NULL,
+    `update_time` DATETIME DEFAULT NULL,
+    `delete_time` DATETIME DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '富文本协议配置';
+
+INSERT IGNORE INTO `vs_drama_richtext` (`id`, `title`, `content`, `create_time`, `update_time`) VALUES
+(1, '用户协议', '<p>请在后台"协议管理"中编辑用户协议内容。</p>', NOW(), NOW()),
+(2, '隐私协议', '<p>请在后台"协议管理"中编辑隐私协议内容。</p>', NOW(), NOW()),
+(3, '法律声明', '<p>请在后台"协议管理"中编辑法律声明内容。</p>', NOW(), NOW()),
+(4, '联系我们', '<p>请在后台"协议管理"中编辑联系我们内容。</p>', NOW(), NOW()),
+(5, '关于我们', '<p>请在后台"协议管理"中编辑关于我们内容。</p>', NOW(), NOW());
+
 CREATE TABLE IF NOT EXISTS `vs_drama_reseller_bind` (
     `id`            BIGINT   NOT NULL AUTO_INCREMENT,
     `site_id`       INT      NOT NULL DEFAULT 1,
@@ -421,3 +438,38 @@ CREATE TABLE IF NOT EXISTS `vs_drama_reseller_bind` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_user_id` (`user_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '分销绑定关系';
+
+-- ============================================================
+-- 评论表
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `vs_drama_comment` (
+    `id`             BIGINT       NOT NULL AUTO_INCREMENT,
+    `site_id`        INT          NOT NULL DEFAULT 1,
+    `user_id`        BIGINT       NOT NULL,
+    `video_id`       BIGINT       NOT NULL,
+    `parent_id`      BIGINT       NOT NULL DEFAULT 0 COMMENT '顶级评论为0',
+    `reply_user_id`  BIGINT       NOT NULL DEFAULT 0 COMMENT '被回复用户ID，0表示无',
+    `reply_nickname` VARCHAR(64)  NOT NULL DEFAULT '',
+    `content`        VARCHAR(500) NOT NULL,
+    `likes`          INT          NOT NULL DEFAULT 0,
+    `status`         TINYINT      NOT NULL DEFAULT 1 COMMENT '1正常 0隐藏',
+    `create_time`    DATETIME     DEFAULT NULL,
+    `update_time`    DATETIME     DEFAULT NULL,
+    `delete_time`    DATETIME     DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_video_parent` (`video_id`, `parent_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '评论';
+
+-- ============================================================
+-- 评论点赞表
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `vs_drama_comment_like` (
+    `id`          BIGINT   NOT NULL AUTO_INCREMENT,
+    `user_id`     BIGINT   NOT NULL,
+    `comment_id`  BIGINT   NOT NULL,
+    `create_time` DATETIME DEFAULT NULL,
+    `update_time` DATETIME DEFAULT NULL,
+    `delete_time` DATETIME DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_user_comment` (`user_id`, `comment_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '评论点赞';

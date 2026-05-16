@@ -62,6 +62,17 @@ public class AuthController {
         return R.ok(buildLoginResp(user, request));
     }
 
+    @Operation(summary = "发送验证码（开发环境固定返回成功）")
+    @PostMapping("/send-sms")
+    public R<Void> sendSms(@RequestBody LoginReq req) {
+        // TODO: 接入真实短信服务后在此处发送验证码
+        if (req.getMobile() == null || req.getMobile().isBlank()) {
+            return R.fail("手机号不能为空");
+        }
+        log.info("发送验证码: mobile={}", req.getMobile());
+        return R.ok();
+    }
+
     @Operation(summary = "退出登录")
     @PostMapping("/logout")
     public R<Void> logout() {

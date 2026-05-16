@@ -3,6 +3,7 @@ package com.duanju.drama.domain;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.duanju.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -71,4 +72,9 @@ public class Video extends BaseEntity {
 
     @TableField(exist = false)
     private Long totalViews;
+
+    /** 当前用户是否已收藏（非DB字段，接口动态填充） */
+    @TableField(exist = false)
+    @JsonProperty("is_favorite")
+    private Integer isFavorite;
 }
