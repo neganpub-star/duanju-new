@@ -13,17 +13,17 @@
 				<view class="vip_info">
 					<view class="vip_tag">
 						<text class="tag_icon">♛</text>
-						<text class="tag_text" v-if="userInfo.is_vip == 1">VIP会员</text>
+						<text class="tag_text" v-if="userInfo.is_vip == 1">{{ $t('user.vipMember') }}</text>
 						<text class="tag_text" v-else>{{ $t('vip.activateVip') }}</text>
 					</view>
 					<view class="vip_title" v-if="userInfo.is_vip == 1">{{ $t('vip.nobleMember') }}</view>
 					<view class="vip_title" v-else>{{ $t('vip.enjoyAll') }}</view>
-					<view class="vip_sub" v-if="userInfo.is_vip == 1">有效期至 {{ userInfo.vip_expiretime_text }}</view>
+					<view class="vip_sub" v-if="userInfo.is_vip == 1">{{ $t('vip.expiredAt') }} {{ userInfo.vip_expiretime_text }}</view>
 					<view class="vip_sub" v-else>{{ $t('vip.activateSlogan') }}</view>
 					<view class="vip_perks">
-						<view class="perk"><text class="perk_icon">✓</text><text>VIP剧集免费看</text></view>
-						<view class="perk"><text class="perk_icon">✓</text><text>新剧优先解锁</text></view>
-						<view class="perk"><text class="perk_icon">✓</text><text>无广告体验</text></view>
+						<view class="perk"><text class="perk_icon">✓</text><text>{{ $t('user.perkFreeEpisodes') }}</text></view>
+						<view class="perk"><text class="perk_icon">✓</text><text>{{ $t('user.perkEarlyUnlock') }}</text></view>
+						<view class="perk"><text class="perk_icon">✓</text><text>{{ $t('user.perkNoAds') }}</text></view>
 					</view>
 				</view>
 				<image class="vip_image" src="https://img.nymaite.com/video_short/icons/vip.png" mode="widthFix"></image>
@@ -42,12 +42,12 @@
 					>
 						<view class="hot_badge" v-if="index === hotIndex">{{ $t('vip.recommended') }}</view>
 						<view class="item_name">{{ item.title }}</view>
-						<view class="item_days">{{ item.days }}天</view>
+						<view class="item_days">{{ item.days }}{{ $t('common.days') }}</view>
 						<view class="item_price">
 							<text class="unit">¥</text>
 							<text class="price_num">{{ item.price }}</text>
 						</view>
-						<view class="item_oprice">原价 ¥{{ item.original_price }}</view>
+						<view class="item_oprice">{{ $t('vip.originalPrice') }}{{ item.original_price }}</view>
 						<view class="item_btn" :class="{ hot_btn: index === hotIndex }">{{ $t('vip.activateNow') }}</view>
 					</view>
 				</view>
