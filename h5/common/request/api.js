@@ -16,6 +16,11 @@ const api = {
 			method: 'GET',
 			desc: '富文本协议内容'
 		},
+		i18nConfig: {
+			url: '/api/common/i18n/config',
+			method: 'GET',
+			desc: '国际化配置（支持语种列表）'
+		},
 		wxguanggao: {
 			url: '/api/noop',
 			method: 'GET',

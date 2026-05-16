@@ -41,7 +41,7 @@
 						@click="openVip(item.id, item.price)"
 					>
 						<view class="hot_badge" v-if="index === hotIndex">{{ $t('vip.recommended') }}</view>
-						<view class="item_name">{{ item.title }}</view>
+						<view class="item_name">{{ item.display_title || item.title }}</view>
 						<view class="item_days">{{ item.days }}{{ $t('common.days') }}</view>
 						<view class="item_price">
 							<text class="unit">¥</text>
@@ -172,7 +172,7 @@
 										 },
 										 fail: (res) => {
 										   uni.showToast({
-										   		      title: '支付失败',
+										   		      title: this.('payment.failed'),
 										   		  	icon: 'none',
 										   		  	duration: 2000
 										   		  });
@@ -212,7 +212,7 @@
 									//       // 但是最终状态要以商户后端结果为准
 									//     }else{
 									// 		uni.showToast({
-									// 		      title: '支付失败',
+									// 		      title: this.('payment.failed'),
 									// 		  	icon: 'none',
 									// 		  	duration: 2000
 									// 		  });
@@ -223,7 +223,7 @@
 									//   fail(res) {
 									// 	  console.log(res,'fail')
 									// 	  uni.showToast({
-									// 	        title: '支付失败',
+									// 	        title: this.('payment.failed'),
 									// 	    	icon: 'none',
 									// 	    	duration: 2000
 									// 	    });
@@ -336,7 +336,7 @@
 				    success(res) {
 				      //console.log('requestVirtualPayment success', res)
 					  uni.showToast({
-					      title: '支付成功',
+					      title: this.('payment.success'),
 					  	icon: 'none',
 					  	duration: 2000
 					  });
@@ -349,7 +349,7 @@
 				    fail({ errMsg, errCode }) {
 				      //console.error(errMsg, errCode)
 					  uni.showToast({
-					      title: '支付失败',
+					      title: this.('payment.failed'),
 					  	icon: 'none',
 					  	duration: 2000
 					  });
@@ -383,7 +383,7 @@
 							paySign: pay.paySign,
 							success: success => {
 								uni.showToast({
-								    title: '支付成功',
+								    title: this.('payment.success'),
 									icon: 'none',
 									duration: 2000
 								});
@@ -394,7 +394,7 @@
 							},
 							fail: fail => {
 								uni.showToast({
-								    title: '支付失败',
+								    title: this.('payment.failed'),
 									icon: 'none',
 									duration: 2000
 								});
@@ -418,7 +418,7 @@
 							res => {
 								if (res.err_msg == "get_brand_wcpay_request:ok") {
 									uni.showToast({
-									    title: '支付成功',
+									    title: this.('payment.success'),
 										icon: 'none',
 										duration: 2000
 									});
@@ -428,7 +428,7 @@
 									uni.hideLoading()
 								} else {
 									uni.showToast({
-									    title: '支付失败',
+									    title: this.('payment.failed'),
 										icon: 'none',
 										duration: 2000
 									});
@@ -448,7 +448,7 @@
 										"orderInfo": pay,
 										success: success => {
 											uni.showToast({
-												title: '支付成功',
+												title: this.('payment.success'),
 												icon: 'none',
 												duration: 2000
 											});
@@ -469,7 +469,7 @@
 												uni.hideLoading()
 											} else {
 												uni.showToast({
-													title: '支付失败',
+													title: this.('payment.failed'),
 													icon: 'none',
 													duration: 2000
 												});
@@ -506,7 +506,7 @@
 						paySign: data.paySign
 					}, (res) => {
 						if(res.err_msg === 'get_brand_wcpay_request:ok') {
-							uni.showToast({ title: '支付成功', icon: 'success' })
+							uni.showToast({ title: this.('payment.success'), icon: 'success' })
 							this.getUserInfo()
 						} else {
 							uni.showToast({ title: '支付取消', icon: 'none' })

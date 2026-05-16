@@ -146,6 +146,7 @@ export default {
     myPoints: '我的积分',
     currentPoints: '当前积分',
     recharge: '充值',
+    rechargeNow: '立即充值',
     history: '积分明细',
     taskTitle: '积分任务',
     freeCount: '免费获取次数',
@@ -155,6 +156,14 @@ export default {
     complete: '去完成',
     income: '收入',
     expense: '支出',
+    neverExpire: '充值后积分余额永不过期',
+    notices: '注意事项',
+    virtualProduct: '虚拟产品',
+    noRefund: '一经充值不可退款',
+    recharging: '充值中...',
+    orderFailed: '下单失败',
+    rechargeDone: '充值成功',
+    payCancel: '支付取消',
   },
   // 钱包/流水
   wallet: {

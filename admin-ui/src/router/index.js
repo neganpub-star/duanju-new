@@ -96,7 +96,7 @@ export const constantRoutes = [
     path: '/drama',
     component: Layout,
     redirect: '/drama/video',
-    meta: { title: '短剧管理', icon: 'video' },
+    meta: { title: '短剧管理', icon: 'list' },
     children: [
       {
         path: 'video',
@@ -149,6 +149,12 @@ export const constantRoutes = [
         component: () => import('@/views/commerce/vip/order'),
         name: 'CommerceVipOrder',
         meta: { title: 'VIP订单', icon: 'documentation' }
+      },
+      {
+        path: 'usable',
+        component: () => import('@/views/commerce/usable/index'),
+        name: 'CommerceUsable',
+        meta: { title: '积分套餐', icon: 'coin' }
       },
       {
         path: 'reseller',

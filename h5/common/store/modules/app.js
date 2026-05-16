@@ -39,6 +39,8 @@ export default {
 		adCountdown: 120,
 		blocks: [],
 		lang: '',
+		supportedLangs: ['zh-CN', 'zh-TW', 'en'],
+		showLangSwitcher: true,
 	},
 	getters: {
 		config: state => state.config,
@@ -55,6 +57,8 @@ export default {
 		adCountdown: state => state.adCountdown,
 		blocks: state => state.blocks,
 		lang: state => state.lang,
+		supportedLangs: state => state.supportedLangs,
+		showLangSwitcher: state => state.showLangSwitcher,
 	},
 	mutations: {
 		setjfName(state, data) { },
@@ -71,6 +75,8 @@ export default {
 		setVideoAutoplay(state, data) { state.videoAutoplay = data },
 		setBlocks(state, data) { state.blocks = data },
 		setLang(state, data) { state.lang = data },
+		setSupportedLangs(state, data) { state.supportedLangs = data },
+		setShowLangSwitcher(state, data) { state.showLangSwitcher = data },
 		changeAdCountdown(state) {
 			state.adCountdown = uni.getStorageSync("adCountdown") || 120
 		}
@@ -100,6 +106,19 @@ export default {
 			// 初始化语言
 			const { getCurrentLang } = await import('@/common/i18n/index.js')
 			commit('setLang', getCurrentLang())
+
+			// 拉取 i18n 配置（支持语种列表）
+			try {
+				const i18nResult = await request("common.i18nConfig", {}, false)
+				if (i18nResult.code === 1 && i18nResult.data) {
+					if (Array.isArray(i18nResult.data.supported_langs) && i18nResult.data.supported_langs.length > 0) {
+						commit('setSupportedLangs', i18nResult.data.supported_langs)
+					}
+					commit('setShowLangSwitcher', i18nResult.data.show_switcher !== false)
+				}
+			} catch(e) {
+				console.warn('i18n config fetch failed, using defaults', e)
+			}
 
 			return DEFAULT_CONFIG
 		},

@@ -3,17 +3,17 @@
 	<view class="page_content">
 		<!-- #ifndef MP-TOUTIAO -->
 		<view class="head_content">
-			<CustomNavbar title="积分充值"></CustomNavbar>
+			<CustomNavbar :title="$t('points.title')"></CustomNavbar>
 		</view>
 		<!-- #endif -->
 		
 		<view class="main_content">
 			<view class="box1">
-				<view class="box_title">充值后积分余额永不过期</view>
+				<view class="box_title">{{ $t('points.neverExpire') }}</view>
 				<view class="box_content">
 					<view class="list_box">
 						<view class="item" :class="{ active: item.id == integralActiveId, badge: item.flag }" :data-flag="item.flag" v-for="(item, index) in integralData" :key="item.id" @click="integralItem(item.id, item.price)">
-							<view class="line1">{{ item.usable }}积分</view>
+							<view class="line1">{{ item.display_title || (item.usable + ' ' + $t('points.points')) }}</view>
 							<view class="line2">
 								<text class="text1">￥</text>
 								<text class="text2">{{ item.price }}</text>
@@ -22,18 +22,18 @@
 								<text class="text">￥{{ item.original_price }}</text>
 							</view>
 							<view class="line4">
-								<view class="">虚拟产品</view>
-								<view class="">一经充值不可退款</view>
+								<view class="">{{ $t('points.virtualProduct') }}</view>
+								<view class="">{{ $t('points.noRefund') }}</view>
 							</view>
 						</view>
 					</view>
 					<view class="button_box">
-						<u-button :loading="!buttonLoading" text="立即充值" :customStyle="buttonStyle" @click="createOrder"/>
+						<u-button :loading="!buttonLoading" :text="$t('points.rechargeNow')" :customStyle="buttonStyle" @click="createOrder"/>
 					</view>
 				</view>
 			</view>
 			<view class="box3">
-				<view class="box_title">注意事项</view>
+				<view class="box_title">{{ $t('points.notices') }}</view>
 				<view class="box_content">
 					<view class="text_info">
 						<u-parse :content="textInfo"></u-parse>
@@ -100,7 +100,7 @@
 			// 创建订单
 			createOrder() {
 				
-				if(!this.integralActiveId || !this.integralActivePrice) return this.$u.toast('请选择积分套餐')
+				if(!this.integralActiveId || !this.integralActivePrice) return this.$u.toast(this.$t('points.buyPoints'))
 				this.recharge(this.integralActiveId, this.integralActivePrice)
 			},
 			// 充值
@@ -110,7 +110,7 @@
 				// #endif
 				if(!this.buttonLoading) return
 				this.buttonLoading = false
-				uni.showLoading({ title: '充值中...', mask: true })
+				uni.showLoading({ title: this.$t('points.recharging'), mask: true })
 				this.$request('integral.create', {
 					usable_id: id,
 					total_fee: price,
@@ -121,7 +121,7 @@
 					if(res.code === 1) {
 						this.handlePayResult(res.data)
 					} else {
-						uni.showToast({ title: res.msg || '下单失败', icon: 'none' })
+						uni.showToast({ title: res.msg || this.$t('points.orderFailed'), icon: 'none' })
 					}
 				}).catch(() => {
 					uni.hideLoading()
@@ -140,10 +140,10 @@
 						signType: data.signType, paySign: data.paySign
 					}, (res) => {
 						if(res.err_msg === 'get_brand_wcpay_request:ok') {
-							uni.showToast({ title: '充值成功', icon: 'success' })
+							uni.showToast({ title: this.$t('points.rechargeDone'), icon: 'success' })
 							this.getUserInfo && this.getUserInfo()
 						} else {
-							uni.showToast({ title: '支付取消', icon: 'none' })
+							uni.showToast({ title: this.$t('points.payCancel'), icon: 'none' })
 						}
 					})
 					return
@@ -230,7 +230,7 @@
 									 orderId:res.orderId,
 										 success: (res) => {
 										   uni.showToast({
-										   		      title: '支付成功',
+										   		      title: this.('payment.success'),
 										   		  	icon: 'none',
 										   		  	duration: 2000
 										   		  });
@@ -242,7 +242,7 @@
 										 fail: (res) => {
 											  uni.hideLoading()
 										   uni.showToast({
-										   	        title: '支付失败',
+										   	        title: this.('payment.failed'),
 										   	    	icon: 'none',
 										   	    	duration: 2000
 										   	    });
@@ -256,7 +256,7 @@
 										   uni.hideLoading()
 										   
 									    uni.showToast({
-									    	        title: '支付失败',
+									    	        title: this.('payment.failed'),
 									    	    	icon: 'none',
 									    	    	duration: 2000
 									    	    });
@@ -273,7 +273,7 @@
 									// 	  console.log(res,'success')
 									//     if (res.code == 0) {
 									// 		uni.showToast({
-									// 		      title: '支付成功',
+									// 		      title: this.('payment.success'),
 									// 		  	icon: 'none',
 									// 		  	duration: 2000
 									// 		  });
@@ -285,7 +285,7 @@
 									//       // 但是最终状态要以商户后端结果为准
 									//     }else{
 									// 		uni.showToast({
-									// 		      title: '支付失败',
+									// 		      title: this.('payment.failed'),
 									// 		  	icon: 'none',
 									// 		  	duration: 2000
 									// 		  });
@@ -296,7 +296,7 @@
 									//   fail(res) {
 									// 	  console.log(res,'fail')
 									// 	  uni.showToast({
-									// 	        title: '支付失败',
+									// 	        title: this.('payment.failed'),
 									// 	    	icon: 'none',
 									// 	    	duration: 2000
 									// 	    });
@@ -358,7 +358,7 @@
 				    success(res) {
 				      //console.log('requestVirtualPayment success', res)
 					  uni.showToast({
-					      title: '支付成功',
+					      title: this.('payment.success'),
 					  	icon: 'none',
 					  	duration: 2000
 					  });
@@ -371,7 +371,7 @@
 				    fail({ errMsg, errCode }) {
 				      //console.error(errMsg, errCode)
 					  uni.showToast({
-					      title: '支付失败',
+					      title: this.('payment.failed'),
 					  	icon: 'none',
 					  	duration: 2000
 					  });
@@ -407,7 +407,7 @@
 				// 	res => {
 				// 		if (res.err_msg == "get_brand_wcpay_request:ok") {
 				// 			uni.showToast({
-				// 			    title: '支付成功',
+				// 			    title: this.('payment.success'),
 				// 				icon: 'none',
 				// 				duration: 2000
 				// 			});
@@ -417,7 +417,7 @@
 				// 			uni.hideLoading()
 				// 		} else {
 				// 			uni.showToast({
-				// 			    title: '支付失败',
+				// 			    title: this.('payment.failed'),
 				// 				icon: 'none',
 				// 				duration: 2000
 				// 			});
@@ -438,7 +438,7 @@
 				// 				"orderInfo": pay,
 				// 				success: success => {
 				// 					uni.showToast({
-				// 						title: '支付成功',
+				// 						title: this.('payment.success'),
 				// 						icon: 'none',
 				// 						duration: 2000
 				// 					});
@@ -459,7 +459,7 @@
 				// 						uni.hideLoading()
 				// 					} else {
 				// 						uni.showToast({
-				// 							title: '支付失败',
+				// 							title: this.('payment.failed'),
 				// 							icon: 'none',
 				// 							duration: 2000
 				// 						});
@@ -485,7 +485,7 @@
 							paySign: pay.paySign,
 							success: success => {
 								uni.showToast({
-								    title: '支付成功',
+								    title: this.('payment.success'),
 									icon: 'none',
 									duration: 2000
 								});
@@ -496,7 +496,7 @@
 							},
 							fail: fail => {
 								uni.showToast({
-								    title: '支付失败',
+								    title: this.('payment.failed'),
 									icon: 'none',
 									duration: 2000
 								});
@@ -519,7 +519,7 @@
 							res => {
 								if (res.err_msg == "get_brand_wcpay_request:ok") {
 									uni.showToast({
-									    title: '支付成功',
+									    title: this.('payment.success'),
 										icon: 'none',
 										duration: 2000
 									});
@@ -529,7 +529,7 @@
 									uni.hideLoading()
 								} else {
 									uni.showToast({
-									    title: '支付失败',
+									    title: this.('payment.failed'),
 										icon: 'none',
 										duration: 2000
 									});
@@ -549,7 +549,7 @@
 										"orderInfo": pay,
 										success: success => {
 											uni.showToast({
-												title: '支付成功',
+												title: this.('payment.success'),
 												icon: 'none',
 												duration: 2000
 											});
@@ -570,7 +570,7 @@
 												uni.hideLoading()
 											} else {
 												uni.showToast({
-													title: '支付失败',
+													title: this.('payment.failed'),
 													icon: 'none',
 													duration: 2000
 												});

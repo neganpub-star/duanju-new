@@ -19,14 +19,18 @@ export default {
   },
   computed: {
     showSwitcher() {
-      return this.$store.state.app.config?.system?.show_lang_switcher !== '0'
+      return this.$store.state.app.showLangSwitcher !== false
     },
     langOptions() {
-      return [
-        { value: 'zh-CN', label: this.$t('lang.zhCN') },
-        { value: 'zh-TW', label: this.$t('lang.zhTW') },
-        { value: 'en',    label: this.$t('lang.en') },
-      ]
+      const allLangs = {
+        'zh-CN': this.$t('lang.zhCN'),
+        'zh-TW': this.$t('lang.zhTW'),
+        'en':    this.$t('lang.en'),
+      }
+      const supported = this.$store.state.app.supportedLangs || ['zh-CN', 'zh-TW', 'en']
+      return supported
+        .filter(code => allLangs[code])
+        .map(code => ({ value: code, label: allLangs[code] }))
     },
     currentLangLabel() {
       const opt = this.langOptions.find(o => o.value === this.currentLang)
