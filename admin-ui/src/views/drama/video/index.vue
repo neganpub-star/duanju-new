@@ -7,8 +7,8 @@
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="全部" clearable style="width:120px">
-          <el-option label="上架" value="normal" />
-          <el-option label="下架" value="hidden" />
+          <el-option label="上架" :value="1" />
+          <el-option label="下架" :value="0" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -36,8 +36,8 @@
       <el-table-column label="集数" prop="episodeCount" width="70" align="center" />
       <el-table-column label="状态" width="80" align="center">
         <template #default="{ row }">
-          <el-tag :type="row.status === 'normal' ? 'success' : 'info'">
-            {{ row.status === 'normal' ? '上架' : '下架' }}
+          <el-tag :type="row.status === 1 ? 'success' : 'info'">
+            {{ row.status === 1 ? '上架' : '下架' }}
           </el-tag>
         </template>
       </el-table-column>
@@ -85,8 +85,8 @@
             </el-form-item>
             <el-form-item label="状态">
               <el-radio-group v-model="form.status">
-                <el-radio value="normal">上架</el-radio>
-                <el-radio value="hidden">下架</el-radio>
+                <el-radio :value="1">上架</el-radio>
+                <el-radio :value="0">下架</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-form>
@@ -182,38 +182,61 @@
       <el-dialog
         :title="epForm.id ? '编辑分集' : '添加分集'"
         v-model="epFormVisible"
-        width="520px"
+        width="560px"
         append-to-body
       >
-        <el-form ref="epFormRef" :model="epForm" :rules="epRules" label-width="80px">
-          <el-form-item label="集数" prop="episodeNum">
-            <el-input-number v-model="epForm.episodeNum" :min="1" style="width:140px" />
-          </el-form-item>
-          <el-form-item label="标题" prop="title">
-            <el-input v-model="epForm.title" placeholder="如：第1集" />
-          </el-form-item>
-          <el-form-item label="视频URL" prop="url">
-            <el-input v-model="epForm.url" placeholder="视频播放地址（mp4/m3u8）" />
-          </el-form-item>
-          <el-form-item label="HLS地址">
-            <el-input v-model="epForm.hlsUrl" placeholder="HLS m3u8 地址（可选）" />
-          </el-form-item>
-          <el-form-item label="时长(秒)">
-            <el-input-number v-model="epForm.duration" :min="0" style="width:140px" />
-          </el-form-item>
-          <el-form-item label="是否免费">
-            <el-radio-group v-model="epForm.isFree">
-              <el-radio :value="0">付费</el-radio>
-              <el-radio :value="1">免费</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="状态">
-            <el-radio-group v-model="epForm.status">
-              <el-radio :value="1">显示</el-radio>
-              <el-radio :value="0">隐藏</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-form>
+        <el-tabs v-model="epActiveTab">
+          <!-- 基本信息 -->
+          <el-tab-pane label="基本信息" name="basic">
+            <el-form ref="epFormRef" :model="epForm" :rules="epRules" label-width="80px" style="margin-top:8px">
+              <el-form-item label="集数" prop="episodeNum">
+                <el-input-number v-model="epForm.episodeNum" :min="1" style="width:140px" />
+              </el-form-item>
+              <el-form-item label="默认标题" prop="title">
+                <el-input v-model="epForm.title" placeholder="如：第1集（作为默认回退）" />
+              </el-form-item>
+              <el-form-item label="视频URL" prop="url">
+                <el-input v-model="epForm.url" placeholder="视频播放地址（mp4/m3u8）" />
+              </el-form-item>
+              <el-form-item label="HLS地址">
+                <el-input v-model="epForm.hlsUrl" placeholder="HLS m3u8 地址（可选）" />
+              </el-form-item>
+              <el-form-item label="时长(秒)">
+                <el-input-number v-model="epForm.duration" :min="0" style="width:140px" />
+              </el-form-item>
+              <el-form-item label="是否免费">
+                <el-radio-group v-model="epForm.isFree">
+                  <el-radio :value="0">付费</el-radio>
+                  <el-radio :value="1">免费</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="状态">
+                <el-radio-group v-model="epForm.status">
+                  <el-radio :value="1">显示</el-radio>
+                  <el-radio :value="0">隐藏</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
+
+          <!-- 每个语言 tab -->
+          <el-tab-pane
+            v-for="lang in supportedLangs"
+            :key="lang.code"
+            :label="lang.label"
+            :name="`ep_${lang.code}`"
+          >
+            <el-form label-width="80px" style="margin-top:8px">
+              <el-form-item label="标题">
+                <el-input
+                  v-model="epI18nForm[lang.code]"
+                  :placeholder="`${lang.label}标题，如 Episode ${epForm.episodeNum || 'N'}`"
+                />
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
+        </el-tabs>
+
         <template #footer>
           <el-button @click="epFormVisible = false">取消</el-button>
           <el-button type="primary" @click="submitEpForm">确定</el-button>
@@ -319,7 +342,7 @@ function handleQuery() { queryParams.pageNum = 1; getList() }
 function resetQuery() { queryRef.value?.resetFields(); handleQuery() }
 
 function handleAdd() {
-  form.value = { status: 'normal', siteId: 1 }
+  form.value = { status: 1, siteId: 1 }
   supportedLangs.value.forEach(l => { i18nForm[l.code] = { title: '', desc: '' } })
   activeTab.value = 'basic'
   dialog.title = '新增视频'
@@ -389,6 +412,8 @@ const episodes = ref([])
 const epFormVisible = ref(false)
 const epForm = ref({})
 const epFormRef = ref()
+const epActiveTab = ref('basic')
+const epI18nForm = reactive({})
 const epRules = {
   episodeNum: [{ required: true, message: '请输入集数', trigger: 'blur' }],
   title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
@@ -415,21 +440,31 @@ async function loadEpisodes() {
 function openEpForm(row) {
   if (row) {
     epForm.value = { ...row }
+    const titleMap = parseJson(row.titleI18n)
+    supportedLangs.value.forEach(l => { epI18nForm[l.code] = titleMap[l.code] || '' })
   } else {
     const nextNum = episodes.value.length > 0
       ? Math.max(...episodes.value.map(e => e.episodeNum)) + 1
       : 1
     epForm.value = { episodeNum: nextNum, isFree: 0, status: 1 }
+    supportedLangs.value.forEach(l => { epI18nForm[l.code] = '' })
   }
+  epActiveTab.value = 'basic'
   epFormVisible.value = true
 }
 
 async function submitEpForm() {
   await epFormRef.value?.validate()
-  if (epForm.value.id) {
-    await updateEpisode(epForm.value.id, epForm.value)
+  const titleI18n = {}
+  supportedLangs.value.forEach(l => { if (epI18nForm[l.code]) titleI18n[l.code] = epI18nForm[l.code] })
+  const payload = {
+    ...epForm.value,
+    titleI18n: Object.keys(titleI18n).length ? JSON.stringify(titleI18n) : null,
+  }
+  if (payload.id) {
+    await updateEpisode(payload.id, payload)
   } else {
-    await addEpisode(epDrawer.videoId, epForm.value)
+    await addEpisode(epDrawer.videoId, payload)
   }
   ElMessage.success('操作成功')
   epFormVisible.value = false
