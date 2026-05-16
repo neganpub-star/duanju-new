@@ -1483,6 +1483,24 @@
 					flex-direction: row;
 					align-items: center;
 					min-width: 0;
+
+					.text1 {
+						flex: 1;
+						min-width: 0;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+						display: block;
+					}
+
+					.divider {
+						flex: 0 0 auto;
+					}
+
+					.text2 {
+						flex: 0 0 auto;
+						white-space: nowrap;
+					}
 				}
 
 				.right {
