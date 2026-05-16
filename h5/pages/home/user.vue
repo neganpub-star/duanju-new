@@ -198,7 +198,7 @@
 				</view>
 				<!-- 快捷入口 -->
 				<view class="hero-shortcuts" v-if="userInfoStore">
-					<view class="shortcut-item" @click="jumpView('/pages/home/watch')">
+					<view class="shortcut-item" @click="uni.switchTab({ url: '/pages/home/watch' })">
 						<u-icon name="eye" color="#fff" size="22"></u-icon>
 						<text class="shortcut-label">{{ $t('user.watchHistory') }}</text>
 					</view>
@@ -779,7 +779,13 @@
 
 				if (url) {
 					if (!this.token) return this.$u.toast('请先登录!')
-					this.jumpView(url)
+					// TabBar 页面需用 switchTab
+					const tabPages = ['/pages/home/index', '/pages/home/watch', '/pages/home/video', '/pages/home/user']
+					if (tabPages.includes(url)) {
+						uni.switchTab({ url })
+					} else {
+						this.jumpView(url)
+					}
 				} else {
 					console.log(id, '这是id')
 					// if(!id) return this.$u.toast('功能正在开发中')
