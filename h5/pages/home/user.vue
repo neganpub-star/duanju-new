@@ -178,7 +178,9 @@
 						</view>
 					</view>
 					<view class="hero-arrow" style="display:flex;align-items:center;">
-						<LangSwitcher style="margin-right: 16rpx;" />
+						<view @click.stop>
+							<LangSwitcher style="margin-right: 16rpx;" />
+						</view>
 						<u-icon name="arrow-right" color="rgba(255,255,255,0.7)" size="18"></u-icon>
 					</view>
 				</view>
