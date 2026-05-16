@@ -81,10 +81,10 @@
 					</block>
 				</view>
 				<view class="nodata" v-if="!videoList.length && status == 'nomore'">
-					<u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/data.png" />
+					<u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/data.png" :text="$t('common.noData')" />
 				</view>
 				<view class="liststatus" v-else>
-					<u-loadmore :status="status" :line="true" />
+					<u-loadmore :status="status" :line="true" :nomoreText="$t('home.noMore')" />
 				</view>
 			</view>
 		</scroll-view>

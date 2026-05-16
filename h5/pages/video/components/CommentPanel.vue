@@ -81,7 +81,7 @@
 				</view>
 
 				<view class="list-status" v-if="list.length">
-					<u-loadmore :status="status" :line="true" />
+					<u-loadmore :status="status" :line="true" :nomoreText="$t('home.noMore')" />
 				</view>
 			</scroll-view>
 

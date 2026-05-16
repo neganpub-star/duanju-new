@@ -39,10 +39,10 @@
 								</view>
 							</view>
 							<view class="nodata" v-if="!item.list.length && item.status == 'nomore'">
-								<u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/data.png" />
+								<u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/data.png" :text="$t('common.noData')" />
 							</view>
 							<view class="liststatus" v-else>
-								<u-loadmore :status="item.status" :line="true" />
+								<u-loadmore :status="item.status" :line="true" :nomoreText="$t('home.noMore')" />
 							</view>
 						</view>
 					</scroll-view>
