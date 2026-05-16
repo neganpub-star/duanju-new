@@ -38,15 +38,15 @@ public class RichTextController {
                         .eq(RichText::getDocKey, key)
                         .eq(RichText::getLang, "zh-CN"));
             }
-            if (rt == null) return R.ok(emptyRichText(key, "暂无内容"));
+            if (rt == null) return R.ok(emptyRichText(key, I18nUtil.msg("error.richtext.no.content")));
             return R.ok(rt);
         }
         // 兼容旧的 id 查询
         if (id != null) {
             RichText rt = richTextMapper.selectById(id);
-            return R.ok(rt != null ? rt : emptyRichText("", "暂无内容"));
+            return R.ok(rt != null ? rt : emptyRichText("", I18nUtil.msg("error.richtext.no.content")));
         }
-        return R.fail("参数错误");
+        return R.fail(I18nUtil.msg("error.param.invalid"));
     }
 
     private String resolveCurrentLang() {

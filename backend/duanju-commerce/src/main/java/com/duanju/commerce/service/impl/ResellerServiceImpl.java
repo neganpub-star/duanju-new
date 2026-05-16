@@ -15,6 +15,9 @@ import com.duanju.system.domain.DramaUser;
 import com.duanju.system.mapper.DramaUserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +37,18 @@ public class ResellerServiceImpl implements ResellerService {
     private final DramaUserMapper userMapper;
     private final WalletService walletService;
 
+    @Autowired(required = false)
+    private MessageSource messageSource;
+
+    private String msg(String key) {
+        if (messageSource == null) return key;
+        try {
+            return messageSource.getMessage(key, null, key, LocaleContextHolder.getLocale());
+        } catch (Exception e) {
+            return key;
+        }
+    }
+
     @Override
     public List<Reseller> listAll(Integer siteId) {
         return resellerMapper.selectList(new LambdaQueryWrapper<Reseller>()
@@ -52,7 +67,7 @@ public class ResellerServiceImpl implements ResellerService {
     public ResellerOrder createOrder(Integer siteId, Long userId, Long resellerId, String payType, String platform) {
         Reseller reseller = resellerMapper.selectById(resellerId);
         if (reseller == null || !"normal".equals(reseller.getStatus())) {
-            throw ServiceException.of("分销套餐不存在或已下架");
+            throw ServiceException.of(msg("error.reseller.not.found"));
         }
 
         BigDecimal payFee = reseller.getPrice();

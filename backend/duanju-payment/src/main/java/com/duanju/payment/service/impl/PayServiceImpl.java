@@ -13,6 +13,9 @@ import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -27,13 +30,25 @@ public class PayServiceImpl implements PayService {
     private final WxPayProperties wxPayProperties;
     private final AlipayProperties alipayProperties;
 
+    @Autowired(required = false)
+    private MessageSource messageSource;
+
+    private String msg(String key) {
+        if (messageSource == null) return key;
+        try {
+            return messageSource.getMessage(key, null, key, LocaleContextHolder.getLocale());
+        } catch (Exception e) {
+            return key;
+        }
+    }
+
     @Override
     public Map<String, Object> prepay(String orderSn, BigDecimal amount, String subject,
                                        String payType, String platform, String openid) {
         return switch (payType) {
             case "wechat" -> wxPrepay(orderSn, amount, subject, platform, openid);
             case "alipay" -> alipayPrepay(orderSn, amount, subject);
-            default -> throw ServiceException.of("不支持的支付方式: " + payType);
+            default -> throw ServiceException.of(msg("error.pay.type") + ": " + payType);
         };
     }
 
@@ -80,14 +95,14 @@ public class PayServiceImpl implements PayService {
                     result.put("timeStamp", app.getTimestamp());
                     result.put("sign", app.getSign());
                 }
-                default -> throw ServiceException.of("不支持的微信支付平台: " + platform);
+                default -> throw ServiceException.of(msg("error.pay.platform") + ": " + platform);
             }
             return result;
         } catch (ServiceException e) {
             throw e;
         } catch (Exception e) {
             log.error("微信预支付失败 orderSn={}", orderSn, e);
-            throw ServiceException.of("微信支付发起失败: " + e.getMessage());
+            throw ServiceException.of(msg("error.pay.failed") + ": " + e.getMessage());
         }
     }
 

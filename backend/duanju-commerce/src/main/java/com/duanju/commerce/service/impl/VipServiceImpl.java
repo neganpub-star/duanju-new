@@ -13,6 +13,9 @@ import com.duanju.system.mapper.DramaUserMapper;
 import cn.hutool.core.util.IdUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +32,18 @@ public class VipServiceImpl implements VipService {
     private final VipOrderMapper vipOrderMapper;
     private final DramaUserMapper userMapper;
     private final WalletService walletService;
+
+    @Autowired(required = false)
+    private MessageSource messageSource;
+
+    private String msg(String key) {
+        if (messageSource == null) return key;
+        try {
+            return messageSource.getMessage(key, null, key, LocaleContextHolder.getLocale());
+        } catch (Exception e) {
+            return key;
+        }
+    }
 
     @Override
     public List<Vip> listAll(Integer siteId) {
@@ -48,7 +63,7 @@ public class VipServiceImpl implements VipService {
     public VipOrder createOrder(Integer siteId, Long userId, Long vipId, String payType, String platform) {
         Vip vip = vipMapper.selectById(vipId);
         if (vip == null || !"normal".equals(vip.getStatus())) {
-            throw ServiceException.of("VIP套餐不存在或已下架");
+            throw ServiceException.of(msg("error.vip.not.found"));
         }
 
         BigDecimal payFee = vip.getPrice();

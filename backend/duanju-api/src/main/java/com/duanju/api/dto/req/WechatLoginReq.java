@@ -6,13 +6,13 @@ import lombok.Data;
 @Data
 public class WechatLoginReq {
 
-    @NotBlank(message = "openid 不能为空")
+    @NotBlank(message = "error.openid.required")
     private String openid;
 
     private String unionid;
 
     /** mp=公众号 miniapp=小程序 app=App */
-    @NotBlank(message = "平台不能为空")
+    @NotBlank(message = "error.platform.required")
     private String platform;
 
     private String nickname;

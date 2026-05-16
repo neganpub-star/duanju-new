@@ -93,9 +93,9 @@ public class VideoController {
                                      @RequestParam(required = false) Long id,
                                      @RequestParam(required = false) Long id2) {
         Long videoId = pathId != null ? pathId : (id != null ? id : id2);
-        if (videoId == null) return R.fail("缺少视频ID");
+        if (videoId == null) return R.fail(I18nUtil.msg("error.video.id.missing"));
         Video video = videoService.getDetail(videoId);
-        if (video == null) return R.fail("视频不存在");
+        if (video == null) return R.fail(I18nUtil.msg("error.video.not.found"));
         List<VideoEpisodes> episodes = episodesMapper.selectByVideoId(videoId);
 
         // 查询当前用户是否已收藏
@@ -157,7 +157,7 @@ public class VideoController {
     public R<List<EpisodeVO>> episodes(@PathVariable(required = false) Long videoId,
                                        @RequestParam(required = false) Long vid) {
         Long id = videoId != null ? videoId : vid;
-        if (id == null) return R.fail("缺少视频ID");
+        if (id == null) return R.fail(I18nUtil.msg("error.video.id.missing"));
         List<VideoEpisodes> episodeList = episodesMapper.selectByVideoId(id);
         List<EpisodeVO> vos = episodeList.stream().map(EpisodeVO::from).collect(Collectors.toList());
 
@@ -360,10 +360,10 @@ public class VideoController {
     @Operation(summary = "添加追剧收藏")
     @PostMapping("/favorite")
     public R<Map<String, Object>> addFavorite(@RequestBody FavoriteReq req) {
-        if (!StpUtil.isLogin()) return R.fail("请先登录");
+        if (!StpUtil.isLogin()) return R.fail(I18nUtil.msg("error.login.required"));
         long userId = StpUtil.getLoginIdAsLong();
         Long videoId = req.getVidLong() != null ? req.getVidLong() : req.getVideoIdLong();
-        if (videoId == null) return R.fail("缺少视频ID");
+        if (videoId == null) return R.fail(I18nUtil.msg("error.video.id.missing"));
 
         VideoFavorite existing = favoriteMapper.selectOne(new LambdaQueryWrapper<VideoFavorite>()
                 .eq(VideoFavorite::getUserId, userId)
@@ -437,9 +437,9 @@ public class VideoController {
     @Operation(summary = "获取分集播放URL（兼容旧前端）")
     @PostMapping("/play")
     public R<EpisodePlayResp> play(@RequestBody PlayReq req) {
-        if (req.getEpisodeId() == null) return R.fail("缺少分集ID");
+        if (req.getEpisodeId() == null) return R.fail(I18nUtil.msg("error.episode.id.missing"));
         VideoEpisodes ep = episodesMapper.selectById(req.getEpisodeId());
-        if (ep == null) return R.fail("分集不存在");
+        if (ep == null) return R.fail(I18nUtil.msg("error.episode.not.found"));
 
         // is_free=1 直接放行
         if (ep.getIsFree() != null && ep.getIsFree() == 1) {
@@ -451,7 +451,7 @@ public class VideoController {
 
         // 付费集：必须登录
         if (!StpUtil.isLogin()) {
-            return R.fail(403, "请登录后观看");
+            return R.fail(403, I18nUtil.msg("error.episode.login.required"));
         }
         long userId = StpUtil.getLoginIdAsLong();
 
@@ -479,7 +479,7 @@ public class VideoController {
         BigDecimal price = ep.getPrice() != null ? ep.getPrice() : BigDecimal.ZERO;
         if (price.compareTo(BigDecimal.ZERO) <= 0) {
             // price=0 且 is_free=0 → VIP专属集，不可单集购买，前面VIP判断已放行过，到这里说明非VIP
-            return R.fail(403, "需要开通VIP才能观看");
+            return R.fail(403, I18nUtil.msg("error.episode.vip.required"));
         }
 
         DramaUser user = userMapper.selectById(userId);

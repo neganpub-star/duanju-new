@@ -8,12 +8,12 @@ import lombok.Data;
 @Data
 public class RegisterReq {
 
-    @NotBlank(message = "手机号不能为空")
-    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确")
+    @NotBlank(message = "error.phone.required")
+    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "error.phone.format")
     private String mobile;
 
-    @NotBlank(message = "密码不能为空")
-    @Size(min = 6, max = 20, message = "密码长度6-20位")
+    @NotBlank(message = "error.password.required")
+    @Size(min = 6, max = 20, message = "error.password.length")
     private String password;
 
     private String nickname;

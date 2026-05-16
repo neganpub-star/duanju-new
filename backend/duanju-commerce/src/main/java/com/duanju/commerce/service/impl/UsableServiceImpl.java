@@ -13,6 +13,9 @@ import com.duanju.system.domain.DramaUser;
 import com.duanju.system.mapper.DramaUserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +32,18 @@ public class UsableServiceImpl implements UsableService {
     private final UsableOrderMapper usableOrderMapper;
     private final DramaUserMapper userMapper;
     private final WalletService walletService;
+
+    @Autowired(required = false)
+    private MessageSource messageSource;
+
+    private String msg(String key) {
+        if (messageSource == null) return key;
+        try {
+            return messageSource.getMessage(key, null, key, LocaleContextHolder.getLocale());
+        } catch (Exception e) {
+            return key;
+        }
+    }
 
     @Override
     public List<Usable> listAll(Integer siteId) {
@@ -48,7 +63,7 @@ public class UsableServiceImpl implements UsableService {
     public UsableOrder createOrder(Integer siteId, Long userId, Long usableId, String payType, String platform) {
         Usable usable = usableMapper.selectById(usableId);
         if (usable == null || !"normal".equals(usable.getStatus())) {
-            throw ServiceException.of("点数套餐不存在或已下架");
+            throw ServiceException.of(msg("error.usable.not.found"));
         }
 
         BigDecimal payFee = usable.getPrice();

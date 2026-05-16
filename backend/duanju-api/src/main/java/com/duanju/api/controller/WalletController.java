@@ -47,9 +47,9 @@ public class WalletController {
 
     @Data
     static class WithdrawReq {
-        @NotBlank(message = "提现方式不能为空")
+        @NotBlank(message = "error.withdraw.type.required")
         private String applyType;
-        @DecimalMin(value = "0.01", message = "提现金额最小0.01")
+        @DecimalMin(value = "0.01", message = "error.withdraw.amount.min")
         private BigDecimal money;
         private String applyInfo;
         private String platform;

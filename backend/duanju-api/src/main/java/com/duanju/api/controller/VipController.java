@@ -70,7 +70,7 @@ public class VipController {
 
     @Data
     static class BuyVipReq {
-        @NotNull(message = "套餐ID不能为空")
+        @NotNull(message = "error.vip.id.required")
         @JsonProperty("vip_id")
         private Long vipId;
         private String payType = "wechat";

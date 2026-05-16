@@ -58,7 +58,7 @@ public class WalletServiceImpl implements WalletService {
     private void changeWallet(Integer siteId, Long userId, String walletType, BigDecimal amount,
                                String changeType, String memo, String itemId, boolean checkBalance) {
         DramaUser user = userMapper.selectById(userId);
-        if (user == null) throw ServiceException.notFound("用户不存在");
+        if (user == null) throw ServiceException.notFound(msg("error.user.notfound"));
 
         BigDecimal before = switch (walletType) {
             case "money" -> user.getMoney();
@@ -108,8 +108,8 @@ public class WalletServiceImpl implements WalletService {
     public UserWalletApply applyWithdraw(Integer siteId, Long userId, String applyType,
                                           BigDecimal money, String applyInfo, String platform) {
         DramaUser user = userMapper.selectById(userId);
-        if (user == null) throw ServiceException.notFound("用户不存在");
-        if (user.getMoney().compareTo(money) < 0) throw ServiceException.of("余额不足");
+        if (user == null) throw ServiceException.notFound(msg("error.user.notfound"));
+        if (user.getMoney().compareTo(money) < 0) throw ServiceException.of(msg("error.wallet.balance"));
 
         deductWallet(siteId, userId, "money", money, "withdraw", "申请提现", null);
 
@@ -132,8 +132,8 @@ public class WalletServiceImpl implements WalletService {
     @Transactional(rollbackFor = Exception.class)
     public void handleWithdraw(Long applyId, Integer status, String remark) {
         UserWalletApply apply = walletApplyMapper.selectById(applyId);
-        if (apply == null) throw ServiceException.notFound("提现申请不存在");
-        if (apply.getStatus() != 0 && apply.getStatus() != 1) throw ServiceException.of("当前状态不可操作");
+        if (apply == null) throw ServiceException.notFound(msg("error.wallet.not.found"));
+        if (apply.getStatus() != 0 && apply.getStatus() != 1) throw ServiceException.of(msg("error.wallet.state"));
 
         // 拒绝时退款
         if (status == -1) {

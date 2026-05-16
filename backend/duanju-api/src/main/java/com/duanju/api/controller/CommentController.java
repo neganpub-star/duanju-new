@@ -2,6 +2,7 @@ package com.duanju.api.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.duanju.api.config.I18nUtil;
 import com.duanju.common.core.domain.R;
 import com.duanju.drama.domain.Comment;
 import com.duanju.drama.domain.CommentLike;
@@ -66,9 +67,9 @@ public class CommentController {
     @Operation(summary = "发表评论 / 回复")
     @PostMapping("/post")
     public R<Map<String, Object>> post(@RequestBody CommentReq req) {
-        if (!StpUtil.isLogin()) return R.fail("请先登录");
-        if (req.getContent() == null || req.getContent().trim().isEmpty()) return R.fail("评论内容不能为空");
-        if (req.getContent().length() > 500) return R.fail("评论内容不能超过500字");
+        if (!StpUtil.isLogin()) return R.fail(I18nUtil.msg("error.comment.login"));
+        if (req.getContent() == null || req.getContent().trim().isEmpty()) return R.fail(I18nUtil.msg("error.comment.empty"));
+        if (req.getContent().length() > 500) return R.fail(I18nUtil.msg("error.comment.too.long"));
 
         long userId = StpUtil.getLoginIdAsLong();
         Comment comment = new Comment();
@@ -91,7 +92,7 @@ public class CommentController {
     @Operation(summary = "点赞 / 取消点赞评论")
     @PostMapping("/like")
     public R<Map<String, Object>> like(@RequestBody LikeReq req) {
-        if (!StpUtil.isLogin()) return R.fail("请先登录");
+        if (!StpUtil.isLogin()) return R.fail(I18nUtil.msg("error.comment.login"));
         long userId = StpUtil.getLoginIdAsLong();
 
         CommentLike existing = commentLikeMapper.selectOne(new LambdaQueryWrapper<CommentLike>()
@@ -125,12 +126,12 @@ public class CommentController {
     @Operation(summary = "删除自己的评论")
     @PostMapping("/delete")
     public R<Void> delete(@RequestBody DeleteReq req) {
-        if (!StpUtil.isLogin()) return R.fail("请先登录");
+        if (!StpUtil.isLogin()) return R.fail(I18nUtil.msg("error.comment.login"));
         long userId = StpUtil.getLoginIdAsLong();
 
         Comment comment = commentMapper.selectById(req.getCommentId());
-        if (comment == null || comment.getDeleteTime() != null) return R.fail("评论不存在");
-        if (!comment.getUserId().equals(userId)) return R.fail("无权删除");
+        if (comment == null || comment.getDeleteTime() != null) return R.fail(I18nUtil.msg("error.comment.not.found"));
+        if (!comment.getUserId().equals(userId)) return R.fail(I18nUtil.msg("error.comment.no.permission"));
 
         commentMapper.deleteById(req.getCommentId());
         // 同步删除该评论下的所有回复

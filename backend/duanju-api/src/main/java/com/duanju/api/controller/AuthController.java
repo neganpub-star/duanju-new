@@ -2,6 +2,7 @@ package com.duanju.api.controller;
 
 import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
+import com.duanju.api.config.I18nUtil;
 import com.duanju.api.dto.req.LoginReq;
 import com.duanju.api.dto.req.RegisterReq;
 import com.duanju.api.dto.req.WechatLoginReq;
@@ -67,7 +68,7 @@ public class AuthController {
     public R<Void> sendSms(@RequestBody LoginReq req) {
         // TODO: 接入真实短信服务后在此处发送验证码
         if (req.getMobile() == null || req.getMobile().isBlank()) {
-            return R.fail("手机号不能为空");
+            return R.fail(I18nUtil.msg("error.phone.required"));
         }
         log.info("发送验证码: mobile={}", req.getMobile());
         return R.ok();
