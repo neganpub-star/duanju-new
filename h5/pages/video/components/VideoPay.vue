@@ -59,8 +59,8 @@
 					<view class="badge" v-if="item.flag">{{ item.flag }}</view>
 				</view>
 				<view class="p_section_header" v-if="iosIsPay && vipData.length">
-					<text class="title">{{ $t('vip.selectPlan') }}</text>
-					<text class="recharge-link" @click.stop="goRecharge">{{ $t('videopay.rechargePoints') }} ›</text>
+					<view class="title">{{ $t('vip.selectPlan') }}</view>
+					<view class="recharge-link" @click.stop="goRecharge">{{ $t('videopay.rechargePoints') }} ›</view>
 				</view>
 				<view class="p_vip_section" v-if="iosIsPay && vipData.length">
 					<view class="vip-card" v-for="(item, index) in vipData" :key="'vip-'+index" @click="recharge('member', item.id, item.price)">
@@ -864,9 +864,11 @@
 				flex-direction: row;
 				align-items: center;
 				justify-content: space-between;
+				width: 100%;
 				margin-top: 24rpx;
 				padding: 0 4rpx 12rpx 16rpx;
 				border-left: 6rpx solid #9354FF;
+				box-sizing: border-box;
 
 				.title {
 					font-size: 30rpx;
