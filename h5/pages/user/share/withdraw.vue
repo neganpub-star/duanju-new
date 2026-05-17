@@ -20,6 +20,7 @@
 					</view>
 				</view>
 				<u-picker :show="typePicker" :columns="types" keyName="label" :closeOnClickOverlay="true"
+					:cancelText="$t('common.cancel')" :confirmText="$t('common.confirm')"
 					@close="typePicker = false" @cancel="typePicker = false" @confirm="selectedType" />
 
 				<!-- 真实姓名 -->

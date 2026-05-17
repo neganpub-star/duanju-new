@@ -142,7 +142,7 @@ duanju-common
 | `vs_drama_usable_order` | 点数购买订单 |
 | `vs_drama_user_wallet_log` | 钱包流水（充值/消费记录） |
 | `vs_drama_user_wallet_apply` | 提现申请 |
-| `vs_drama_reseller` | 分销商套餐配置 |
+| `vs_drama_reseller` | 分销商套餐配置（含 `name_i18n` 多语言字段） |
 | `vs_drama_reseller_bind` | 分销绑定关系 |
 | `vs_drama_reseller_order` | 分销佣金记录 |
 | `vs_drama_watch_log` | 观看记录 |
@@ -163,6 +163,23 @@ H5 支持三种语言，文件位于 `h5/locale/`：
 - `en.js` — 英文
 
 **新增 UI 文案时必须同步更新三个文件**，模板中统一用 `$t('模块.key')` 引用，禁止硬编码中文。
+
+### 后端内容多语言（套餐名称等）
+
+部分由后管配置的动态内容支持多语言，存为 JSON 字段：
+
+| 表 | 字段 | 说明 |
+|---|---|---|
+| `vs_drama_usable` | `title_i18n` / `desc_i18n` | 点数套餐名称和描述 |
+| `vs_drama_reseller` | `name_i18n` | 分销套餐名称 |
+
+格式：`{"zh-TW":"繁体名称","en":"English Name"}`，`zh-CN` 存在默认 `name`/`title` 字段中，作为回退值。后管对应页面已提供多语言 Tab 编辑入口。
+
+### 数据库变更记录
+
+| 日期 | 变更内容 |
+|------|----------|
+| 2026-05-18 | `vs_drama_reseller` 加 `name_i18n VARCHAR(1000)` 字段 |
 
 ---
 
