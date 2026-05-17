@@ -154,7 +154,7 @@ export const constantRoutes = [
         path: 'usable',
         component: () => import('@/views/commerce/usable/index'),
         name: 'CommerceUsable',
-        meta: { title: '积分套餐', icon: 'form' }
+        meta: { title: '点数套餐', icon: 'form' }
       },
       {
         path: 'reseller',
@@ -167,7 +167,7 @@ export const constantRoutes = [
         component: () => import('@/views/commerce/wallet/log'),
         name: 'WalletLog',
         meta: { title: '钱包流水', icon: 'chart' }
-      },
+      }
       {
         path: 'withdraw',
         component: () => import('@/views/commerce/wallet/withdraw'),

@@ -284,19 +284,14 @@ const api = {
 	// 分销
 	dealer: {
 		info: {
-			url: '/api/user/info',
+			url: '/api/reseller/dashboard',
 			method: 'GET',
-			desc: '分销商信息'
+			desc: '分销主页数据'
 		},
 		level: {
 			url: '/api/reseller/list',
 			method: 'GET',
 			desc: '分销套餐'
-		},
-		orderList: {
-			url: '/api/reseller/orders',
-			method: 'GET',
-			desc: '分销订单'
 		},
 		createOrder: {
 			url: '/api/reseller/buy',
@@ -311,20 +306,15 @@ const api = {
 	},
 	// 分享
 	share: {
-		record: {
-			url: '/api/reseller/share-logs',
-			method: 'GET',
-			desc: '分享记录'
-		},
 		team: {
 			url: '/api/reseller/team',
 			method: 'GET',
 			desc: '我的团队'
 		},
 		brokerage: {
-			url: '/api/wallet/logs',
+			url: '/api/reseller/commissions',
 			method: 'GET',
-			desc: '佣金流水'
+			desc: '佣金明细'
 		}
 	},
 	// 提现
@@ -339,20 +329,10 @@ const api = {
 			method: 'POST',
 			desc: '提现申请'
 		},
-		account: {
-			url: '/api/noop',
-			method: 'GET',
-			desc: '提现账户（旧接口，已废弃）'
-		},
-		addAccount: {
-			url: '/api/noop',
-			method: 'POST',
-			desc: '添加提现账户（旧接口，已废弃）'
-		},
 		rule: {
 			url: '/api/noop',
 			method: 'GET',
-			desc: '提现规则（旧接口，已废弃）'
+			desc: '提现规则（暂不使用）'
 		},
 	},
 	// 签到

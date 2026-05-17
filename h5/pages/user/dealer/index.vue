@@ -64,11 +64,11 @@
 </template>
 
 <script>
-	import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
+	import { mapGetters, mapActions } from "vuex"
 	export default {
 		data() {
 			return {
-				isColor:`pink`,
+				isColor: `pink`,
 				isBgColor: `#5E72F7`,
 				buttonStyle: {
 					width: '100%',
@@ -83,535 +83,119 @@
 				},
 				buttonLoading: false,
 				msg: '',
-				levelData: [], // 等级列表
-				level: 0, // 自己的等级
-				dredgeLevel: 0, // 需要开通的等级
-				maxLevel: 0, // 最大等级
-				dredge: { // 需要开通的参数
-					reseller_id: '',
-					total_fee: ''
-				},
-				userInfo: ''
+				levelData: [],
+				level: 0,
+				dredgeLevel: 0,
+				maxLevel: 0,
+				dredge: { resellerId: null },
+				userInfo: {}
 			}
 		},
 		computed: {
 			...mapGetters("user", ["token"]),
 			...mapGetters("app", ["iosIsPay"])
 		},
-		watch: {
-			
-		},
-		onPageScroll(e) {
-			let colorAlpha = e.scrollTop > 100 ? 0.95 : e.scrollTop * 0.0095
-			this.navbarBg = `rgba(255, 255, 255, ${colorAlpha})`
-		},
 		onLoad() {
 			this.getPageData()
-			
-		},
-		async onShow(){
-			 await this.$onLaunched
-			 this.isColor = `pink`
-			 this.isBgColor = `#5E72F7`
-			 this.buttonStyle.background = `linear-gradient(90deg, #5E72F7 0%, #9354FF 100%)`
-			
 		},
 		methods: {
 			...mapActions("user", ["getUserInfo"]),
-			// 开通经销商
-			dredgeDealer() {
-			// #ifdef MP-WEIXIN
-			if(!this.iosIsPay) return this.jumpView('/pages/user/info/contact')
-			// #endif
-				
-				const buy = () => {
-					this.buttonLoading = true
-					uni.showLoading({
-						title: '开通中...',
-						mask: true
-					})
-					// #ifdef MP-TOUTIAO
-					
-					this.$request('dealer.createOrder', {
-						...this.dredge,
-						platform: 'douyinxcx'
-					}).then(res => {
-						if(res.code === 1) {
-								this.callPay(res.data.order_sn, 'douyinxcx', res.data.platform)
-
-						} else {
-							this.buttonLoading = false
-							uni.hideLoading()
-						}
-					}).catch(err => {
-						this.buttonLoading = false
-						uni.hideLoading()
-					})
-					// #endif
-					// #ifndef MP-TOUTIAO
-					this.$request('dealer.createOrder', {
-						...this.dredge,
-						platform: this.$utils.platforms()
-					}).then(res => {
-						if(res.code === 1) {
-							
-							
-							this.callPay(res.data.order_sn, 'wechat', res.data.platform)
-					
-						} else {
-							this.buttonLoading = false
-							uni.hideLoading()
-						}
-					}).catch(err => {
-						this.buttonLoading = false
-						uni.hideLoading()
-					})
-					// #endif
-				}
-				
-				if(this.dredgeLevel < this.level) {
-					uni.showModal({
-						title: '提示',
-						content: '当前购买等级小于已购买等级，是否继续购买？',
-						success: (res) => {
-							if (res.confirm) {
-								buy()
-							} else if (res.cancel) {}
-						}
-					});
-				} else {
-					buy()
-				}
-			},
-			//虚拟支付调起
-			xGetPay(order_sn,payment,platform){
-				uni.login({
-					provider: 'weixin',
-					success: success => {
-						if(success.errMsg === 'login:ok') {
-							
-							this.$request('common.xunipay', {
-								order_sn,
-								payment,
-								platform,
-								code: success.code
-							}).then(res => {
-								console.log(res)
-								if(res.code === 1) {
-									if(platform == 'H5') {
-										const div = document.createElement('divpay');
-										div.innerHTML = res.data.pay_data;
-										document.body.appendChild(div);
-									} else {
-										this.xunipay(res.data.pay_data)
-									}
-								}
-							})
-							
-						}
-					}
-				})
-			},
-			//非虚拟支付调起
-			getPay(order_sn,payment,platform){
-				this.$request('common.pay', {
-					order_sn,
-					payment,
-					platform,
-				}).then(res => {
-					console.log(res)
-					if(res.code === 1) {
-						if(platform == 'H5') {
-							const div = document.createElement('divpay');
-							div.innerHTML = res.data.pay_data;
-							document.body.appendChild(div);
-						} else {
-							this.pay(res.data.pay_data)
-						}
-					}
-				})
-			},
-			// 发起支付请求
-			callPay(order_sn, payment, platform) {
-				// #ifdef MP-TOUTIAO
-					var that = this
-						this.$request('common.dypay', {
-							order_sn,
-							payment,
-							platform,
-						}).then(res => {
-							console.log(res)
-							if(res.code === 1) {
-								
-								if(platform == 'H5') {
-									const div = document.createElement('divpay');
-									div.innerHTML = res.data.pay_data;
-									document.body.appendChild(div);
-								} else {
-									tt.requestOrder({
-									   data: res.data.data, // 请勿在前端对data做任何处理
-									   byteAuthorization: res.data.byteAuthorization, // 请勿在前端对byteAuthorization做任何处理
-									   success: (res) => {
-									     console.log('成功', res);
-										 tt.getOrderPayment({
-											 orderId:res.orderId,
-											 success: (res) => {
-											  uni.showToast({
-											  		      title: '支付成功',
-											  		  	icon: 'none',
-											  		  	duration: 2000
-											  		  });
-											  		that.buttonLoading = false
-											  		that.getPageData()
-											  		uni.hideLoading()
-											 },
-											 fail: (res) => {
-												 uni.hideLoading()
-												 
-											   uni.showToast({
-											   		      title: '支付失败',
-											   		  	icon: 'none',
-											   		  	duration: 2000
-											   		  });
-											   		that.buttonLoading = false
-											   
-											 },
-										 });
-									   },
-									   fail: (res) => {
-										   uni.hideLoading()
-										   
-									    uni.showToast({
-									    		      title: '支付失败',
-									    		  	icon: 'none',
-									    		  	duration: 2000
-									    		  });
-									    		that.buttonLoading = false
-									   },
-									 });
-									// tt.pay({
-									//   orderInfo: {
-									//     order_id:  res.data.pay_data.data.order_id ,
-									//     order_token:res.data.pay_data.data.order_token ,
-									//   },
-									//   service: 5,
-									//   success(res) {
-									// 	  console.log(res,'success')
-									//     if (res.code == 0) {
-									// 		uni.showToast({
-									// 		      title: '支付成功',
-									// 		  	icon: 'none',
-									// 		  	duration: 2000
-									// 		  });
-									// 		that.buttonLoading = false
-									// 		that.getPageData()
-									// 		uni.hideLoading()
-											
-									//       // 支付成功处理逻辑，只有res.code=0时，才表示支付成功
-									//       // 但是最终状态要以商户后端结果为准
-									//     }else{
-									// 		uni.showToast({
-									// 		      title: '支付失败',
-									// 		  	icon: 'none',
-									// 		  	duration: 2000
-									// 		  });
-									// 		that.buttonLoading = false
-									// 		uni.hideLoading()
-									// 	}
-									//   },
-									//   fail(res) {
-									// 	  console.log(res,'fail')
-									// 	  uni.showToast({
-									// 	        title: '支付失败',
-									// 	    	icon: 'none',
-									// 	    	duration: 2000
-									// 	    });
-									// 	  that.buttonLoading = false
-									// 	  uni.hideLoading()
-									//     // 调起收银台失败处理逻辑
-									//   },
-									// });
-								}
-							}
-						})
-				
-				// #endif
-				// #ifndef MP-TOUTIAO
-					this.$request('common.ifxunipay').then(res=>{
-						
-						if(res.data.xunipay_switch == 0){
-							this.getPay(order_sn,payment,platform)
-						}else{
-							// #ifdef MP-WEIXIN
-							var iosd = wx.getSystemInfoSync()
-							
-								if(this.iosIsPay && iosd.platform == 'ios'){
-									this.getPay(order_sn,payment,platform)
-									
-								}else{
-									
-									this.xGetPay(order_sn,payment,platform)
-								}
-							// #endif
-							// #ifndef MP-WEIXIN
-								this.getPay(order_sn,payment,platform)
-							// #endif
-							
-						}
-					})
-				// #endif
-				
-				
-			},
-			// 发起 小程序/公众号 支付
-			xunipay(pay){
-				var that = this
-				// #ifdef MP-WEIXIN
-				const SDKVersion = wx.getSystemInfoSync().SDKVersion
-				
-				if (that.compareVersion(SDKVersion, '2.19.2') >= 0 || wx.canIUse('requestVirtualPayment')) {
-				  wx.requestVirtualPayment({
-				    signData: JSON.stringify({
-				      offerId: pay.signData.offerId,
-				      buyQuantity: pay.signData.buyQuantity,
-				      env: pay.signData.env,
-				      currencyType: pay.signData.currencyType,
-				      platform: pay.signData.platform,
-				      productId: pay.signData.productId,
-				      goodsPrice: pay.signData.goodsPrice,
-				      outTradeNo: pay.signData.outTradeNo,
-				      attach: pay.signData.attach,
-				    }),
-				    paySig: pay.paySig, 
-				    signature: pay.signature,
-				    mode: pay.mode,
-				    success(res) {
-				      //console.log('requestVirtualPayment success', res)
-					  uni.showToast({
-					      title: '支付成功',
-					  	icon: 'none',
-					  	duration: 2000
-					  });
-					that.buttonLoading = false
-					that.getPageData()
-					uni.hideLoading()
-					
-					
-				    },
-				    fail({ errMsg, errCode }) {
-				      //console.error(errMsg, errCode)
-					  uni.showToast({
-					      title: '支付失败',
-					  	icon: 'none',
-					  	duration: 2000
-					  });
-					that.buttonLoading = false
-					uni.hideLoading()
-				    },
-				  })
-				} else {
-				  //console.log('当前用户的客户端版本不支持 wx.requestVirtualPayment')
-				  
-				  uni.showToast({
-				      title: '当前用户的客户端版本不支持小程序虚拟支付',
-				  	icon: 'none',
-				  	duration: 2000
-				  });
-				 that.buttonLoading = false
-				 uni.hideLoading()
-				  
-				}
-				// #endif
-	
-			},
-			pay(pay) {
-					var that = this
-						// #ifdef MP-WEIXIN
-						uni.requestPayment({
-							timeStamp: pay.timeStamp,
-							nonceStr: pay.nonceStr,
-							package: pay.package,
-							signType: pay.signType,
-							paySign: pay.paySign,
-							success: success => {
-								uni.showToast({
-								    title: '支付成功',
-									icon: 'none',
-									duration: 2000
-								});
-								that.buttonLoading = false
-								that.getPageData()
-								uni.hideLoading()
-							},
-							fail: fail => {
-								uni.showToast({
-								    title: '支付失败',
-									icon: 'none',
-									duration: 2000
-								});
-								that.buttonLoading = false
-								uni.hideLoading()
-							}
-						})
-						// #endif
-						
-						// #ifdef H5
-						WeixinJSBridge.invoke(
-							'getBrandWCPayRequest', {
-								"appId": pay.appId, // 公众号ID，由商户传入     
-								"timeStamp": pay.timeStamp, // 时间戳，自1970年以来的秒数     
-								"nonceStr": pay.nonceStr, // 随机串     
-								"package": pay.package, // 订单详情扩展字符串
-								"signType": pay.signType, // 微信签名方式：     
-								"paySign": pay.paySign // 微信签名 
-							},
-							res => {
-								if (res.err_msg == "get_brand_wcpay_request:ok") {
-									uni.showToast({
-									    title: '支付成功',
-										icon: 'none',
-										duration: 2000
-									});
-									that.buttonLoading = false
-									that.getPageData()
-									uni.hideLoading()
-								} else {
-									uni.showToast({
-									    title: '支付失败',
-										icon: 'none',
-										duration: 2000
-									});
-									that.buttonLoading = false
-									uni.hideLoading()
-								}
-							});
-						// #endif
-						// #ifdef APP-PLUS
-						// APP
-							uni.getProvider({
-								service: "payment",
-								success: e => {
-									const type = e.provider.includes('wxpay')
-									type && uni.requestPayment({
-										"provider": "wxpay",
-										"orderInfo": pay,
-										success: success => {
-											uni.showToast({
-												title: '支付成功',
-												icon: 'none',
-												duration: 2000
-											});
-											that.buttonLoading = false
-											that.getPageData()
-											uni.hideLoading()
-											
-										},
-										fail: fail => {
-											if(fail.errCode === -8) {
-												uni.showToast({
-													title: '未安装微信客户端',
-													icon: 'none',
-													duration: 2000
-												});
-												that.buttonLoading = false
-												uni.hideLoading()
-											} else {
-												uni.showToast({
-													title: '支付失败',
-													icon: 'none',
-													duration: 2000
-												});
-												that.buttonLoading = false
-												uni.hideLoading()
-											}
-										}
-									})
-								},
-								fail: e => {
-									that.payFail("获取iap支付通道失败")
-								}
-							});
-						// #endif
-					
-				
-			}, 
-			//判断微信js版本用
-			compareVersion(_v1, _v2) {
-			  if (typeof _v1 !== 'string' || typeof _v2 !== 'string') return 0
-			
-			  const v1 = _v1.split('.')
-			  const v2 = _v2.split('.')
-			  const len = Math.max(v1.length, v2.length)
-			
-			  while (v1.length < len) {
-			    v1.push('0')
-			  }
-			  while (v2.length < len) {
-			    v2.push('0')
-			  }
-			
-			  for (let i = 0; i < len; i++) {
-			    const num1 = parseInt(v1[i], 10)
-			    const num2 = parseInt(v2[i], 10)
-			
-			    if (num1 > num2) {
-			      return 1
-			    } else if (num1 < num2) {
-			      return -1
-			    }
-			  }
-			
-			  return 0
-			},
-			// 点击的经销商等级
 			levelCardClick(item) {
 				this.dredgeLevel = item.level
-				this.dredgeLevelId = item.id
-			
-				this.dredge.reseller_id = item.id
-				this.dredge.total_fee = item.price
+				this.dredge.resellerId = item.id
 			},
-			// 经销商等级
 			dealerLevelList() {
 				this.$request('dealer.level').then(res => {
-					if(res.code === 1) {
-						this.levelData = res.data.list
-						// this.msg = res.data.list[0].content
-						this.msg = res.data.reseller_desc.content
-						let level = res.data.list.map(obj => obj.level);
-						this.maxLevel = Math.max(...level)
+					if (res.code === 1) {
+						this.levelData = res.data.list || []
+						this.msg = res.data.reseller_desc && res.data.reseller_desc.content || ''
+						const levels = this.levelData.map(o => o.level)
+						this.maxLevel = levels.length ? Math.max(...levels) : 0
 						this.dredgeLevel = this.level + 1 > this.maxLevel ? this.maxLevel : this.level + 1
-						if(this.dredgeLevel <= this.maxLevel) {
-							let item = res.data.list.filter(item => item.level == this.dredgeLevel)[0]
-							this.dredge.reseller_id = item.id
-							this.dredge.total_fee = item.price
-						}
+						const selected = this.levelData.find(item => item.level === this.dredgeLevel)
+						if (selected) this.dredge.resellerId = selected.id
 					}
 				})
 			},
-			// 个人信息
 			getPageData() {
 				this.getUserInfo().then(res => {
-					if(res.code === 1) {
-						this.level = res.data.reseller ? res.data.reseller.level : 0
-						// this.userInfo = { avatar: res.data.avatar }
+					if (res.code === 1) {
 						this.userInfo = res.data
-						if(res.data.reseller) {
-							let obj = {
-								id: res.data.reseller.reseller_id,
-								level: res.data.reseller.level,
-								levelText: res.data.reseller.reseller_json.name,
-								expireText: res.data.reseller.expiretime_text
-							}
-							
-							this.userInfo = {
-								...this.userInfo,
-								...obj
-							}
+						this.level = res.data.reseller_level || 0
+						if (res.data.reseller_level > 0 && res.data.reseller_expire_time) {
+							this.userInfo.levelText = res.data.reseller_level + '级分销商'
+							this.userInfo.expireText = res.data.reseller_expire_time
 						}
 						this.dealerLevelList()
 					}
 				})
+			},
+			dredgeDealer() {
+				// #ifdef MP-WEIXIN
+				if (!this.iosIsPay) return this.jumpView('/pages/user/info/contact')
+				// #endif
+				if (!this.dredge.resellerId) return this.$u.toast('请选择套餐')
+				const doBuy = () => {
+					this.buttonLoading = true
+					uni.showLoading({ title: '开通中...', mask: true })
+					this.$request('dealer.createOrder', {
+						resellerId: this.dredge.resellerId,
+						payType: 'wechat',
+						platform: this.$utils.platforms()
+					}).then(res => {
+						uni.hideLoading()
+						this.buttonLoading = false
+						if (res.code === 1) {
+							this.handlePayResult(res.data)
+						} else {
+							uni.showToast({ title: res.msg || '下单失败', icon: 'none' })
+						}
+					}).catch(() => {
+						uni.hideLoading()
+						this.buttonLoading = false
+					})
+				}
+				if (this.dredgeLevel < this.level) {
+					uni.showModal({
+						title: '提示',
+						content: '当前购买等级小于已有等级，是否继续？',
+						success: r => { if (r.confirm) doBuy() }
+					})
+				} else {
+					doBuy()
+				}
+			},
+			handlePayResult(data) {
+				if (data.status === 'paid') {
+					uni.showToast({ title: '开通成功', icon: 'success' })
+					this.getPageData()
+					return
+				}
+				if (data.h5Url) {
+					window.location.href = data.h5Url
+					return
+				}
+				if (data.timeStamp && typeof WeixinJSBridge !== 'undefined') {
+					WeixinJSBridge.invoke('getBrandWCPayRequest', {
+						appId: data.appId, timeStamp: data.timeStamp,
+						nonceStr: data.nonceStr, package: data.package,
+						signType: data.signType, paySign: data.paySign
+					}, res => {
+						if (res.err_msg === 'get_brand_wcpay_request:ok') {
+							uni.showToast({ title: '开通成功', icon: 'success' })
+							this.getPageData()
+						} else {
+							uni.showToast({ title: '支付取消', icon: 'none' })
+						}
+					})
+					return
+				}
+				if (data.payError) {
+					uni.showToast({ title: '支付未配置，请联系客服', icon: 'none', duration: 3000 })
+				} else {
+					uni.showToast({ title: '开通成功', icon: 'success' })
+					this.getPageData()
+				}
 			}
 		}
 	}

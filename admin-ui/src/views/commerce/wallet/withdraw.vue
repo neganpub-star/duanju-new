@@ -15,7 +15,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="list">
+    <el-table v-loading="loading" :data="list" stripe border>
       <el-table-column label="申请单号" prop="applySn" width="200" show-overflow-tooltip />
       <el-table-column label="用户ID" prop="userId" width="90" />
       <el-table-column label="申请金额" prop="money" width="100" align="right">
