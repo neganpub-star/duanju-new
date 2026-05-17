@@ -4,44 +4,48 @@
       <el-col :span="1.5">
         <el-button type="primary" icon="Plus" @click="handleAdd">新增套餐</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button icon="Refresh" @click="getList">刷新</el-button>
+      </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="list" border>
+    <el-table v-loading="loading" :data="list" stripe border>
       <el-table-column label="ID" prop="id" width="60" align="center" />
-      <el-table-column label="套餐名(中文)" prop="title" width="130" />
-      <el-table-column label="多语言名称" min-width="160">
+      <el-table-column label="套餐名称" min-width="180">
         <template #default="{ row }">
-          <div v-if="row.titleI18n" style="font-size:12px;color:#666">
-            <div v-for="(v, k) in parseJson(row.titleI18n)" :key="k">
-              <el-tag size="small" style="margin-right:4px">{{ k }}</el-tag>{{ v }}
-            </div>
+          <div class="pkg-name">{{ row.title }}</div>
+          <div v-if="row.titleI18n" class="pkg-i18n">
+            <span v-for="(v, k) in parseJson(row.titleI18n)" :key="k" class="i18n-item">
+              <el-tag size="small" type="info" effect="plain">{{ k }}</el-tag> {{ v }}
+            </span>
           </div>
-          <span v-else style="color:#ccc">—</span>
         </template>
       </el-table-column>
-      <el-table-column label="点数" prop="usable" width="80" align="center" />
-      <el-table-column label="赠送" prop="giveUsable" width="80" align="center" />
-      <el-table-column label="价格" width="90" align="right">
-        <template #default="{ row }">¥{{ row.price }}</template>
-      </el-table-column>
-      <el-table-column label="首充价" width="90" align="right">
+      <el-table-column label="点数" width="120" align="center">
         <template #default="{ row }">
-          <span v-if="row.firstPrice">¥{{ row.firstPrice }}</span>
-          <span v-else style="color:#ccc">—</span>
+          <span class="pts-num">{{ row.usable }}</span>
+          <span v-if="row.giveUsable" class="pts-gift">+{{ row.giveUsable }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="售价 / 首充价" width="150" align="center">
+        <template #default="{ row }">
+          <span class="pkg-price">¥{{ row.price }}</span>
+          <span v-if="row.firstPrice" class="pkg-first">首充¥{{ row.firstPrice }}</span>
         </template>
       </el-table-column>
       <el-table-column label="排序" prop="weigh" width="70" align="center" />
       <el-table-column label="状态" width="80" align="center">
         <template #default="{ row }">
-          <el-tag :type="row.status === '1' ? 'success' : 'info'">{{ row.status === '1' ? '上架' : '下架' }}</el-tag>
+          <el-tag :type="row.status === '1' ? 'success' : 'info'" size="small" effect="light">
+            {{ row.status === '1' ? '上架' : '下架' }}
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="160" fixed="right" align="center">
+      <el-table-column label="操作" width="130" fixed="right" align="center">
         <template #default="{ row }">
-          <el-space :size="4">
-            <el-button size="small" type="primary" icon="Edit" @click="handleEdit(row)">编辑</el-button>
-            <el-button size="small" type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
-          </el-space>
+          <el-button link type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
+          <el-divider direction="vertical" />
+          <el-button link type="danger" size="small" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -178,7 +182,7 @@ function handleAdd() {
   form.value = { status: '1', usable: 100, giveUsable: 0, price: 6.0, weigh: 0, siteId: 1 }
   supportedLangs.value.forEach(l => { i18nForm[l.code] = { title: '', desc: '' } })
   activeTab.value = 'basic'
-  dialog.title = '新增积分套餐'
+  dialog.title = '新增点数套餐'
   dialog.visible = true
 }
 
@@ -190,7 +194,7 @@ function handleEdit(row) {
     i18nForm[l.code] = { title: titleMap[l.code] || '', desc: descMap[l.code] || '' }
   })
   activeTab.value = 'basic'
-  dialog.title = '编辑积分套餐'
+  dialog.title = '编辑点数套餐'
   dialog.visible = true
 }
 
@@ -239,4 +243,11 @@ getList()
   color: #333;
   width: 100%;
 }
+.pkg-name { font-size: 13px; font-weight: 600; color: #303133; }
+.pkg-i18n { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.i18n-item { font-size: 12px; color: #909399; display: flex; align-items: center; gap: 3px; }
+.pts-num { font-size: 16px; font-weight: 700; color: #e6a23c; }
+.pts-gift { font-size: 12px; color: #67c23a; margin-left: 4px; }
+.pkg-price { font-size: 15px; font-weight: 700; color: #f56c6c; }
+.pkg-first { font-size: 11px; color: #409eff; margin-left: 6px; background: #ecf5ff; padding: 1px 5px; border-radius: 3px; }
 </style>

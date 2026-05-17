@@ -7,8 +7,8 @@
       <el-form-item label="钱包类型" prop="walletType">
         <el-select v-model="queryParams.walletType" placeholder="全部" clearable style="width:120px">
           <el-option label="余额" value="money" />
-          <el-option label="积分" value="score" />
           <el-option label="点数" value="usable" />
+          <el-option label="积分" value="score" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -17,20 +17,38 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="list">
+    <el-table v-loading="loading" :data="list" stripe border>
       <el-table-column label="ID" prop="id" width="80" />
       <el-table-column label="用户ID" prop="userId" width="90" />
-      <el-table-column label="钱包类型" prop="walletType" width="90" align="center" />
-      <el-table-column label="变动" prop="wallet" width="100" align="right">
+      <el-table-column label="钱包类型" width="90" align="center">
         <template #default="{ row }">
-          <span :class="row.wallet >= 0 ? 'text-success' : 'text-danger'">
+          <el-tag :type="row.walletType === 'money' ? 'success' : 'warning'" effect="plain" size="small">
+            {{ walletTypeLabel(row.walletType) }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="变动" width="110" align="center">
+        <template #default="{ row }">
+          <span :class="row.wallet >= 0 ? 'text-success' : 'text-danger'" style="font-size:15px;font-weight:700">
             {{ row.wallet >= 0 ? '+' : '' }}{{ row.wallet }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="变动前" prop="before" width="100" align="right" />
-      <el-table-column label="变动后" prop="after" width="100" align="right" />
-      <el-table-column label="类型" prop="type" width="120" />
+      <el-table-column label="变动前" prop="before" width="90" align="center">
+        <template #default="{ row }">
+          <span style="color:#909399">{{ row.before }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="变动后" prop="after" width="90" align="center">
+        <template #default="{ row }">
+          <span style="font-weight:600;color:#303133">{{ row.after }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="类型" width="130">
+        <template #default="{ row }">
+          {{ logTypeLabel(row.type) }}
+        </template>
+      </el-table-column>
       <el-table-column label="备注" prop="memo" show-overflow-tooltip />
       <el-table-column label="时间" prop="createTime" width="160" />
     </el-table>
@@ -47,6 +65,30 @@ const list = ref([])
 const total = ref(0)
 const queryParams = reactive({ pageNum: 1, pageSize: 20, siteId: 1, userId: '', walletType: '' })
 const queryRef = ref()
+
+const WALLET_TYPE_MAP = {
+  money: '余额',
+  usable: '点数',
+  score: '积分',
+}
+
+const LOG_TYPE_MAP = {
+  episode_unlock: '解锁剧集',
+  usable_recharge: '充值点数',
+  admin_recharge: '平台赠送',
+  vip_recharge: '购买VIP',
+  reseller_buy: '购买分销商',
+  withdraw: '提现申请',
+  withdraw_reject: '提现驳回',
+}
+
+function walletTypeLabel(type) {
+  return WALLET_TYPE_MAP[type] || type
+}
+
+function logTypeLabel(type) {
+  return LOG_TYPE_MAP[type] || type
+}
 
 async function getList() {
   loading.value = true

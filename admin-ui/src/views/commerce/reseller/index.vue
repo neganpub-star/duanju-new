@@ -6,27 +6,47 @@
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="list">
-      <el-table-column label="ID" prop="id" width="80" />
-      <el-table-column label="套餐名" prop="name" />
-      <el-table-column label="等级" prop="level" width="70" align="center" />
-      <el-table-column label="有效天数" prop="expire" width="90" align="center" />
-      <el-table-column label="价格" prop="price" width="90" align="right">
-        <template #default="{ row }">¥{{ row.price }}</template>
-      </el-table-column>
-      <el-table-column label="直接佣金%" prop="direct" width="100" align="center" />
-      <el-table-column label="间接佣金%" prop="indirect" width="100" align="center" />
-      <el-table-column label="状态" width="80" align="center">
+    <el-table v-loading="loading" :data="list" stripe border>
+      <el-table-column label="ID" prop="id" width="70" align="center" />
+      <el-table-column label="套餐名 / 等级" min-width="150">
         <template #default="{ row }">
-          <el-tag :type="row.status === 'normal' ? 'success' : 'info'">{{ row.status === 'normal' ? '上架' : '下架' }}</el-tag>
+          <div style="font-weight:600;color:#303133;font-size:13px">{{ row.name }}</div>
+          <el-tag size="small" type="primary" effect="plain" style="margin-top:4px">Lv{{ row.level }} 分销商</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="160" fixed="right" align="center">
+      <el-table-column label="有效天数" prop="expire" width="90" align="center">
         <template #default="{ row }">
-          <el-space :size="4">
-            <el-button size="small" type="primary" icon="Edit" @click="handleEdit(row)">编辑</el-button>
-            <el-button size="small" type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
-          </el-space>
+          <span style="font-size:15px;font-weight:700;color:#409eff">{{ row.expire }}</span>
+          <span style="font-size:12px;color:#909399"> 天</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="价格" width="90" align="center">
+        <template #default="{ row }">
+          <span style="font-size:15px;font-weight:700;color:#f56c6c">¥{{ row.price }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="直接佣金" prop="direct" width="100" align="center">
+        <template #default="{ row }">
+          <el-tag type="success" effect="plain" size="small">{{ row.direct }}%</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="间接佣金" prop="indirect" width="100" align="center">
+        <template #default="{ row }">
+          <el-tag type="warning" effect="plain" size="small">{{ row.indirect }}%</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="状态" width="80" align="center">
+        <template #default="{ row }">
+          <el-tag :type="row.status === 'normal' ? 'success' : 'info'" size="small" effect="light">
+            {{ row.status === 'normal' ? '上架' : '下架' }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="130" fixed="right" align="center">
+        <template #default="{ row }">
+          <el-button link type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
+          <el-divider direction="vertical" />
+          <el-button link type="danger" size="small" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

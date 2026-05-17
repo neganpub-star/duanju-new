@@ -25,35 +25,53 @@
     </el-row>
 
     <!-- 表格 -->
-    <el-table v-loading="loading" :data="list">
-      <el-table-column label="ID" prop="id" width="80" />
-      <el-table-column label="封面" width="80">
+    <el-table v-loading="loading" :data="list" stripe border>
+      <el-table-column label="ID" prop="id" width="70" align="center" />
+      <el-table-column label="封面" width="90" align="center">
         <template #default="{ row }">
-          <el-image :src="row.cover" style="width:50px;height:70px;object-fit:cover" fit="cover" />
+          <el-image
+            :src="row.cover"
+            :preview-src-list="[row.cover]"
+            preview-teleported
+            style="width:54px;height:76px;border-radius:6px;object-fit:cover;display:block;margin:0 auto"
+            fit="cover"
+          />
         </template>
       </el-table-column>
-      <el-table-column label="标题" prop="title" show-overflow-tooltip />
-      <el-table-column label="集数" prop="seriesCount" width="70" align="center" />
-      <el-table-column label="状态" width="80" align="center">
+      <el-table-column label="短剧信息" min-width="180">
         <template #default="{ row }">
-          <el-tag :type="row.status === 1 ? 'success' : 'info'">
-            {{ row.status === 1 ? '上架' : '下架' }}
-          </el-tag>
+          <div class="drama-title">{{ row.title }}</div>
+          <div class="drama-meta">
+            <el-tag size="small" effect="plain" :type="row.status === 1 ? 'success' : 'info'" style="margin-right:4px">
+              {{ row.status === 1 ? '上架' : '下架' }}
+            </el-tag>
+            <el-tag v-if="row.is_recommend === 1" size="small" type="warning" effect="plain">推荐</el-tag>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column label="推荐" width="70" align="center">
+      <el-table-column label="集数" prop="seriesCount" width="70" align="center">
         <template #default="{ row }">
-          <el-tag v-if="row.is_recommend === 1" type="warning" size="small">推荐</el-tag>
-          <span v-else style="color:#ccc">—</span>
+          <span class="ep-count">{{ row.seriesCount || 0 }}</span>
+          <span style="font-size:11px;color:#909399"> 集</span>
         </template>
       </el-table-column>
-      <el-table-column label="权重" prop="weigh" width="70" align="center" />
-      <el-table-column label="创建时间" prop="createTime" width="160" />
-      <el-table-column label="操作" width="220" fixed="right">
+      <el-table-column label="权重" prop="weigh" width="70" align="center">
         <template #default="{ row }">
-          <el-button link type="primary" icon="Film" @click="openEpisodes(row)">分集</el-button>
-          <el-button link type="primary" icon="Edit" @click="handleEdit(row)">编辑</el-button>
-          <el-button link type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
+          <span style="color:#606266">{{ row.weigh }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" width="100" align="center">
+        <template #default="{ row }">
+          <span style="font-size:12px;color:#909399">{{ row.createTime ? row.createTime.slice(0,10) : '—' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="190" fixed="right" align="center">
+        <template #default="{ row }">
+          <el-button link type="primary" size="small" @click="openEpisodes(row)">分集管理</el-button>
+          <el-divider direction="vertical" />
+          <el-button link type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
+          <el-divider direction="vertical" />
+          <el-button link type="danger" size="small" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -693,6 +711,9 @@ getList()
 .upload-placeholder:hover { border-color: var(--el-color-primary); }
 .upload-icon { font-size: 24px; }
 .ep-toolbar { margin-bottom: 12px; }
+.drama-title { font-size: 13px; font-weight: 600; color: #303133; margin-bottom: 6px; line-height: 1.4; }
+.drama-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
+.ep-count { font-size: 15px; font-weight: 700; color: #409eff; }
 
 /* 视频预览 */
 .preview-wrap { display: flex; flex-direction: column; gap: 10px; }

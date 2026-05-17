@@ -6,42 +6,42 @@
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="list" border>
+    <el-table v-loading="loading" :data="list" stripe border>
       <el-table-column label="ID" prop="id" width="60" align="center" />
-      <el-table-column label="套餐名(中文)" prop="title" width="140" />
-      <el-table-column label="多语言名称" min-width="180">
+      <el-table-column label="套餐名称" min-width="200">
         <template #default="{ row }">
-          <div v-if="row.titleI18n" style="font-size:12px;color:#666">
-            <div v-for="(v, k) in parseJson(row.titleI18n)" :key="k">
-              <el-tag size="small" style="margin-right:4px">{{ k }}</el-tag>{{ v }}
-            </div>
+          <div class="pkg-name">{{ row.title }}</div>
+          <div v-if="row.titleI18n" class="pkg-i18n">
+            <span v-for="(v, k) in parseJson(row.titleI18n)" :key="k" class="i18n-item">
+              <el-tag size="small" type="info" effect="plain">{{ k }}</el-tag> {{ v }}
+            </span>
           </div>
-          <span v-else style="color:#ccc">—</span>
         </template>
       </el-table-column>
-      <el-table-column label="天数" prop="days" width="70" align="center">
-        <template #default="{ row }">{{ row.days }}天</template>
-      </el-table-column>
-      <el-table-column label="价格" width="90" align="right">
-        <template #default="{ row }">¥{{ row.price }}</template>
-      </el-table-column>
-      <el-table-column label="划线价" width="90" align="right">
+      <el-table-column label="时长" width="90" align="center">
         <template #default="{ row }">
-          <span style="text-decoration:line-through;color:#999">¥{{ row.originalPrice }}</span>
+          <span class="pkg-days">{{ row.days }}</span><span style="font-size:12px;color:#909399"> 天</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="售价 / 划线价" width="150" align="center">
+        <template #default="{ row }">
+          <span class="pkg-price">¥{{ row.price }}</span>
+          <span v-if="row.originalPrice" class="pkg-original">¥{{ row.originalPrice }}</span>
         </template>
       </el-table-column>
       <el-table-column label="排序" prop="weigh" width="70" align="center" />
       <el-table-column label="状态" width="80" align="center">
         <template #default="{ row }">
-          <el-tag :type="row.status === 'normal' ? 'success' : 'info'">{{ row.status === 'normal' ? '上架' : '下架' }}</el-tag>
+          <el-tag :type="row.status === 'normal' ? 'success' : 'info'" size="small" effect="light">
+            {{ row.status === 'normal' ? '上架' : '下架' }}
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="160" fixed="right" align="center">
+      <el-table-column label="操作" width="130" fixed="right" align="center">
         <template #default="{ row }">
-          <el-space :size="4">
-            <el-button size="small" type="primary" icon="Edit" @click="handleEdit(row)">编辑</el-button>
-            <el-button size="small" type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
-          </el-space>
+          <el-button link type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
+          <el-divider direction="vertical" />
+          <el-button link type="danger" size="small" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -247,4 +247,10 @@ getList()
   color: #333;
   width: 100%;
 }
+.pkg-name { font-size: 13px; font-weight: 600; color: #303133; }
+.pkg-i18n { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.i18n-item { font-size: 12px; color: #909399; display: flex; align-items: center; gap: 3px; }
+.pkg-days { font-size: 16px; font-weight: 700; color: #409eff; }
+.pkg-price { font-size: 15px; font-weight: 700; color: #f56c6c; }
+.pkg-original { font-size: 12px; color: #c0c4cc; text-decoration: line-through; margin-left: 6px; }
 </style>
