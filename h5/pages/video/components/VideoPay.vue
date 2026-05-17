@@ -869,15 +869,15 @@
 				border-left: 6rpx solid #9354FF;
 
 				.title {
-					font-size: 26rpx;
+					font-size: 30rpx;
 					font-weight: 600;
 					color: #9354FF;
 				}
 
 				.recharge-link {
-					font-size: 24rpx;
+					font-size: 30rpx;
+					font-weight: 600;
 					color: #9354FF;
-					opacity: 0.75;
 				}
 			}
 
