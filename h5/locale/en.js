@@ -285,5 +285,6 @@ export default {
     virtualPayNotSupported: 'Your WeChat version does not support virtual payment',
     wxNotInstalled: 'WeChat not installed',
     pointsUnit: 'pts',
+    rechargePoints: 'Recharge Points',
   },
 }

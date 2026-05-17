@@ -270,5 +270,6 @@ export default {
     virtualPayNotSupported: '當前客戶端版本不支持小程序虛擬支付',
     wxNotInstalled: '未安裝微信客戶端',
     pointsUnit: '積分',
+    rechargePoints: '充值積分',
   },
 }

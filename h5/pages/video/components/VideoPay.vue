@@ -14,7 +14,10 @@
 					<text class="text1">{{ $t('videopay.unlockEp') }}</text>
 					<text class="text2" :style="'color:'+isColor">{{ $t('videopay.pricePoints', [price]) }}</text>
 				</view>
-				<view class="right">{{ $t('videopay.balance', [userInfoStore.usable || 0]) }}</view>
+				<view class="right">
+					{{ $t('videopay.balance', [userInfoStore.usable || 0]) }}
+					<text class="recharge-link" :style="'color:'+isColor" @click.stop="goRecharge">{{ $t('videopay.rechargePoints') }}</text>
+				</view>
 			</view>
 			<view class="p_list">
 				<!-- <view class="item">
@@ -57,6 +60,10 @@
 						</view>
 					</view>
 					<view class="badge" v-if="item.flag">{{ item.flag }}</view>
+				</view>
+				<view class="p_recharge_btn" v-if="iosIsPay" @click.stop="goRecharge">
+					<text class="label">{{ $t('videopay.rechargePoints') }}</text>
+					<text class="arrow">›</text>
 				</view>
 				<view class="p_section_title" v-if="iosIsPay && vipData.length">{{ $t('vip.selectPlan') }}</view>
 				<view class="p_vip_section" v-if="iosIsPay && vipData.length">
@@ -148,6 +155,11 @@
 				if(!this.iosIsPay) return this.jumpView('/pages/user/info/contact')
 				// #endif
 				this.jumpView(url)
+			},
+			goRecharge() {
+				if(!this.token) return this.$u.toast(this.$t('common.loginFirst'))
+				this.$emit('close')
+				this.jumpView('/pages/user/integral/recharge')
 			},
 			// 获取积分套餐列表
 			getIntegralList() {
@@ -847,7 +859,40 @@
 				}
 
 				.right {
+					display: flex;
+					flex-direction: column;
+					align-items: flex-end;
 					color: rgba(#1a1a1a, 0.5);
+
+					.recharge-link {
+						font-size: 24rpx;
+						margin-top: 6rpx;
+						text-decoration: underline;
+					}
+				}
+			}
+
+			.p_recharge_btn {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				justify-content: space-between;
+				background: linear-gradient(135deg, #f0f2ff 0%, #e8eaff 100%);
+				border: 1rpx solid #d0d5ff;
+				border-radius: 14rpx;
+				padding: 24rpx 28rpx;
+				margin-top: 20rpx;
+
+				.label {
+					font-size: 28rpx;
+					font-weight: 600;
+					color: #5E72F7;
+				}
+
+				.arrow {
+					font-size: 36rpx;
+					color: #9354FF;
+					line-height: 1;
 				}
 			}
 			
