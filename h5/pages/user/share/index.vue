@@ -45,6 +45,12 @@
 					</view>
 					<view class="text">{{ $t('share.commissionDetail') }}</view>
 				</view>
+				<view class="item" @click="jumpView('/pages/user/dealer/index')">
+					<view class="photo">
+						<image class="image" src="/static/img/分销商管理.png" mode="aspectFill"></image>
+					</view>
+					<view class="text">{{ $t('share.reseller') }}</view>
+				</view>
 			</view>
 			<view class="text_box">
 				<!-- <view class="title">利用这款创作工具如何赚钱？</view> -->
@@ -193,9 +199,11 @@
 				margin: 44rpx 0;
 				display: flex;
 				align-items: center;
-				
+				flex-wrap: wrap;
+				gap: 20rpx;
+
 				.item {
-					width: 208rpx;
+					width: calc((100% - 40rpx) / 3);
 					height: 172rpx;
 					border-radius: 30rpx;
 					background: #fff;
@@ -208,11 +216,7 @@
 					flex-direction: column;
 					align-items: center;
 					justify-content: center;
-					margin-right: calc((100% - 208rpx * 3) / 2);
-					
-					&:nth-child(3n) {
-						margin-right: 0;
-					}
+					margin-right: 0;
 					
 					&.active {
 						background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
