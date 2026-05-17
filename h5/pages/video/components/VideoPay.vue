@@ -951,12 +951,15 @@
 				width: 100%;
 				display: flex;
 				flex-wrap: wrap;
-				gap: 20rpx;
-				margin-bottom: 20rpx;
 
 				.vip-card {
-					width: calc(50% - 10rpx);
+					width: calc((100% - 20rpx) / 2);
 					min-height: 260rpx;
+					margin-bottom: 20rpx;
+
+					&:nth-child(2n) {
+						margin-left: 20rpx;
+					}
 					border-radius: 20rpx;
 					background: #fff;
 					position: relative;
@@ -1010,9 +1013,8 @@
 
 					.vc-btn {
 						margin-top: auto;
-						padding-top: 16rpx;
 						width: 100%;
-						padding: 12rpx 0;
+						padding: 16rpx 0;
 						border-radius: 40rpx;
 						border: 2rpx solid #5E72F7;
 						color: #5E72F7;
