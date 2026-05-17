@@ -30,7 +30,7 @@
 									<text>{{ item.wallet > 0 ? '+' : '' }}{{ item.wallet }}</text>
 								</view>
 								<view class="line">
-									<text>{{ $utils.timestampToTime(item.createtime) }}</text>
+									<text>{{ item.createTime || item.createtime || '' }}</text>
 								</view>
 							</view>
 						</view>
@@ -99,8 +99,8 @@
 					page: this.page
 				}).then(res => {
 					if(res.code === 1) {
-						if(res.data.wallet_logs.data && res.data.wallet_logs.data.length) {
-							this.list = this.list.concat(res.data.wallet_logs.data)
+						if(res.data && res.data.length) {
+							this.list = this.list.concat(res.data)
 						} else {
 							this.page--
 						}

@@ -37,6 +37,8 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -596,8 +598,8 @@ public class VideoController {
         // is_free=1 直接放行
         if (ep.getIsFree() != null && ep.getIsFree() == 1) {
             EpisodePlayResp resp = new EpisodePlayResp();
-            resp.setUrl(ep.getUrl() != null ? ep.getUrl() : ep.getHlsUrl());
-            resp.setHlsUrl(ep.getHlsUrl());
+            resp.setUrl(EpisodeVO.safeEncodeUrl(ep.getUrl() != null ? ep.getUrl() : ep.getHlsUrl()));
+            resp.setHlsUrl(EpisodeVO.safeEncodeUrl(ep.getHlsUrl()));
             return R.ok(resp);
         }
 
@@ -610,8 +612,8 @@ public class VideoController {
         // 已单集解锁 → 放行
         if (unlockMapper.existsUnlock(userId, ep.getId()) > 0) {
             EpisodePlayResp resp = new EpisodePlayResp();
-            resp.setUrl(ep.getUrl() != null ? ep.getUrl() : ep.getHlsUrl());
-            resp.setHlsUrl(ep.getHlsUrl());
+            resp.setUrl(EpisodeVO.safeEncodeUrl(ep.getUrl() != null ? ep.getUrl() : ep.getHlsUrl()));
+            resp.setHlsUrl(EpisodeVO.safeEncodeUrl(ep.getHlsUrl()));
             return R.ok(resp);
         }
 
@@ -621,8 +623,8 @@ public class VideoController {
             DramaUser user = userMapper.selectById(userId);
             if (user != null && user.isVipActive()) {
                 EpisodePlayResp resp = new EpisodePlayResp();
-                resp.setUrl(ep.getUrl() != null ? ep.getUrl() : ep.getHlsUrl());
-                resp.setHlsUrl(ep.getHlsUrl());
+                resp.setUrl(EpisodeVO.safeEncodeUrl(ep.getUrl() != null ? ep.getUrl() : ep.getHlsUrl()));
+                resp.setHlsUrl(EpisodeVO.safeEncodeUrl(ep.getHlsUrl()));
                 return R.ok(resp);
             }
         }
@@ -665,8 +667,8 @@ public class VideoController {
         walletLogMapper.insert(log);
 
         EpisodePlayResp resp = new EpisodePlayResp();
-        resp.setUrl(ep.getUrl() != null ? ep.getUrl() : ep.getHlsUrl());
-        resp.setHlsUrl(ep.getHlsUrl());
+        resp.setUrl(EpisodeVO.safeEncodeUrl(ep.getUrl() != null ? ep.getUrl() : ep.getHlsUrl()));
+        resp.setHlsUrl(EpisodeVO.safeEncodeUrl(ep.getHlsUrl()));
         return R.ok(resp);
     }
 
@@ -722,12 +724,25 @@ public class VideoController {
                         new com.fasterxml.jackson.databind.ObjectMapper().readTree(playInfo);
                     if (arr.isArray() && arr.size() > 0) {
                         String best = arr.get(arr.size() - 1).path("url").asText("");
-                        if (!best.isEmpty()) return best;
+                        if (!best.isEmpty()) return safeEncodeUrl(best);
                     }
                 } catch (Exception ignored) {}
             }
-            if (hlsUrl != null && !hlsUrl.isEmpty()) return hlsUrl;
-            return url;
+            if (hlsUrl != null && !hlsUrl.isEmpty()) return safeEncodeUrl(hlsUrl);
+            return safeEncodeUrl(url);
+        }
+
+        /** 对含非 ASCII 字符的 URL 做 percent-encoding，已合法的 URL 原样返回 */
+        static String safeEncodeUrl(String rawUrl) {
+            if (rawUrl == null || rawUrl.isEmpty()) return rawUrl;
+            // 纯 ASCII 无需处理
+            if (rawUrl.chars().allMatch(c -> c < 128)) return rawUrl;
+            try {
+                URL u = new URL(rawUrl);
+                return new URI(u.getProtocol(), u.getAuthority(), u.getPath(), u.getQuery(), u.getRef()).toASCIIString();
+            } catch (Exception e) {
+                return rawUrl;
+            }
         }
 
         public void setUrl(String url)         { this.url = url; }
