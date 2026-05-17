@@ -147,6 +147,7 @@
     >
       <div class="ep-toolbar">
         <el-button type="primary" icon="Plus" @click="openEpForm()">添加分集</el-button>
+        <el-button icon="Setting" @click="openBatchSet()">整部剧设置</el-button>
       </div>
 
       <el-table v-loading="epLoading" :data="episodes" size="small">
@@ -191,6 +192,43 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- 整部剧批量设置 -->
+      <el-dialog title="整部剧批量设置" v-model="batchSetVisible" width="480px" append-to-body>
+        <el-alert type="info" :closable="false" style="margin-bottom:16px">
+          批量修改该剧所有（或指定区间）分集的解锁方式和积分价格。
+        </el-alert>
+        <el-form :model="batchForm" label-width="100px">
+          <el-form-item label="解锁方式">
+            <el-radio-group v-model="batchForm.isFree">
+              <el-radio :value="1">全部免费</el-radio>
+              <el-radio :value="0">付费解锁</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item v-if="batchForm.isFree === 0" label="积分价格">
+            <el-input-number v-model="batchForm.price" :min="0" :precision="0" :step="10" style="width:160px" />
+            <span style="margin-left:8px;color:#999;font-size:12px">
+              0 = VIP专属，&gt;0 = 可用积分单集解锁
+            </span>
+          </el-form-item>
+          <el-form-item label="应用范围">
+            <el-radio-group v-model="batchForm.rangeType">
+              <el-radio value="all">全部分集</el-radio>
+              <el-radio value="range">指定区间</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item v-if="batchForm.rangeType === 'range'" label="集数区间">
+            <el-input-number v-model="batchForm.fromEpisode" :min="1" :precision="0" style="width:120px" placeholder="从第几集" />
+            <span style="margin:0 8px;color:#999">到</span>
+            <el-input-number v-model="batchForm.toEpisode" :min="1" :precision="0" style="width:120px" placeholder="到第几集" />
+            <span style="margin-left:8px;color:#999;font-size:12px">集</span>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button @click="batchSetVisible = false">取消</el-button>
+          <el-button type="primary" :loading="batchSubmitting" @click="submitBatchSet">确认应用</el-button>
+        </template>
+      </el-dialog>
 
       <!-- 分集表单 -->
       <el-dialog
@@ -303,7 +341,7 @@
 
 <script setup>
 import { listVideo, addVideo, updateVideo, deleteVideo } from '@/api/drama/video'
-import { listEpisodes, addEpisode, updateEpisode, deleteEpisode, transcodeEpisode } from '@/api/drama/episode'
+import { listEpisodes, addEpisode, updateEpisode, deleteEpisode, transcodeEpisode, batchSetEpisodes } from '@/api/drama/episode'
 import { uploadFile, listConfig } from '@/api/system/config'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -489,6 +527,38 @@ async function submitEpForm() {
   ElMessage.success('操作成功')
   epFormVisible.value = false
   loadEpisodes()
+}
+
+// ===== 整部剧批量设置 =====
+const batchSetVisible = ref(false)
+const batchSubmitting = ref(false)
+const batchForm = reactive({ isFree: 0, price: 50, rangeType: 'all', fromEpisode: 1, toEpisode: null })
+
+function openBatchSet() {
+  batchForm.isFree = 0
+  batchForm.price = 50
+  batchForm.rangeType = 'all'
+  batchForm.fromEpisode = 1
+  batchForm.toEpisode = episodes.value.length || null
+  batchSetVisible.value = true
+}
+
+async function submitBatchSet() {
+  const payload = {
+    isFree: batchForm.isFree,
+    price: batchForm.isFree === 0 ? batchForm.price : 0,
+    fromEpisode: batchForm.rangeType === 'range' ? batchForm.fromEpisode : null,
+    toEpisode: batchForm.rangeType === 'range' ? batchForm.toEpisode : null,
+  }
+  batchSubmitting.value = true
+  try {
+    await batchSetEpisodes(epDrawer.videoId, payload)
+    ElMessage.success('批量设置成功')
+    batchSetVisible.value = false
+    loadEpisodes()
+  } finally {
+    batchSubmitting.value = false
+  }
 }
 
 async function handleDeleteEp(row) {

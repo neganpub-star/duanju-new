@@ -19,3 +19,7 @@ export function deleteEpisode(epId) {
 export function transcodeEpisode(epId) {
   return request({ url: `/admin/drama/video/episodes/${epId}/transcode`, method: 'post' })
 }
+
+export function batchSetEpisodes(videoId, data) {
+  return request({ url: `/admin/drama/video/${videoId}/episodes/batch`, method: 'put', data })
+}

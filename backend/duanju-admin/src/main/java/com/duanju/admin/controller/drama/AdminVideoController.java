@@ -1,5 +1,7 @@
 package com.duanju.admin.controller.drama;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.duanju.common.core.domain.R;
 import com.duanju.common.core.page.PageQuery;
 import com.duanju.common.core.page.PageResult;
@@ -11,10 +13,12 @@ import com.duanju.drama.service.VideoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Tag(name = "【后管】短剧管理")
@@ -114,6 +118,42 @@ public class AdminVideoController {
         episodesMapper.updateById(mark);
         transcodeService.submit(epId, ep.getUrl());
         return R.ok();
+    }
+
+    @Operation(summary = "整部剧批量设置解锁方式")
+    @PutMapping("/{videoId}/episodes/batch")
+    public R<Void> batchSetEpisodes(@PathVariable Long videoId, @RequestBody BatchEpReq req) {
+        LambdaUpdateWrapper<VideoEpisodes> wrapper = new LambdaUpdateWrapper<VideoEpisodes>()
+                .eq(VideoEpisodes::getVideoId, videoId)
+                .isNull(VideoEpisodes::getDeleteTime);
+        // 指定集数区间
+        if (req.getFromEpisode() != null) {
+            wrapper.ge(VideoEpisodes::getEpisodeNum, req.getFromEpisode());
+        }
+        if (req.getToEpisode() != null) {
+            wrapper.le(VideoEpisodes::getEpisodeNum, req.getToEpisode());
+        }
+        wrapper.set(VideoEpisodes::getIsFree, req.getIsFree());
+        if (req.getIsFree() == 0) {
+            wrapper.set(VideoEpisodes::getPrice, req.getPrice() != null ? req.getPrice() : BigDecimal.ZERO);
+        } else {
+            // 免费时价格清零
+            wrapper.set(VideoEpisodes::getPrice, BigDecimal.ZERO);
+        }
+        episodesMapper.update(null, wrapper);
+        return R.ok();
+    }
+
+    @Data
+    static class BatchEpReq {
+        /** 0=付费 1=免费 */
+        private Integer isFree;
+        /** 每集积分价格（isFree=0 时有效） */
+        private BigDecimal price;
+        /** 起始集数（null=全部） */
+        private Integer fromEpisode;
+        /** 结束集数（null=全部） */
+        private Integer toEpisode;
     }
 
     @Operation(summary = "批量排序剧集")
