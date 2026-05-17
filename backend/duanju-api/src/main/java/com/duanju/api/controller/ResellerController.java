@@ -53,6 +53,7 @@ public class ResellerController {
             item.put("indirect", r.getIndirect());
             item.put("expire", r.getExpire());
             item.put("content", r.getContent());
+            item.put("content_i18n", r.getContentI18n());
             return item;
         }).collect(Collectors.toList());
 

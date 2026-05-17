@@ -21,7 +21,7 @@ export default {
     submit: 'Submit',
     back: 'Back',
     close: 'Close',
-    days: 'days',
+    days: ' days',
   },
   login: {
     title: 'Phone Login',

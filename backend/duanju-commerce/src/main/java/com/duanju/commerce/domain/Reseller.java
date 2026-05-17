@@ -18,6 +18,8 @@ public class Reseller extends BaseEntity {
     private String nameI18n;
     private String image;
     private String content;
+    /** 多语言描述 JSON */
+    private String contentI18n;
 
     private BigDecimal price;
     private BigDecimal originalPrice;

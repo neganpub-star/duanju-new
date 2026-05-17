@@ -43,14 +43,16 @@
 						:key="index"
 						@click="levelCardClick(item)"
 					>
-						<view class="level_name">{{ item.expire }}{{ $t('common.days') }}</view>
-						<view class="level_price">
-							<text class="currency">¥</text>
-							<text class="price_num">{{ item.price }}</text>
+						<view class="level_tag">{{ resolveI18n(item.name_i18n, item.name) }}</view>
+						<view class="level_body">
+							<view class="level_name">{{ item.expire }}{{ $t('common.days') }}</view>
+							<view class="level_price">
+								<text class="currency">¥</text>
+								<text class="price_num">{{ item.price }}</text>
+							</view>
+							<view class="level_rate">{{ $t('dealer.directRate', [Number(item.direct)]) }}</view>
+							<view class="level_rate">{{ $t('dealer.indirectRate', [Number(item.indirect)]) }}</view>
 						</view>
-						<view class="level_rate">{{ $t('dealer.directRate', [Number(item.direct)]) }}</view>
-						<view class="level_rate">{{ $t('dealer.indirectRate', [Number(item.indirect)]) }}</view>
-						<view class="level_tag">{{ item.name }}</view>
 					</view>
 				</view>
 			</view>
@@ -108,6 +110,15 @@
 		},
 		methods: {
 			...mapActions("user", ["getUserInfo"]),
+			resolveI18n(i18nJson, fallback) {
+				try {
+					const map = i18nJson ? JSON.parse(i18nJson) : {}
+					const locale = this.$i18n.locale
+					return map[locale] || map['zh-CN'] || fallback
+				} catch {
+					return fallback
+				}
+			},
 			levelCardClick(item) {
 				this.dredgeLevel = item.level
 				this.dredge.resellerId = item.id
@@ -238,6 +249,19 @@
 						flex-shrink: 0;
 					}
 
+					.avatar_placeholder {
+						background: rgba(255, 255, 255, 0.25);
+						display: flex;
+						align-items: center;
+						justify-content: center;
+
+						.avatar_initial {
+							font-size: 36rpx;
+							font-weight: 700;
+							color: #fff;
+						}
+					}
+
 					.user_info {
 						flex: 1;
 
@@ -303,10 +327,9 @@
 					gap: 16rpx;
 
 					.level_item {
-						position: relative;
 						width: calc((100% - 32rpx) / 3);
 						border-radius: 20rpx;
-						padding: 56rpx 16rpx 28rpx;
+						overflow: hidden;
 						border: 2rpx solid #e8eaff;
 						background: #f8f9ff;
 
@@ -314,6 +337,10 @@
 							background: linear-gradient(135deg, #5E72F7 0%, #9354FF 100%);
 							border-color: transparent;
 							box-shadow: 0 4rpx 20rpx rgba(94, 114, 247, 0.35);
+
+							.level_tag {
+								background: rgba(0, 0, 0, 0.18);
+							}
 
 							.level_name, .level_rate {
 								color: rgba(255, 255, 255, 0.85);
@@ -323,6 +350,23 @@
 								color: #fff;
 								.price_num { color: #fff; }
 							}
+						}
+
+						.level_tag {
+							display: block;
+							width: 100%;
+							background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+							color: #fff;
+							font-size: 20rpx;
+							font-weight: 700;
+							text-align: center;
+							padding: 10rpx 8rpx;
+							line-height: 1.3;
+							word-break: break-word;
+						}
+
+						.level_body {
+							padding: 16rpx 16rpx 24rpx;
 						}
 
 						.level_name {
@@ -344,7 +388,7 @@
 							}
 
 							.price_num {
-								font-size: 56rpx;
+								font-size: 52rpx;
 								font-weight: 900;
 								line-height: 1;
 								color: #5E72F7;
@@ -355,18 +399,6 @@
 							font-size: 22rpx;
 							color: #666;
 							line-height: 1.6;
-						}
-
-						.level_tag {
-							position: absolute;
-							top: 0;
-							right: 0;
-							background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
-							color: #fff;
-							font-size: 22rpx;
-							font-weight: 700;
-							padding: 6rpx 16rpx;
-							border-radius: 0 20rpx 0 16rpx;
 						}
 					}
 				}

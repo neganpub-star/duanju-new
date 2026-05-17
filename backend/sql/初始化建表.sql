@@ -296,6 +296,7 @@ CREATE TABLE IF NOT EXISTS `vs_drama_reseller` (
     `name_i18n`      VARCHAR(1000)           DEFAULT NULL COMMENT '多语言名称 JSON',
     `image`          VARCHAR(255)   NOT NULL DEFAULT '',
     `content`        TEXT           NOT NULL,
+    `content_i18n`   VARCHAR(5000)           DEFAULT NULL COMMENT '多语言描述 JSON',
     `price`          DECIMAL(10, 2) NOT NULL,
     `original_price` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     `level`          TINYINT        NOT NULL COMMENT '分销等级',
