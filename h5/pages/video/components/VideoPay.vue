@@ -14,10 +14,7 @@
 					<text class="text1">{{ $t('videopay.unlockEp') }}</text>
 					<text class="text2" :style="'color:'+isColor">{{ $t('videopay.pricePoints', [price]) }}</text>
 				</view>
-				<view class="right">
-					{{ $t('videopay.balance', [userInfoStore.usable || 0]) }}
-					<text class="recharge-link" :style="'color:'+isColor" @click.stop="goRecharge">{{ $t('videopay.rechargePoints') }}</text>
-				</view>
+				<view class="right">{{ $t('videopay.balance', [userInfoStore.usable || 0]) }}</view>
 			</view>
 			<view class="p_list">
 				<!-- <view class="item">
@@ -859,16 +856,7 @@
 				}
 
 				.right {
-					display: flex;
-					flex-direction: column;
-					align-items: flex-end;
 					color: rgba(#1a1a1a, 0.5);
-
-					.recharge-link {
-						font-size: 24rpx;
-						margin-top: 6rpx;
-						text-decoration: underline;
-					}
 				}
 			}
 
