@@ -9,3 +9,6 @@ export function handleWithdraw(id, data) {
 export function listWalletLog(params) {
   return request({ url: '/admin/commerce/wallet/logs', method: 'get', params })
 }
+export function getWalletStats(params) {
+  return request({ url: '/admin/commerce/wallet/stats', method: 'get', params })
+}

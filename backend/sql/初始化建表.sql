@@ -1,6 +1,5 @@
 -- 短剧平台初始化 SQL
 -- 数据库: duanju（新建）
--- 说明: 参考原 PHP 系统 vs_ 前缀表重新设计，字段统一使用 datetime 类型
 
 CREATE DATABASE IF NOT EXISTS `duanju` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `duanju`;
@@ -103,15 +102,18 @@ CREATE TABLE IF NOT EXISTS `vs_drama_video` (
     `id`            BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
     `site_id`       INT UNSIGNED     NOT NULL DEFAULT 1,
     `title`         VARCHAR(100)     NOT NULL DEFAULT '' COMMENT '短剧名称',
+    `title_i18n`    JSON                      DEFAULT NULL COMMENT '多语言标题',
     `image`         VARCHAR(255)     NOT NULL DEFAULT '' COMMENT '封面',
     `cover`         VARCHAR(255)     NOT NULL DEFAULT '' COMMENT '横版封面',
     `series_count`  INT              NOT NULL DEFAULT 0 COMMENT '总集数',
     `is_tv`         TINYINT          NOT NULL DEFAULT 0 COMMENT '0=完结 1=连载',
     `score`         VARCHAR(10)      NOT NULL DEFAULT '0.0' COMMENT '评分',
     `status`        TINYINT          NOT NULL DEFAULT 1 COMMENT '0=隐藏 1=显示',
+    `is_recommend`  TINYINT          NOT NULL DEFAULT 0 COMMENT '是否推荐到发现页 0=否 1=是',
     `category_ids`  VARCHAR(255)     NOT NULL DEFAULT '' COMMENT '分类ID逗号分隔',
     `tags`          VARCHAR(255)     NOT NULL DEFAULT '' COMMENT '标签',
     `description`   VARCHAR(500)     NOT NULL DEFAULT '' COMMENT '简介',
+    `desc_i18n`     JSON                      DEFAULT NULL COMMENT '多语言描述',
     `content`       TEXT COMMENT '详细介绍',
     `performer`     VARCHAR(255)     NOT NULL DEFAULT '' COMMENT '主演',
     `director`      VARCHAR(100)     NOT NULL DEFAULT '' COMMENT '导演',
@@ -137,29 +139,34 @@ CREATE TABLE IF NOT EXISTS `vs_drama_video` (
     `delete_time`   DATETIME                  DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `idx_site_status` (`site_id`, `status`),
-    KEY `idx_weigh` (`weigh`, `id`)
+    KEY `idx_weigh` (`weigh`, `id`),
+    KEY `idx_recommend` (`is_recommend`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '短剧主表';
 
 -- ============================================================
 -- 剧集表
 -- ============================================================
 CREATE TABLE IF NOT EXISTS `vs_drama_video_episodes` (
-    `id`          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `site_id`     INT UNSIGNED    NOT NULL DEFAULT 1,
-    `video_id`    BIGINT          NOT NULL COMMENT '关联短剧ID',
-    `title`       VARCHAR(100)    NOT NULL DEFAULT '' COMMENT '集标题',
-    `duration`    INT             NOT NULL DEFAULT 0 COMMENT '时长（秒）',
-    `url`         VARCHAR(512)    NOT NULL DEFAULT '' COMMENT '视频地址',
-    `hls_url`     VARCHAR(512)    NOT NULL DEFAULT '' COMMENT 'HLS地址',
-    `episode_num` INT             NOT NULL DEFAULT 0 COMMENT '集数',
-    `is_free`     TINYINT         NOT NULL DEFAULT 0 COMMENT '0=收费 1=免费',
-    `price`       DECIMAL(10, 2)  NOT NULL DEFAULT 0.00 COMMENT '解锁价格',
-    `views`       INT             NOT NULL DEFAULT 0,
-    `weigh`       INT             NOT NULL DEFAULT 0,
-    `status`      TINYINT         NOT NULL DEFAULT 1 COMMENT '0=隐藏 1=显示',
-    `create_time` DATETIME                 DEFAULT NULL,
-    `update_time` DATETIME                 DEFAULT NULL,
-    `delete_time` DATETIME                 DEFAULT NULL,
+    `id`               BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `site_id`          INT UNSIGNED    NOT NULL DEFAULT 1,
+    `video_id`         BIGINT          NOT NULL COMMENT '关联短剧ID',
+    `title`            VARCHAR(100)    NOT NULL DEFAULT '' COMMENT '集标题',
+    `title_i18n`       JSON                     DEFAULT NULL COMMENT '多语言标题',
+    `duration`         INT             NOT NULL DEFAULT 0 COMMENT '时长（秒）',
+    `url`              VARCHAR(512)    NOT NULL DEFAULT '' COMMENT '视频地址',
+    `hls_url`          VARCHAR(512)    NOT NULL DEFAULT '' COMMENT 'HLS地址',
+    `play_info`        JSON                     DEFAULT NULL COMMENT '多清晰度播放信息，格式：[{"definition":"720p","url":"..."}]',
+    `episode_num`      INT             NOT NULL DEFAULT 0 COMMENT '集数',
+    `is_free`          TINYINT         NOT NULL DEFAULT 0 COMMENT '0=收费 1=免费',
+    `price`            DECIMAL(10, 2)  NOT NULL DEFAULT 0.00 COMMENT '解锁价格',
+    `views`            INT             NOT NULL DEFAULT 0,
+    `weigh`            INT             NOT NULL DEFAULT 0,
+    `status`           TINYINT         NOT NULL DEFAULT 1 COMMENT '0=隐藏 1=显示',
+    `create_time`      DATETIME                 DEFAULT NULL,
+    `update_time`      DATETIME                 DEFAULT NULL,
+    `delete_time`      DATETIME                 DEFAULT NULL,
+    `transcode_status` VARCHAR(20)              DEFAULT NULL COMMENT '转码状态：pending/processing/done/failed',
+    `transcode_msg`    VARCHAR(500)             DEFAULT NULL COMMENT '转码失败原因',
     PRIMARY KEY (`id`),
     KEY `idx_video_id` (`video_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '短剧剧集表';
@@ -286,6 +293,7 @@ CREATE TABLE IF NOT EXISTS `vs_drama_reseller` (
     `id`             INT UNSIGNED   NOT NULL AUTO_INCREMENT,
     `site_id`        INT UNSIGNED   NOT NULL DEFAULT 1,
     `name`           VARCHAR(50)    NOT NULL,
+    `name_i18n`      VARCHAR(1000)           DEFAULT NULL COMMENT '多语言名称 JSON',
     `image`          VARCHAR(255)   NOT NULL DEFAULT '',
     `content`        TEXT           NOT NULL,
     `price`          DECIMAL(10, 2) NOT NULL,
@@ -473,3 +481,82 @@ CREATE TABLE IF NOT EXISTS `vs_drama_comment_like` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_user_comment` (`user_id`, `comment_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '评论点赞';
+
+-- ============================================================
+-- 分集解锁记录表
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `vs_drama_episode_unlock` (
+    `id`          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `site_id`     INT UNSIGNED    NOT NULL DEFAULT 1,
+    `user_id`     BIGINT          NOT NULL,
+    `video_id`    BIGINT          NOT NULL,
+    `episode_id`  BIGINT          NOT NULL,
+    `price`       DECIMAL(10, 2)  NOT NULL DEFAULT 0.00,
+    `create_time` DATETIME        DEFAULT NULL,
+    `update_time` DATETIME        DEFAULT NULL,
+    `delete_time` DATETIME        DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_user_episode` (`user_id`, `episode_id`),
+    KEY `idx_user_video` (`user_id`, `video_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '分集解锁记录';
+
+-- ============================================================
+-- 观看记录表
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `vs_drama_watch_log` (
+    `id`          BIGINT   NOT NULL AUTO_INCREMENT,
+    `site_id`     INT      NOT NULL DEFAULT 1,
+    `user_id`     BIGINT   NOT NULL,
+    `video_id`    BIGINT   NOT NULL,
+    `episode_id`  BIGINT   NOT NULL DEFAULT 0,
+    `view_time`   DECIMAL(10, 2) NOT NULL DEFAULT 0.00 COMMENT '已看时长（秒）',
+    `create_time` DATETIME DEFAULT NULL,
+    `update_time` DATETIME DEFAULT NULL,
+    `delete_time` DATETIME DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_user_video` (`user_id`, `video_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '观看记录';
+
+-- ============================================================
+-- 追剧收藏表
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `vs_drama_video_favorite` (
+    `id`          BIGINT   NOT NULL AUTO_INCREMENT,
+    `site_id`     INT      NOT NULL DEFAULT 1,
+    `user_id`     BIGINT   NOT NULL,
+    `video_id`    BIGINT   NOT NULL,
+    `create_time` DATETIME DEFAULT NULL,
+    `update_time` DATETIME DEFAULT NULL,
+    `delete_time` DATETIME DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_user_video` (`user_id`, `video_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '用户追剧收藏';
+
+-- ============================================================
+-- 视频点赞记录表
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `vs_drama_video_like` (
+    `id`          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `site_id`     INT UNSIGNED    NOT NULL DEFAULT 1,
+    `user_id`     BIGINT UNSIGNED NOT NULL,
+    `video_id`    BIGINT UNSIGNED NOT NULL,
+    `create_time` DATETIME        DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_user_video` (`user_id`, `video_id`),
+    KEY `idx_video_id` (`video_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '用户点赞记录';
+
+-- ============================================================
+-- 系统参数配置表
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `sys_config` (
+    `config_key`   VARCHAR(100)  NOT NULL COMMENT '配置键',
+    `config_value` VARCHAR(1000)          DEFAULT '' COMMENT '配置值',
+    `config_name`  VARCHAR(200)           DEFAULT '' COMMENT '配置名称',
+    `config_type`  VARCHAR(20)            DEFAULT 'text' COMMENT 'text/password/select',
+    `config_group` VARCHAR(50)            DEFAULT '' COMMENT '分组',
+    `remark`       VARCHAR(200)           DEFAULT '' COMMENT '备注',
+    `create_time`  DATETIME               DEFAULT NULL,
+    `update_time`  DATETIME               DEFAULT NULL,
+    PRIMARY KEY (`config_key`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '系统参数配置';

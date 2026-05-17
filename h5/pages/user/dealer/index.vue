@@ -1,64 +1,74 @@
 
+
 <template>
 	<view class="page_content">
 		<!-- #ifndef MP-TOUTIAO -->
 		<view class="head_content">
-			<CustomNavbar title="开通经销商"></CustomNavbar>
+			<CustomNavbar :title="$t('dealer.title')"></CustomNavbar>
 		</view>
 		<!-- #endif -->
-		
+
 		<view class="main_content">
-			<view class="info_box">
-				<view class="user">
-					<view class="avatar">
-						<image class="image" :src="userInfo.avatar" mode="aspectFill"></image>
+			<!-- 用户信息卡片 -->
+			<view class="user_card">
+				<view class="user_row">
+					<image v-if="userInfo.avatar" class="avatar" :src="userInfo.avatar" mode="aspectFill"></image>
+					<view v-else class="avatar avatar_placeholder">
+						<text class="avatar_initial">{{ (userInfo.nickname || 'U').charAt(0).toUpperCase() }}</text>
 					</view>
-					<view class="content" v-if="level == 0">
-						<view class="p1">亲爱的平台用户，您好</view>
-						<view class="p2">您还不是分销商，请在下面点击开通经销商</view>
-					</view>
-					<view class="content" v-else>
-						<view class="p1">亲爱的{{ userInfo.levelText }}，您好</view>
-						<view class="p2">恭喜你，您已是我们的{{ userInfo.levelText }}</view>
+					<view class="user_info">
+						<view class="user_greeting" v-if="level == 0">{{ $t('dealer.greetUser') }}</view>
+						<view class="user_greeting" v-else>{{ $t('dealer.greetReseller', [userInfo.levelText]) }}</view>
+						<view class="user_desc" v-if="level == 0">{{ $t('dealer.notReseller') }}</view>
+						<view class="user_desc" v-else>{{ $t('dealer.alreadyReseller', [userInfo.levelText]) }}</view>
 					</view>
 				</view>
-				<view class="card">
-					<view class="texts" v-if="level == 0">
-						<text class="text1" :style="'color:'+isColor">平台用户</text>
-						<text class="text3">永久有效</text>
+				<view class="status_row">
+					<view class="status_badge">
+						<text class="badge_text" v-if="level == 0">{{ $t('dealer.platformUser') }}</text>
+						<text class="badge_text" v-else>{{ userInfo.levelText }}</text>
 					</view>
-					<view class="texts" v-else>
-						<text class="text1">{{ userInfo.levelText }}</text>
-						<!-- <text class="text2">开通时间:2023年5月26日</text> -->
-						<text class="text3">{{ userInfo.expireText }}</text>
+					<text class="expire_text">{{ level == 0 ? $t('dealer.permanent') : userInfo.expireText }}</text>
+				</view>
+			</view>
+
+			<!-- 等级套餐 -->
+			<view class="section_card" v-if="levelData.length">
+				<view class="section_title">{{ $t('dealer.levelCategory') }}</view>
+				<view class="level_grid">
+					<view
+						class="level_item"
+						:class="{ active: item.level == dredgeLevel }"
+						v-for="(item, index) in levelData"
+						:key="index"
+						@click="levelCardClick(item)"
+					>
+						<view class="level_name">{{ item.expire }}{{ $t('common.days') }}</view>
+						<view class="level_price">
+							<text class="currency">¥</text>
+							<text class="price_num">{{ item.price }}</text>
+						</view>
+						<view class="level_rate">{{ $t('dealer.directRate', [Number(item.direct)]) }}</view>
+						<view class="level_rate">{{ $t('dealer.indirectRate', [Number(item.indirect)]) }}</view>
+						<view class="level_tag">{{ item.name }}</view>
 					</view>
 				</view>
 			</view>
-			<view class="content_box">
-				<view class="level_box">
-					<view class="title">等级分类</view>
-					<view class="list_box" v-if="levelData.length">
-						<view class="item" :style="item.level == dredgeLevel ?'background-image: linear-gradient(to right, #000, #000),'+isBgColor :''" :class="{ active: item.level == dredgeLevel }" v-for="(item, index) in levelData" :key="index" @click="levelCardClick(item)">
-							<view class="text1">{{ item.expire_text }}</view>
-							<view class="text2" :style="'color:'+isColor">
-								<text>￥</text>
-								<text class="num">{{ item.price }}</text>
-							</view>
-							<view class="text3">直接分润{{ Number(item.direct) }}%</view>
-							<view class="text3">间接分润{{ Number(item.indirect) }}%</view>
-							<view class="tip" :style="'background:'+isBgColor">{{ item.name }}</view>
-						</view>
-					</view>
-				</view>
-				<view class="text_box">
-					<u-parse :content="msg"></u-parse>
-				</view>
+
+			<!-- 说明内容 -->
+			<view class="desc_card" v-if="msg">
+				<u-parse :content="msg"></u-parse>
 			</view>
 		</view>
+
 		<view class="footer_content" v-if="levelData.length">
-			<view class="button_box">
-				<u-button text="立即开通" v-if="dredgeLevel != 0" :loading="buttonLoading" :customStyle="buttonStyle" @click="dredgeDealer" />
-			</view>
+			<u-button
+				:text="$t('dealer.activateNow')"
+				v-if="dredgeLevel != 0"
+				:loading="buttonLoading"
+				:customStyle="buttonStyle"
+				@click="dredgeDealer"
+			/>
 		</view>
 	</view>
 </template>
@@ -68,15 +78,13 @@
 	export default {
 		data() {
 			return {
-				isColor: `pink`,
-				isBgColor: `#5E72F7`,
 				buttonStyle: {
 					width: '100%',
-					height: '108rpx',
+					height: '100rpx',
 					border: 'none',
 					fontSize: '32rpx',
 					color: '#fff',
-					background: `linear-gradient(90deg, #5E72F7 0%, #9354FF 100%)`,
+					background: 'linear-gradient(90deg, #5E72F7 0%, #9354FF 100%)',
 					borderRadius: '16rpx',
 					margin: '0',
 					fontWeight: 'bold'
@@ -123,7 +131,7 @@
 						this.userInfo = res.data
 						this.level = res.data.reseller_level || 0
 						if (res.data.reseller_level > 0 && res.data.reseller_expire_time) {
-							this.userInfo.levelText = res.data.reseller_level + '级分销商'
+							this.userInfo.levelText = this.$t('dealer.resellerLevel', [res.data.reseller_level])
 							this.userInfo.expireText = res.data.reseller_expire_time
 						}
 						this.dealerLevelList()
@@ -134,10 +142,10 @@
 				// #ifdef MP-WEIXIN
 				if (!this.iosIsPay) return this.jumpView('/pages/user/info/contact')
 				// #endif
-				if (!this.dredge.resellerId) return this.$u.toast('请选择套餐')
+				if (!this.dredge.resellerId) return this.$u.toast(this.$t('dealer.selectPlan'))
 				const doBuy = () => {
 					this.buttonLoading = true
-					uni.showLoading({ title: '开通中...', mask: true })
+					uni.showLoading({ title: this.$t('dealer.activating'), mask: true })
 					this.$request('dealer.createOrder', {
 						resellerId: this.dredge.resellerId,
 						payType: 'wechat',
@@ -148,7 +156,7 @@
 						if (res.code === 1) {
 							this.handlePayResult(res.data)
 						} else {
-							uni.showToast({ title: res.msg || '下单失败', icon: 'none' })
+							uni.showToast({ title: res.msg || this.$t('payment.orderFailed'), icon: 'none' })
 						}
 					}).catch(() => {
 						uni.hideLoading()
@@ -157,8 +165,8 @@
 				}
 				if (this.dredgeLevel < this.level) {
 					uni.showModal({
-						title: '提示',
-						content: '当前购买等级小于已有等级，是否继续？',
+						title: this.$t('dealer.tip'),
+						content: this.$t('dealer.lowerLevelTip'),
 						success: r => { if (r.confirm) doBuy() }
 					})
 				} else {
@@ -167,7 +175,7 @@
 			},
 			handlePayResult(data) {
 				if (data.status === 'paid') {
-					uni.showToast({ title: '开通成功', icon: 'success' })
+					uni.showToast({ title: this.$t('dealer.activateSuccess'), icon: 'success' })
 					this.getPageData()
 					return
 				}
@@ -182,18 +190,18 @@
 						signType: data.signType, paySign: data.paySign
 					}, res => {
 						if (res.err_msg === 'get_brand_wcpay_request:ok') {
-							uni.showToast({ title: '开通成功', icon: 'success' })
+							uni.showToast({ title: this.$t('dealer.activateSuccess'), icon: 'success' })
 							this.getPageData()
 						} else {
-							uni.showToast({ title: '支付取消', icon: 'none' })
+							uni.showToast({ title: this.$t('dealer.payCancel'), icon: 'none' })
 						}
 					})
 					return
 				}
 				if (data.payError) {
-					uni.showToast({ title: '支付未配置，请联系客服', icon: 'none', duration: 3000 })
+					uni.showToast({ title: this.$t('dealer.payNotConfigured'), icon: 'none', duration: 3000 })
 				} else {
-					uni.showToast({ title: '开通成功', icon: 'success' })
+					uni.showToast({ title: this.$t('dealer.activateSuccess'), icon: 'success' })
 					this.getPageData()
 				}
 			}
@@ -203,219 +211,185 @@
 
 <style lang="scss" scoped>
 	.page_content {
-		position: relative;
-		
-		&::before {
-			content: "";
-			width: 100%;
-			height: 410rpx;
-			position: absolute;
-			top: 0;
-			left: 0;
-			z-index: 0;
-			background-image: url('https://img.nymaite.com/video_short/images/v_bg.png');
-			background-repeat: no-repeat;
-			background-size: auto 100%;
-			background-position: 110% 100%;
-		}
-		
-		.head_content {
-			background: #F9F9FB;
-		}
-		
+		background: #f5f6ff;
+		min-height: 100vh;
+
 		.main_content {
-			overflow-x: hidden;
-			padding-bottom: 200rpx;
-			
-			.info_box {
-				width: 140%;
-				background: #F9F9FB;
-				border-radius: 0 0 50% 50%;
-				margin-left: -20%;
-				padding: 0 calc(20% + 32rpx);
-				overflow: hidden;
-				  
-				.user {
-					position: relative;
+			padding: 24rpx 28rpx 160rpx;
+
+			.user_card {
+				background: linear-gradient(135deg, #5E72F7 0%, #9354FF 100%);
+				border-radius: 28rpx;
+				padding: 36rpx 32rpx 28rpx;
+				box-shadow: 0 8rpx 32rpx rgba(94, 114, 247, 0.35);
+				margin-bottom: 24rpx;
+
+				.user_row {
 					display: flex;
 					align-items: center;
-					margin-top: 10rpx;
-					
+					gap: 24rpx;
+					margin-bottom: 28rpx;
+
 					.avatar {
-						width: 114rpx;
-						height: 114rpx;
+						width: 96rpx;
+						height: 96rpx;
 						border-radius: 50%;
-						overflow: hidden;
-						
-						.image {
-							width: 100%;
-							height: 100%;
-						}
+						border: 3rpx solid rgba(255, 255, 255, 0.5);
+						flex-shrink: 0;
 					}
-					
-					.content {
-						margin-left: 24rpx;
-						
-						.p1 {
-							font-size: 32rpx;
-							color: #333;
-							margin-bottom: 8rpx;
+
+					.user_info {
+						flex: 1;
+
+						.user_greeting {
+							font-size: 30rpx;
 							font-weight: 700;
+							color: #fff;
+							margin-bottom: 8rpx;
 						}
-						
-						.p2 {
-							font-size: 28rpx;
-							color: #999;
+
+						.user_desc {
+							font-size: 24rpx;
+							color: rgba(255, 255, 255, 0.75);
 						}
 					}
 				}
-				
-				.card {
-					position: relative;
-					height: 120rpx;
-					margin-top: 10rpx;
-					border-radius: 16rpx;
-					padding: 32rpx 40rpx 0 40rpx;
-					background: linear-gradient(269.64deg, rgba(92, 86, 96, 1) 0%, rgba(57, 52, 59, 1) 100%);
-					
-					&::before {
-						content: "";
-						width: 100%;
-						height: 100%;
-						position: absolute;
-						top: 0;
-						left: 0;
-						background-image: url('https://img.nymaite.com/video_short/images/line_bg.png');
-						background-repeat: no-repeat;
-						background-size: auto 110%;
-						background-position: 50% 0;
-					}
-					
-					.texts {
-						position: relative;
-						display: flex;
-						align-items: center;
-						justify-content: space-between;
-						
-						.text1 {
-							font-size: 36rpx;
-							// color: #E6BD70;
-							// color: #F28C46;
-							color: pink;
+
+				.status_row {
+					display: flex;
+					align-items: center;
+					justify-content: space-between;
+					padding-top: 20rpx;
+					border-top: 1rpx solid rgba(255, 255, 255, 0.2);
+
+					.status_badge {
+						background: rgba(255, 255, 255, 0.2);
+						border-radius: 20rpx;
+						padding: 6rpx 20rpx;
+
+						.badge_text {
+							font-size: 24rpx;
 							font-weight: 700;
-						}
-						
-						.text2 {
-							font-size: 24rpx;
 							color: #fff;
 						}
-						
-						.text3 {
+					}
+
+					.expire_text {
+						font-size: 24rpx;
+						color: rgba(255, 255, 255, 0.75);
+					}
+				}
+			}
+
+			.section_card {
+				background: #fff;
+				border-radius: 24rpx;
+				padding: 32rpx;
+				box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
+				margin-bottom: 24rpx;
+
+				.section_title {
+					font-size: 30rpx;
+					font-weight: 700;
+					color: #1a1a1a;
+					margin-bottom: 28rpx;
+					padding-left: 12rpx;
+					border-left: 6rpx solid #5E72F7;
+				}
+
+				.level_grid {
+					display: flex;
+					flex-wrap: wrap;
+					gap: 16rpx;
+
+					.level_item {
+						position: relative;
+						width: calc((100% - 32rpx) / 3);
+						border-radius: 20rpx;
+						padding: 56rpx 16rpx 28rpx;
+						border: 2rpx solid #e8eaff;
+						background: #f8f9ff;
+
+						&.active {
+							background: linear-gradient(135deg, #5E72F7 0%, #9354FF 100%);
+							border-color: transparent;
+							box-shadow: 0 4rpx 20rpx rgba(94, 114, 247, 0.35);
+
+							.level_name, .level_rate {
+								color: rgba(255, 255, 255, 0.85);
+							}
+
+							.level_price {
+								color: #fff;
+								.price_num { color: #fff; }
+							}
+						}
+
+						.level_name {
 							font-size: 24rpx;
+							color: #888;
+							margin-bottom: 8rpx;
+						}
+
+						.level_price {
+							display: flex;
+							align-items: baseline;
+							gap: 4rpx;
+							margin: 10rpx 0;
+							color: #5E72F7;
+
+							.currency {
+								font-size: 28rpx;
+								font-weight: 700;
+							}
+
+							.price_num {
+								font-size: 56rpx;
+								font-weight: 900;
+								line-height: 1;
+								color: #5E72F7;
+							}
+						}
+
+						.level_rate {
+							font-size: 22rpx;
+							color: #666;
+							line-height: 1.6;
+						}
+
+						.level_tag {
+							position: absolute;
+							top: 0;
+							right: 0;
+							background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
 							color: #fff;
+							font-size: 22rpx;
+							font-weight: 700;
+							padding: 6rpx 16rpx;
+							border-radius: 0 20rpx 0 16rpx;
 						}
 					}
 				}
 			}
-			
-			.content_box {
+
+			.desc_card {
+				background: #fff;
+				border-radius: 24rpx;
 				padding: 32rpx;
-				
-				.level_box {
-					position: relative;
-					background: #fff;
-					
-					.title {
-						font-size: 36rpx;
-						font-weight: 700;
-						color: #272D2F;
-					}
-					
-					.list_box {
-						margin-top: 36rpx;
-						display: flex;
-						flex-wrap: wrap;
-						justify-content: space-between;
-						.item {
-							position: relative;
-							min-width: calc((100% - 60rpx) / 3);
-							border-radius: 20rpx;
-							padding: 72rpx 20rpx 36rpx 20rpx;
-							border: 4rpx solid #5E72F7;
-							background: rgba(77, 77, 77, 1);
-							margin: 0 0rpx 30rpx 0;
-							
-							&:nth-child(3n) {
-								margin-right: 0;
-							}
-							
-							&.active {
-								background-clip: padding-box, border-box;
-								background-origin: padding-box, border-box;
-								background-image: linear-gradient(to right, #000, #000), linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
-							}
-							
-							.text1 {
-								font-size: 28rpx;
-								color: #fff;
-							}
-							
-							.text2 {
-								font-size: 36rpx;
-								color: #5E72F7;
-								margin: 8rpx 0;
-								
-								.num {
-									font-size: 64rpx;
-									font-weight: 900;
-								}
-							}
-							
-							.text3 {
-								font-size: 24rpx;
-								color: #fff;
-							}
-							
-							.tip {
-								font-size: 24rpx;
-								font-weight: 700;
-								color: #fff;
-								padding: 8rpx 16rpx;
-								border-radius: 0 20rpx 0 20rpx;
-								background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
-								position: absolute;
-								top: -4rpx;
-								right: -4rpx;
-							}
-						}
-					}
-				}
-				
-				.text_box {
-					margin-top: 40rpx;
-					border-radius: 16rpx;
-					box-shadow: 0 0 60rpx 0 rgba(102, 102, 102, 0.15);
-					padding: 40rpx;
-					font-size: 28rpx;
-					color: rgba(51, 51, 51, 1);
-					overflow: hidden;
-					
-					.title {
-						font-weight: bold;
-						padding-bottom: 36rpx;
-						border-bottom: 2rpx solid rgba(221, 221, 221, 1);
-						margin-bottom: 36rpx;
-					}
-				}
+				box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
+				font-size: 26rpx;
+				color: #555;
 			}
 		}
-	
+
 		.footer_content {
-			width: 100%;
-			padding: 0 32rpx;
 			position: fixed;
-			bottom: 40rpx;
+			bottom: 0;
 			left: 0;
+			width: 100%;
+			padding: 20rpx 32rpx 40rpx;
+			background: #fff;
+			box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.06);
 		}
 	}
 </style>

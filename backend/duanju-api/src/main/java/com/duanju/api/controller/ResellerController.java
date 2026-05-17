@@ -46,12 +46,12 @@ public class ResellerController {
             Map<String, Object> item = new LinkedHashMap<>();
             item.put("id", r.getId());
             item.put("name", r.getName());
+            item.put("name_i18n", r.getNameI18n());
             item.put("level", r.getLevel());
             item.put("price", r.getPrice());
             item.put("direct", r.getDirect());
             item.put("indirect", r.getIndirect());
             item.put("expire", r.getExpire());
-            item.put("expire_text", r.getExpire() + "天");
             item.put("content", r.getContent());
             return item;
         }).collect(Collectors.toList());

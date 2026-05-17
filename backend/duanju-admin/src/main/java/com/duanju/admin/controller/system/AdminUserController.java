@@ -2,6 +2,7 @@ package com.duanju.admin.controller.system;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.duanju.commerce.service.WalletService;
 import com.duanju.common.core.domain.R;
 import com.duanju.common.core.page.PageQuery;
 import com.duanju.common.core.page.PageResult;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +28,10 @@ public class AdminUserController {
 
     private final DramaUserService userService;
     private final DramaUserMapper userMapper;
+    private final WalletService walletService;
+
+    @Value("${duanju.site-id:1}")
+    private Integer siteId;
 
     @Operation(summary = "用户列表")
     @GetMapping("/list")
@@ -74,7 +80,8 @@ public class AdminUserController {
     @Operation(summary = "手动充值余额/积分/点数")
     @PostMapping("/{id}/recharge")
     public R<Void> recharge(@PathVariable Long id, @RequestBody RechargeReq req) {
-        userService.changeWallet(id, req.getWalletType(), req.getAmount(), "admin_recharge", req.getMemo(), null);
+        walletService.addWallet(siteId, id, req.getWalletType(), req.getAmount(), "admin_recharge",
+                (req.getMemo() != null && !req.getMemo().isBlank()) ? req.getMemo() : "平台赠送", null);
         return R.ok();
     }
 

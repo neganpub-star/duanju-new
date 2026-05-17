@@ -167,7 +167,7 @@ export const constantRoutes = [
         component: () => import('@/views/commerce/wallet/log'),
         name: 'WalletLog',
         meta: { title: '钱包流水', icon: 'chart' }
-      }
+      },
       {
         path: 'withdraw',
         component: () => import('@/views/commerce/wallet/withdraw'),

@@ -1,58 +1,88 @@
 
 
 <template>
-	<view class="page_content" :style="{ '--bgcolor':isBgColor }">
+	<view class="page_content">
 		<!-- #ifndef MP-TOUTIAO -->
-			<view class="head_content">
-			<CustomNavbar title="提现申请" color="#fff"></CustomNavbar>
+		<view class="head_content">
+			<CustomNavbar :title="$t('withdraw.title')"></CustomNavbar>
 		</view>
 		<!-- #endif -->
-		
+
 		<view class="main_content">
-			<view class="top_card">
-				<view class="line1">
-					<view class="left">提现金额（需 ≥ {{ sumMin }}元）</view>
-					<view class="right" @click="jumpView('/pages/user/share/payee')">
-						<image class="image" src="https://img.nymaite.com/video_short/icons/setting.png" mode="widthFix"></image>
-						<text>收款号设置</text>
+			<!-- 提现表单 -->
+			<view class="form_card">
+				<!-- 提现类型选择 -->
+				<view class="field_row" @click="typePicker = true">
+					<view class="field_label">{{ $t('withdraw.withdrawTo') }}</view>
+					<view class="field_value type_value">
+						<text>{{ typeText }}</text>
+						<text class="arrow">›</text>
 					</view>
 				</view>
-				<view class="line2">
-					<text class="text">￥</text>
-					<input class="input" type="number" v-model="params.money" placeholder="请输入提现金额" placeholder-class="placeholder">
+				<u-picker :show="typePicker" :columns="types" keyName="label" :closeOnClickOverlay="true"
+					@close="typePicker = false" @cancel="typePicker = false" @confirm="selectedType" />
+
+				<!-- 真实姓名 -->
+				<view class="field_row">
+					<view class="field_label">{{ $t('withdraw.realName') }}</view>
+					<input class="field_input" v-model="params.realName" :placeholder="$t('withdraw.namePlaceholder')" />
 				</view>
-				<view class="line3">
-					<view class="left">提现至</view>
-					<view class="right" :style="'color:'+isColor" @click="typePicker = true">{{ typeText }} > </view>
+
+				<!-- 账号（微信/支付宝） -->
+				<view class="field_row" v-if="params.applyType !== 'bank'">
+					<view class="field_label">{{ $t('withdraw.accountNo') }}</view>
+					<input class="field_input" v-model="params.account" :placeholder="$t('withdraw.accountPlaceholder')" />
 				</view>
-				<view class="line4">
-					<u-button text="确认提现" :loading="buttonLoading" :customStyle="buttonStyle" @click="withdrawHandle" />
+
+				<!-- 银行卡专用字段 -->
+				<template v-if="params.applyType === 'bank'">
+					<view class="field_row">
+						<view class="field_label">{{ $t('withdraw.bankName') }}</view>
+						<input class="field_input" v-model="params.bankName" :placeholder="$t('withdraw.bankPlaceholder')" />
+					</view>
+					<view class="field_row">
+						<view class="field_label">{{ $t('withdraw.accountNo') }}</view>
+						<input class="field_input" v-model="params.account" :placeholder="$t('withdraw.accountPlaceholder')" />
+					</view>
+				</template>
+
+				<!-- 提现金额 -->
+				<view class="field_row amount_row">
+					<view class="field_label">
+						{{ $t('withdraw.amount') }}
+						<text class="hint_text">（{{ $t('withdraw.minHint') }} {{ sumMin }}{{ $t('withdraw.yuan') }}）</text>
+					</view>
 				</view>
-				<u-picker :show="typePicker" :columns="types" keyName="label" :closeOnClickOverlay="true" @close="typePicker = false" @cancel="typePicker = false" @confirm="selectedType"></u-picker>
+				<view class="amount_input_row">
+					<text class="currency">¥</text>
+					<input class="amount_input" type="digit" v-model="params.money" :placeholder="$t('withdraw.inputAmount')" />
+				</view>
+
+				<view class="submit_btn">
+					<u-button :text="$t('withdraw.confirm')" :loading="buttonLoading" :customStyle="buttonStyle" @click="withdrawHandle" />
+				</view>
 			</view>
-			<view class="content_box">
-				<view class="title">提现记录</view>
-				<view class="block_box">
-					<scroll-view class="scroll_view" :scroll-y="true" @scrolltolower="scrollBottom">
-						<view class="scroll_content">
-							<view class="list_box" v-if="recordData.length">
-								<view class="item" v-for="(item, index) in recordData" :key="index">
-									<view class="left">
-										<view class="photo">
-											<image class="image" src="https://img.nymaite.com/video_short/icons/vip.png" mode="widthFix"></image>
-										</view>
-										<view class="info">
-											<view class="text1">{{ `${item.money} (${item.apply_type_text})` }}</view>
-											<view class="text2">{{ timestampToTime(item.createtime) }}</view>
-										</view>
-									</view>
-									<view class="right">{{ item.status_text }}</view>
-								</view>
+
+			<!-- 提现记录 -->
+			<view class="records_card">
+				<view class="records_title">{{ $t('withdraw.records') }}</view>
+				<view class="record_list" v-if="recordData.length">
+					<view class="record_item" v-for="(item, index) in recordData" :key="index">
+						<view class="record_left">
+							<view class="record_type_icon">
+								<text>{{ typeIcon(item.apply_type) }}</text>
 							</view>
-							<view class="be_empty" v-else>没有提现记录</view>
+							<view class="record_info">
+								<view class="record_money">¥{{ item.money }}</view>
+								<view class="record_meta">{{ item.apply_type_text }} · {{ timestampToTime(item.createtime) }}</view>
+							</view>
 						</view>
-					</scroll-view>
+						<view class="record_status" :class="'status_' + item.status">
+							{{ statusText(item.status) }}
+						</view>
+					</view>
 				</view>
+				<view class="empty_tip" v-else>{{ $t('withdraw.noRecord') }}</view>
 			</view>
 		</view>
 	</view>
@@ -62,304 +92,290 @@
 	export default {
 		data() {
 			return {
-				isColor: `#9354FF`,
-				isBgColor: `#5E72F7`,
 				buttonStyle: {
 					width: '100%',
-					height: '108rpx',
+					height: '100rpx',
 					border: 'none',
-					fontSize: '32rpx',
+					fontSize: '30rpx',
 					color: '#fff',
-					background: `linear-gradient(90deg, #5E72F7 0%, #9354FF 100%)`,
+					background: 'linear-gradient(90deg, #5E72F7 0%, #9354FF 100%)',
 					borderRadius: '16rpx',
 					margin: '0',
 					fontWeight: 'bold'
 				},
 				buttonLoading: false,
-				types: [
-					[
-						{ id: 1, type: 'wechat', label: '微信' },
-						{ id: 2, type: 'alipay', label: '支付宝' },
-						{ id: 3, type: 'bank', label: '银行卡' }
-					]
-				],
+				types: [[
+					{ id: 1, type: 'wechat', label: '' },
+					{ id: 2, type: 'alipay', label: '' },
+					{ id: 3, type: 'bank', label: '' },
+				]],
 				typePicker: false,
-				typeText: '微信',
+				typeText: '',
 				params: {
-					type: 'wechat',
+					applyType: 'wechat',
 					money: '',
-					platform: 'wxMiniProgram'
+					realName: '',
+					account: '',
+					bankName: '',
+					platform: 'h5',
 				},
 				recordData: [],
 				page: 1,
+				hasMore: true,
 				sumMin: 100,
-				sumMax: 5000
+				sumMax: 5000,
 			}
 		},
 		onLoad() {
-			this.isColor = getApp().globalData.isColor
-			this.isBgColor=getApp().globalData.isBgColor,
-			this.withdrawRule()
+			this.initTypes()
 			this.recordList()
 		},
 		methods: {
-			// 提现规则
-			withdrawRule() {
-				this.$request('withdraw.rule').then(res => {
-					if(res.code === 1) {
-						this.sumMin = res.data.min
-						this.sumMax = res.data.max
-					}
-				})
+			initTypes() {
+				this.types[0][0].label = this.$t('withdraw.wechat')
+				this.types[0][1].label = this.$t('withdraw.alipay')
+				this.types[0][2].label = this.$t('withdraw.bank')
+				this.typeText = this.$t('withdraw.wechat')
 			},
-			// 触底
-			scrollBottom() {
-				this.page++
-				this.recordList()
+			typeIcon(type) {
+				return { wechat: '💚', alipay: '💙', bank: '🏦' }[type] || '💰'
 			},
-			// 时间戳转日期
+			statusText(status) {
+				const map = {
+					'-1': this.$t('withdraw.rejected'),
+					0: this.$t('withdraw.pending'),
+					1: this.$t('withdraw.processing'),
+					2: this.$t('withdraw.completed'),
+				}
+				return map[String(status)] || status
+			},
 			timestampToTime(value) {
-				let date = new Date(value * 1000);
-				let month = date.getMonth() + 1;
-				let hours = date.getHours();
-				if (hours < 10) hours = "0" + hours;
-				let minutes = date.getMinutes();
-				if (minutes < 10) minutes = "0" + minutes;
-				let time = date.getFullYear() + "-" + month + "-" + date.getDate() + " " + hours + ":" + minutes;
-				return time;
+				const d = new Date(value * 1000)
+				const pad = n => String(n).padStart(2, '0')
+				return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
 			},
-			// 提现
+			selectedType(e) {
+				const item = e.value[0]
+				this.params.applyType = item.type
+				this.typeText = item.label
+				this.typePicker = false
+				this.params.account = ''
+				this.params.bankName = ''
+			},
 			withdrawHandle() {
 				const num = Number(this.params.money)
-				if(!num) {
-					this.$u.toast('请输入提现金额')
-					return
-				}
-				if(num < this.sumMin) {
-					this.$u.toast('提现金额需大于' + this.sumMin)
-					return
-				}
-				if (num > this.sumMax) {
-					this.$u.toast('提现金额需小于' + this.sumMax)
-					return
-				}
+				if (!num) return this.$u.toast(this.$t('withdraw.inputAmount'))
+				if (num < this.sumMin) return this.$u.toast(this.$t('withdraw.minAmountTip') + this.sumMin + this.$t('withdraw.yuan'))
+				if (num > this.sumMax) return this.$u.toast(this.$t('withdraw.maxAmountTip') + this.sumMax + this.$t('withdraw.yuan'))
+				if (!this.params.realName) return this.$u.toast(this.$t('withdraw.namePlaceholder'))
+				if (!this.params.account) return this.$u.toast(this.$t('withdraw.accountPlaceholder'))
+
+				const applyInfo = JSON.stringify({
+					real_name: this.params.realName,
+					account: this.params.account,
+					bank_name: this.params.bankName,
+				})
 				this.buttonLoading = true
-				this.$request('withdraw.apply', this.params).then(res => {
-					if(res.code === 1) {
-						this.$u.toast(res.msg)
+				this.$request('withdraw.apply', {
+					applyType: this.params.applyType,
+					money: num,
+					applyInfo,
+					platform: this.params.platform,
+				}).then(res => {
+					if (res.code === 1) {
+						this.$u.toast(this.$t('common.success'))
 						this.params.money = ''
-						this.page = 1
-						this.recordList()
+						this.params.realName = ''
+						this.params.account = ''
+						this.params.bankName = ''
 						this.recordData = []
+						this.page = 1
+						this.hasMore = true
+						this.recordList()
 					}
 					this.buttonLoading = false
-				}).catch(err => {
-					this.buttonLoading = false
-				})
+				}).catch(() => { this.buttonLoading = false })
 			},
-			// 提现记录
 			recordList() {
-				this.$request('withdraw.record', {
-					page: this.page
-				}).then(res => {
-					if(res.code === 1) {
-						if(res.data.data && res.data.data.length) {
-							this.recordData = this.recordData.concat(res.data.data)
+				if (!this.hasMore) return
+				this.$request('withdraw.record', { page: this.page }).then(res => {
+					if (res.code === 1) {
+						const rows = res.data?.data || []
+						if (rows.length) {
+							this.recordData = this.recordData.concat(rows)
+							this.page++
 						} else {
-							this.page--
+							this.hasMore = false
 						}
 					}
 				})
 			},
-			// 选择提现类型
-			selectedType(e) {
-				this.params.type = e.value[0].type
-				this.typeText = e.value[0].label
-				this.typePicker = false
-			}
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
 	.page_content {
-		background: #F9F9F9;
-		
-		&::before {
-			content: "";
-			width: 100%;
-			height: 420rpx;
-			background:var(--bgcolor);
-			position: absolute;
-			top: 0;
-			left: 0;
-		}
-		
+		background: #f5f6ff;
+		min-height: 100vh;
+
 		.main_content {
-			overflow: hidden;
-			padding: 24rpx 40rpx 0 40rpx;
-			display: flex;
-			flex-direction: column;
-			
-			.top_card {
-				position: relative;
-				border-radius: 20rpx;
+			padding: 24rpx 28rpx 60rpx;
+
+			.form_card {
 				background: #fff;
-				padding: 40rpx;
-				font-weight: 700;
-				
-				.line1 {
+				border-radius: 24rpx;
+				padding: 8rpx 32rpx 32rpx;
+				box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
+				margin-bottom: 24rpx;
+
+				.field_row {
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
-					margin-bottom: 20rpx;
-					
-					.left {
-						font-size: 36rpx;
-						color: #000;
+					padding: 32rpx 0;
+					border-bottom: 1rpx solid #f2f2f2;
+
+					&.amount_row {
+						border-bottom: none;
+						padding-bottom: 8rpx;
 					}
-					
-					.right {
-						font-size: 24rpx;
-						color: rgba(46, 46, 46, 1);
+
+					.field_label {
+						font-size: 28rpx;
+						font-weight: 600;
+						color: #222;
+						flex-shrink: 0;
+
+						.hint_text {
+							font-size: 22rpx;
+							color: #999;
+							font-weight: 400;
+						}
+					}
+
+					.field_value {
+						font-size: 28rpx;
+						color: #555;
+					}
+
+					.type_value {
 						display: flex;
 						align-items: center;
-						
-						.image {
-							width: 32rpx;
-							margin-right: 20rpx;
+						gap: 8rpx;
+						color: #5E72F7;
+						font-weight: 600;
+
+						.arrow {
+							font-size: 36rpx;
+							color: #aaa;
+							font-weight: 400;
 						}
 					}
-				}
-				
-				.line2 {
-					display: flex;
-					align-items: center;
-					padding: 20rpx 0;
-					border-bottom: 2rpx solid rgba(221, 221, 221, 1);
-					
-					.text {
-						font-size: 32rpx;
-						color: rgba(102, 102, 102, 1);
-					}
-					
-					.input {
-						font-size: 32rpx;
-						color: #000;
-					}
-				}
-				
-				.line3 {
-					display: flex;
-					align-items: center;
-					justify-content: space-between;
-					margin: 40rpx 0;
-					
-					.left {
-						font-size: 36rpx;
-						color: #000;
-					}
-					
-					.right {
+
+					.field_input {
+						flex: 1;
+						text-align: right;
 						font-size: 28rpx;
-						color: pink;
-					}
-				}
-				
-				.line4 {
-					
-				}
-			}
-			
-			.content_box {
-				flex: 1;
-				overflow: hidden;
-				display: flex;
-				flex-direction: column;
-				
-				.title {
-					font-size: 36rpx;
-					font-weight: 700;
-					color: rgba(39, 45, 47, 1);
-					padding: 20rpx 0;
-				}
-				
-				.block_box {
-					flex: 1;
-					overflow: hidden;
-					
-					.scroll_view {
-						height: 100%;
-						
-						.scroll_content {
-							padding-bottom: 60rpx;
-						}
+						color: #222;
 					}
 				}
 
-				.list_box {
-					
-					.item {
-						padding: 40rpx 0;
-						border-bottom: 2rpx solid rgba(240, 240, 240, 1);
+				.amount_input_row {
+					display: flex;
+					align-items: center;
+					padding: 16rpx 0 32rpx;
+					border-bottom: 1rpx solid #f2f2f2;
+					margin-bottom: 32rpx;
+
+					.currency {
+						font-size: 36rpx;
+						font-weight: 700;
+						color: #5E72F7;
+						margin-right: 12rpx;
+					}
+
+					.amount_input {
+						flex: 1;
+						font-size: 44rpx;
+						font-weight: 700;
+						color: #1a1a1a;
+					}
+				}
+			}
+
+			.records_card {
+				background: #fff;
+				border-radius: 24rpx;
+				padding: 32rpx;
+				box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
+
+				.records_title {
+					font-size: 30rpx;
+					font-weight: 700;
+					color: #1a1a1a;
+					margin-bottom: 24rpx;
+					padding-left: 12rpx;
+					border-left: 6rpx solid #5E72F7;
+				}
+
+				.record_item {
+					display: flex;
+					align-items: center;
+					justify-content: space-between;
+					padding: 24rpx 0;
+					border-bottom: 1rpx solid #f5f5f5;
+
+					&:last-child { border-bottom: none; }
+
+					.record_left {
 						display: flex;
 						align-items: center;
-						justify-content: space-between;
-					
-						.left {
+						gap: 20rpx;
+
+						.record_type_icon {
+							width: 80rpx;
+							height: 80rpx;
+							border-radius: 20rpx;
+							background: #f5f6ff;
 							display: flex;
 							align-items: center;
-							
-							.photo {
-								width: 100rpx;
-								height: 100rpx;
-								border-radius: 20rpx;
-								background: #fff;
-								box-shadow: 0 0 60rpx 0 rgba(202, 202, 202, 0.3);
-								overflow: hidden;
-								display: flex;
-								align-items: center;
-								justify-content: center;
-								
-								.image {
-									width: 60rpx;
-								}
-							}
-							
-							.info {
-								margin-left: 40rpx;
-								
-								.text1 {
-									font-size: 32rpx;
-									font-weight: 700;
-									color: #272D2F;
-									margin-bottom: 12rpx;
-								}
-								
-								.text2 {
-									font-size: 24rpx;
-									color: #A5ACB6;
-								}
-							}
+							justify-content: center;
+							font-size: 36rpx;
 						}
-						
-						.right {
-							font-size: 32rpx;
-							font-weight: 700;
-							color: #000;
-							
-							&.type1 {
-								color: rgba(81, 37, 105, 1);
+
+						.record_info {
+							.record_money {
+								font-size: 32rpx;
+								font-weight: 700;
+								color: #1a1a1a;
+								margin-bottom: 6rpx;
+							}
+							.record_meta {
+								font-size: 22rpx;
+								color: #aaa;
 							}
 						}
 					}
+
+					.record_status {
+						font-size: 24rpx;
+						font-weight: 600;
+						padding: 8rpx 20rpx;
+						border-radius: 20rpx;
+
+						&.status_0 { background: #fff8e6; color: #f0a500; }
+						&.status_1 { background: #eef0ff; color: #5E72F7; }
+						&.status_2 { background: #e8f5e9; color: #2e7d32; }
+						&.status_-1 { background: #ffeaea; color: #e53935; }
+					}
 				}
-				
-				.be_empty {
-					font-size: 28rpx;
-					color: #999;
+
+				.empty_tip {
 					text-align: center;
-					padding: 40rpx 0;
+					font-size: 28rpx;
+					color: #bbb;
+					padding: 60rpx 0;
 				}
 			}
 		}

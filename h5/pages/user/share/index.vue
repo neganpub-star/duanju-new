@@ -7,100 +7,119 @@
 			<CustomNavbar :title="$t('share.title')"></CustomNavbar>
 		</view>
 		<!-- #endif -->
-		
+
 		<view class="main_content">
-			<view class="top_card" :class="[levelCount(info.level)]">
-				<view class="line line1">
-					<view class="left">{{ info.total }}元</view>
-					<view class="right" @click="jumpView('/pages/user/share/withdraw')">{{ $t('share.withdraw') }}</view>
+			<!-- 收益卡片 -->
+			<view class="earn_card">
+				<view class="card_top">
+					<view class="balance_block">
+						<view class="balance_label">{{ $t('share.totalIncome') }}</view>
+						<view class="balance_amount"><text class="amount_num">{{ info.total }}</text><text class="amount_unit">{{ $t('share.yuan') }}</text></view>
+					</view>
+					<view class="withdraw_btn" @click="jumpView('/pages/user/share/withdraw')">{{ $t('share.withdraw') }}</view>
 				</view>
-				<view class="line line2">
-					<text>{{ info.levelText || '普通用户' }}</text>
-					<text>直推分佣{{ Number(info.zhitui) }}%</text>
-					<text>间推分佣{{ Number(info.jiantui) }}%</text>
-				</view>
-				<view class="line line3">
-					<text>当前总收入</text>
-					<text>{{ info.jine }}元</text>
+				<view class="card_divider"></view>
+				<view class="card_bottom">
+					<view class="stat_item">
+						<view class="stat_label">{{ $t('share.normalUser') }}</view>
+						<view class="stat_value level_tag">{{ info.levelText || $t('share.normalUser') }}</view>
+					</view>
+					<view class="stat_item">
+						<view class="stat_label">{{ $t('share.directRate') }}{{ $t('share.commission') }}</view>
+						<view class="stat_value">{{ Number(info.zhitui) }}%</view>
+					</view>
+					<view class="stat_item">
+						<view class="stat_label">{{ $t('share.indirectRate') }}{{ $t('share.commission') }}</view>
+						<view class="stat_value">{{ Number(info.jiantui) }}%</view>
+					</view>
 				</view>
 			</view>
-			<view class="menu_card">
+
+			<!-- 功能菜单 -->
+			<view class="menu_grid">
 				<!-- #ifndef APP-PLUS -->
-				<view class="item active" :style="'background:'+isBgColor"  @click="$store.state.user.token && jumpView('/pages/user/share/poster')">
-					<view class="photo">
-						<image class="image" src="/static/img/分享赚钱.png" mode="aspectFill"></image>
+				<view class="menu_item active" @click="$store.state.user.token && jumpView('/pages/user/share/poster')">
+					<view class="menu_icon">
+						<image class="icon_img" src="/static/img/分享赚钱.png" mode="aspectFit"></image>
 					</view>
-					<view class="text">{{ $t('share.earnMoney') }}</view>
+					<view class="menu_label">{{ $t('share.earnMoney') }}</view>
 				</view>
 				<!-- #endif -->
-				<view class="item" @click="jumpView('/pages/user/share/team')">
-					<view class="photo">
-						<image class="image" src="/static/img/团队管理.png" mode="aspectFill"></image>
+				<view class="menu_item" @click="jumpView('/pages/user/share/team')">
+					<view class="menu_icon">
+						<image class="icon_img" src="/static/img/团队管理.png" mode="aspectFit"></image>
 					</view>
-					<view class="text">{{ $t('share.teamManage') }}</view>
+					<view class="menu_label">{{ $t('share.teamManage') }}</view>
 				</view>
-				<view class="item" @click="jumpView('/pages/user/share/brokerage')">
-					<view class="photo">
-						<image class="image" src="/static/img/佣金明细.png" mode="aspectFill"></image>
+				<view class="menu_item" @click="jumpView('/pages/user/share/brokerage')">
+					<view class="menu_icon">
+						<image class="icon_img" src="/static/img/佣金明细.png" mode="aspectFit"></image>
 					</view>
-					<view class="text">{{ $t('share.commissionDetail') }}</view>
+					<view class="menu_label">{{ $t('share.commissionDetail') }}</view>
 				</view>
-				<view class="item" @click="jumpView('/pages/user/dealer/index')">
-					<view class="photo">
-						<image class="image" src="/static/img/分销商管理.png" mode="aspectFill"></image>
+				<view class="menu_item" @click="jumpView('/pages/user/dealer/index')">
+					<view class="menu_icon reseller_icon">
+						<image class="icon_img" src="/static/img/reseller.png" mode="aspectFit"></image>
 					</view>
-					<view class="text">{{ $t('share.reseller') }}</view>
+					<view class="menu_label">{{ $t('share.reseller') }}</view>
 				</view>
 			</view>
-			<view class="text_box">
-				<!-- <view class="title">利用这款创作工具如何赚钱？</view> -->
+
+			<!-- 说明内容 -->
+			<view class="desc_box" v-if="info.content">
 				<u-parse :content="info.content"></u-parse>
+			</view>
+			<view class="desc_box desc_placeholder" v-else>
+				<view class="desc_title">{{ $t('share.inviteDesc') }}</view>
+				<view class="desc_item">
+					<text class="desc_icon">📢</text>
+					<text class="desc_text">{{ $t('share.directRate') }}{{ $t('share.commission') }}：{{ Number(info.zhitui) }}%</text>
+				</view>
+				<view class="desc_item">
+					<text class="desc_icon">🔗</text>
+					<text class="desc_text">{{ $t('share.indirectRate') }}{{ $t('share.commission') }}：{{ Number(info.jiantui) }}%</text>
+				</view>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import { mapGetters } from 'vuex'
 	export default {
+		computed: {
+			...mapGetters('user', ['token'])
+		},
 		data() {
 			return {
-				isBgColor: `#5E72F7`,
-				msg: '',
 				info: {
-					jine: 0, // 金额
-					total: 0, // 总收入
-					level: 0, // 分销商等级
-					levelText: '', // 分销商等级
-					zhitui: 0, // 直推
-					jiantui: 0, // 间推
-					content: '', // 文本
+					total: 0,
+					level: 0,
+					levelText: '',
+					zhitui: 0,
+					jiantui: 0,
+					content: '',
 				}
 			}
 		},
 		onLoad() {
+			if (!this.$store.state.user.token) {
+				uni.navigateTo({ url: '/pages/login/login' })
+				return
+			}
 			this.dealerInfo()
 		},
 		methods: {
-			levelCount(count) {
-				if(count < 1) {
-					return 'level1'
-				} else if(count > 3) {
-					return 'level3'
-				} else {
-					return 'level' + count
-				}
-			},
 			dealerInfo() {
 				this.$request('dealer.info').then(res => {
-					if(res.code === 1) {
-						this.info.jine = res.data.reseller_money
-						this.info.total = res.data.money
-						this.info.content = res.data.reseller_desc.content
-						if(res.data.reseller) {
+					if (res.code === 1) {
+						this.info.total = res.data.money || 0
+						this.info.content = res.data.reseller_desc?.content || ''
+						if (res.data.reseller) {
 							this.info.level = res.data.reseller.level
-							this.info.levelText = res.data.reseller.reseller_json.name
-							this.info.zhitui = res.data.reseller.reseller_json.direct
-							this.info.jiantui = res.data.reseller.reseller_json.indirect
+							this.info.levelText = res.data.reseller.reseller_json?.name || ''
+							this.info.zhitui = res.data.reseller.reseller_json?.direct || 0
+							this.info.jiantui = res.data.reseller.reseller_json?.indirect || 0
 						}
 					}
 				})
@@ -111,143 +130,210 @@
 
 <style lang="scss" scoped>
 	.page_content {
+		background: #f5f6ff;
+		min-height: 100vh;
+
 		.main_content {
-			overflow-y: auto;
-			padding: 24rpx 40rpx 60rpx 40rpx;
-			
-			.top_card {
-				
-				height: 340rpx;
-				border-radius: 40rpx;
-				background-repeat: no-repeat;
-				background-size: 100% 100%;
-				padding: 52rpx 40rpx 40rpx 40rpx;
-				display: flex;
-				flex-direction: column;
-				justify-content: space-between;
-				
-				&.level1 {
-					// wBack.png
-					background-image: url('https://img.nymaite.com/video_short/images/wBack.png');
-					
-					.line1 {
-						.right {
-							color: #000;
-						}
-					}
+			padding: 24rpx 28rpx 60rpx;
+
+			/* 收益卡片 */
+			.earn_card {
+				background: linear-gradient(135deg, #5E72F7 0%, #9354FF 100%);
+				border-radius: 28rpx;
+				padding: 40rpx 36rpx 32rpx;
+				box-shadow: 0 8rpx 32rpx rgba(94, 114, 247, 0.35);
+				position: relative;
+				overflow: hidden;
+
+				&::before {
+					content: '';
+					position: absolute;
+					top: -60rpx;
+					right: -60rpx;
+					width: 280rpx;
+					height: 280rpx;
+					border-radius: 50%;
+					background: rgba(255, 255, 255, 0.06);
 				}
-				
-				&.level2 {
-					//wHBack.png
-					background-image: url('https://img.nymaite.com/video_short/images/wHBack.png');
-				
-					.line1 {
-						.right {
-							color: pink;
-						}
-					}
-				}
-				
-				&.level3 {
-					//wLBack.png
-					background-image: url('https://img.nymaite.com/video_short/images/wLBack.png');
-					
-					.line1 {
-						.right {
-							color: #5E72F7;
-						}
-					}
-				}
-				
-				.line {
+
+				.card_top {
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
-					color: #fff;
-				}
-				
-				.line1 {
-					.left {
-						font-size: 48rpx;
-						font-weight: 900;
+					margin-bottom: 28rpx;
+
+					.balance_block {
+						.balance_label {
+							font-size: 24rpx;
+							color: rgba(255, 255, 255, 0.75);
+							margin-bottom: 8rpx;
+						}
+
+						.balance_amount {
+							display: flex;
+							align-items: baseline;
+							gap: 6rpx;
+
+							.amount_num {
+								font-size: 56rpx;
+								font-weight: 900;
+								color: #fff;
+								line-height: 1;
+							}
+
+							.amount_unit {
+								font-size: 26rpx;
+								color: rgba(255, 255, 255, 0.85);
+								font-weight: 600;
+							}
+						}
 					}
-					
-					.right {
-						width: 120rpx;
-						height: 52rpx;
-						line-height: 52rpx;
+
+					.withdraw_btn {
+						background: rgba(255, 255, 255, 0.22);
+						border: 1.5rpx solid rgba(255, 255, 255, 0.5);
+						border-radius: 40rpx;
+						padding: 14rpx 36rpx;
 						font-size: 28rpx;
-						background: #fff;
-						border-radius: 8rpx;
-						text-align: center;
-						font-weight: bold;
-					}
-				}
-				
-				.line2 {
-					font-size: 28rpx;
-					font-weight: 900;
-				}
-				
-				.line3 {
-					font-size: 28rpx;
-					font-weight: 700;
-				}
-			}
-			
-			.menu_card {
-				margin: 44rpx 0;
-				display: flex;
-				align-items: center;
-				flex-wrap: wrap;
-				gap: 20rpx;
-
-				.item {
-					width: calc((100% - 40rpx) / 3);
-					height: 172rpx;
-					border-radius: 30rpx;
-					background: #fff;
-					box-shadow: 0 0 60rpx 0 rgba(102, 102, 102, 0.15);
-					color: #000;
-					font-size: 28rpx;
-					font-weight: bold;
-					text-align: center;
-					display: flex;
-					flex-direction: column;
-					align-items: center;
-					justify-content: center;
-					margin-right: 0;
-					
-					&.active {
-						background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+						font-weight: 700;
 						color: #fff;
+						backdrop-filter: blur(8rpx);
 					}
-					
-					.photo {
-						width: 108rpx;
-						height: 108rpx;
+				}
 
-						.image {
-							width: 100%;
-							height: 100%;
+				.card_divider {
+					height: 1rpx;
+					background: rgba(255, 255, 255, 0.2);
+					margin-bottom: 28rpx;
+				}
+
+				.card_bottom {
+					display: flex;
+					justify-content: space-between;
+
+					.stat_item {
+						display: flex;
+						flex-direction: column;
+						align-items: center;
+						gap: 8rpx;
+
+						.stat_label {
+							font-size: 22rpx;
+							color: rgba(255, 255, 255, 0.7);
+						}
+
+						.stat_value {
+							font-size: 28rpx;
+							font-weight: 700;
+							color: #fff;
+
+							&.level_tag {
+								background: rgba(255, 255, 255, 0.2);
+								border-radius: 20rpx;
+								padding: 4rpx 16rpx;
+								font-size: 24rpx;
+							}
 						}
 					}
 				}
 			}
-			
-			.text_box {
-				border-radius: 16rpx;
-				box-shadow: 0 0 60rpx 0 rgba(102, 102, 102, 0.15);
-				padding: 40rpx;
-				font-size: 28rpx;
-				color: rgba(51, 51, 51, 1);
-				overflow: hidden;
-				
-				.title {
-					font-weight: bold;
-					padding-bottom: 36rpx;
-					border-bottom: 2rpx solid rgba(221, 221, 221, 1);
-					margin-bottom: 36rpx;
+
+			/* 功能菜单 */
+			.menu_grid {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 16rpx;
+				margin: 28rpx 0;
+
+				.menu_item {
+					width: calc((100% - 32rpx) / 3);
+					background: #fff;
+					border-radius: 24rpx;
+					padding: 28rpx 16rpx;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					gap: 14rpx;
+					box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
+
+					&.active {
+						background: linear-gradient(135deg, #5E72F7 0%, #9354FF 100%);
+						box-shadow: 0 4rpx 20rpx rgba(94, 114, 247, 0.35);
+
+						.menu_label {
+							color: #fff;
+						}
+					}
+
+					.menu_icon {
+						width: 80rpx;
+						height: 80rpx;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+
+						.icon_img {
+							width: 100%;
+							height: 100%;
+						}
+
+						&.reseller_icon {
+							background: rgba(94, 114, 247, 0.08);
+							border-radius: 50%;
+							padding: 12rpx;
+							width: 80rpx;
+							height: 80rpx;
+						}
+					}
+
+					.menu_label {
+						font-size: 24rpx;
+						font-weight: 600;
+						color: #333;
+						text-align: center;
+					}
+				}
+			}
+
+			/* 说明内容 */
+			.desc_box {
+				background: #fff;
+				border-radius: 24rpx;
+				padding: 32rpx 28rpx;
+				box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
+				font-size: 26rpx;
+				color: #555;
+
+				&.desc_placeholder {
+					.desc_title {
+						font-size: 30rpx;
+						font-weight: 700;
+						color: #222;
+						margin-bottom: 24rpx;
+						padding-left: 12rpx;
+						border-left: 6rpx solid #5E72F7;
+					}
+
+					.desc_item {
+						display: flex;
+						align-items: center;
+						gap: 16rpx;
+						padding: 16rpx 0;
+						border-bottom: 1rpx solid #f0f0f0;
+
+						&:last-child {
+							border-bottom: none;
+						}
+
+						.desc_icon {
+							font-size: 32rpx;
+						}
+
+						.desc_text {
+							font-size: 28rpx;
+							color: #444;
+						}
+					}
 				}
 			}
 		}

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -34,7 +35,28 @@ public class UsableController {
     public R<Map<String, Object>> list() {
         Map<String, Object> data = new HashMap<>();
         data.put("list", usableService.listAll(siteId));
+        data.put("usable_desc", Map.of("content", buildNoticeHtml()));
         return R.ok(data);
+    }
+
+    private String buildNoticeHtml() {
+        String lang = LocaleContextHolder.getLocale().toLanguageTag();
+        if (lang.startsWith("zh-TW") || lang.startsWith("zh-Hant")) {
+            return "<p>1. 點數為虛擬商品，購買後不支持退款。</p>" +
+                   "<p>2. 點數充值後永久有效，不會過期。</p>" +
+                   "<p>3. 每個帳號積分獨立，不可轉讓。</p>" +
+                   "<p>4. 未成年人請在家長監護下進行充值消費。</p>";
+        } else if (lang.startsWith("en")) {
+            return "<p>1. Points are virtual goods and non-refundable once purchased.</p>" +
+                   "<p>2. Points never expire after purchase.</p>" +
+                   "<p>3. Points are account-specific and non-transferable.</p>" +
+                   "<p>4. Minors must recharge under parental supervision.</p>";
+        } else {
+            return "<p>1. 点数为虚拟商品，购买后不支持退款。</p>" +
+                   "<p>2. 点数充值后永久有效，不会过期。</p>" +
+                   "<p>3. 每个账号积分独立，不可转让。</p>" +
+                   "<p>4. 未成年人请在家长监护下进行充值消费。</p>";
+        }
     }
 
     @Operation(summary = "购买点数套餐")

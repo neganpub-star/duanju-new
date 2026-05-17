@@ -203,7 +203,7 @@
 						<text class="shortcut-label">{{ $t('user.watchHistory') }}</text>
 					</view>
 					<view class="shortcut-divider"></view>
-					<view class="shortcut-item" @click="jumpView('/pages/user/member/index')">
+					<view class="shortcut-item" @click="jumpView('/pages/user/integral/index')">
 						<text class="shortcut-num">{{ userInfoStore.usable || 0 }}</text>
 						<text class="shortcut-label">{{ $t('user.myPoints') }}</text>
 					</view>
@@ -236,15 +236,6 @@
 					<view class="right">
 						<u-button :text="$t('user.contactUs')" :customStyle="buttonStyle" @click="openVip" />
 					</view>
-				</view>
-				<view class="integral_box" @click=" goMai();jumpView('/pages/user/integral/index')">
-					<view class="right">
-						<text class="text">{{ $t('user.myPoints') }}</text>
-						<image class="image" src="https://img.nymaite.com/video_short/icons/integral.png"
-							mode="widthFix"></image>
-						<text class="text">{{ userInfoStore.usable || 0 }}</text>
-					</view>
-					<view v-if="iosIsPay" class="left">{{ $t('user.recharge') }}</view>
 				</view>
 			</view>
 
@@ -336,9 +327,9 @@
 					height: '100%',
 					border: 'none',
 					fontSize: '24rpx',
-					color: '#a78bfa',
-					background: '#2a3599',
-					borderRadius: '8rpx',
+					color: '#fff',
+					background: 'linear-gradient(90deg, #5E72F7 0%, #9354FF 100%)',
+					borderRadius: '32rpx',
 					fontWeight: 'bold'
 				},
 				cardListTwo: [{
@@ -436,14 +427,14 @@
 						rid: 5,
 						docKey: 'about_us'
 					},
-					{
-						id: 7,
-						img: 'https://img.nymaite.com/video_short/images/points.png',
-						width: '28rpx',
-						text: '获取积分',
-						rid: '',
-						path: '/pages/user/integral/task'
-					},
+					// {
+					// 	id: 7,
+					// 	img: 'https://img.nymaite.com/video_short/images/points.png',
+					// 	width: '28rpx',
+					// 	text: '获取积分',
+					// 	rid: '',
+					// 	path: '/pages/user/integral/task'
+					// },
 					{
 						id: 4,
 						img: 'https://img.nymaite.com/video_short/images/Notice.png',
@@ -472,14 +463,14 @@
 						path: '/pages/user/share/poster'
 					},
 					// #endif
-					{
-						id: 7,
-						img: 'https://img.nymaite.com/video_short/icons/list_2.png',
-						width: '28rpx',
-						text: '获取积分',
-						rid: '',
-						path: '/pages/user/integral/task'
-					},
+					// {
+					// 	id: 7,
+					// 	img: 'https://img.nymaite.com/video_short/icons/list_2.png',
+					// 	width: '28rpx',
+					// 	text: '获取积分',
+					// 	rid: '',
+					// 	path: '/pages/user/integral/task'
+					// },
 					// #ifdef MP-WEIXIN
 					{
 						id: 8,
@@ -628,8 +619,6 @@
 				this.getUserInfo()
 			})
 			uni.$on('loginSuccess', this.refreshPage)
-			this.mggTrue()
-			this.dealerLevelList()
 			this.richtext && this.initMenuList(this.richtext)
 		},
 		onShow() {
@@ -665,16 +654,6 @@
 					point_type: 7
 				}, false).then(res => {
 
-				})
-			},
-			mggTrue() {
-
-				this.$request('mgg.mggswitch', '', false).then(res => {
-					if (res.code === 1) {
-						console.log(res)
-						this.mggStatus = res.data.switch
-
-					}
 				})
 			},
 			// 调试
@@ -897,426 +876,8 @@
 					this.jumpView(item.path)
 				}
 			},
-			//免广告支付
-			dealerLevelList() {
-				this.$request('mgg.level', '', false).then(res => {
-					if (res.code === 1) {
-						let item = res.data.list.filter(item => item.level == this.dredgeLevel)[0]
-						this.dredge.mgg_id = res.data.list[0].id
-						this.dredge.total_fee = res.data.list[0].price
-
-					}
-				})
-			},
-			dredgeDealer() {
-				// #ifdef MP-WEIXIN
-				if (!this.iosIsPay) return this.jumpView('/pages/user/info/contact')
-				// #endif
-
-				const buy = () => {
-					this.buttonLoading = true
-					uni.showLoading({
-						title: '开通中...',
-						mask: true
-					})
-					// #ifdef MP-TOUTIAO
-
-					this.$request('mgg.createOrder', {
-						...this.dredge,
-						platform: 'douyinxcx'
-					}).then(res => {
-						if (res.code === 1) {
-							this.callPay(res.data.order_sn, 'douyinxcx', res.data.platform)
-
-						} else {
-							this.buttonLoading = false
-							uni.hideLoading()
-						}
-					}).catch(err => {
-						this.buttonLoading = false
-						uni.hideLoading()
-					})
-					// #endif
-					// #ifndef MP-TOUTIAO
-					this.$request('mgg.createOrder', {
-						...this.dredge,
-						platform: this.$utils.platforms()
-					}).then(res => {
-						if (res.code === 1) {
-
-
-							this.callPay(res.data.order_sn, 'wechat', res.data.platform)
-
-						} else {
-							this.buttonLoading = false
-							uni.hideLoading()
-						}
-					}).catch(err => {
-						this.buttonLoading = false
-						uni.hideLoading()
-					})
-					// #endif
-				}
-
-
-				buy()
-			},
-			//虚拟支付调起
-			xGetPay(order_sn, payment, platform) {
-				uni.login({
-					provider: 'weixin',
-					success: success => {
-						if (success.errMsg === 'login:ok') {
-
-							this.$request('common.xunipay', {
-								order_sn,
-								payment,
-								platform,
-								code: success.code
-							}).then(res => {
-								console.log(res)
-								if (res.code === 1) {
-									if (platform == 'H5') {
-										const div = document.createElement('divpay');
-										div.innerHTML = res.data.pay_data;
-										document.body.appendChild(div);
-									} else {
-										this.xunipay(res.data.pay_data)
-									}
-								}
-							})
-
-						}
-					}
-				})
-			},
-			//非虚拟支付调起
-			getPay(order_sn, payment, platform) {
-				this.$request('common.pay', {
-					order_sn,
-					payment,
-					platform,
-				}).then(res => {
-					console.log(res)
-					if (res.code === 1) {
-						if (platform == 'H5') {
-							const div = document.createElement('divpay');
-							div.innerHTML = res.data.pay_data;
-							document.body.appendChild(div);
-						} else {
-							this.pay(res.data.pay_data)
-						}
-					}
-				})
-			},
-			// 发起支付请求
-			callPay(order_sn, payment, platform) {
-				// #ifdef MP-TOUTIAO
-				var that = this
-				this.$request('common.dypay', {
-					order_sn,
-					payment,
-					platform,
-				}).then(res => {
-					console.log(res)
-					if (res.code === 1) {
-
-						if (platform == 'H5') {
-							const div = document.createElement('divpay');
-							div.innerHTML = res.data.pay_data;
-							document.body.appendChild(div);
-						} else {
-							tt.pay({
-								orderInfo: {
-									order_id: res.data.pay_data.data.order_id,
-									order_token: res.data.pay_data.data.order_token,
-								},
-								service: 5,
-								success(res) {
-									console.log(res, 'success')
-									if (res.code == 0) {
-										uni.showToast({
-											title: '支付成功',
-											icon: 'none',
-											duration: 2000
-										});
-										that.buttonLoading = false
-										that.getPageData()
-										uni.hideLoading()
-
-										// 支付成功处理逻辑，只有res.code=0时，才表示支付成功
-										// 但是最终状态要以商户后端结果为准
-									} else {
-										uni.showToast({
-											title: '支付失败',
-											icon: 'none',
-											duration: 2000
-										});
-										that.buttonLoading = false
-										uni.hideLoading()
-									}
-								},
-								fail(res) {
-									console.log(res, 'fail')
-									uni.showToast({
-										title: '支付失败',
-										icon: 'none',
-										duration: 2000
-									});
-									that.buttonLoading = false
-									uni.hideLoading()
-									// 调起收银台失败处理逻辑
-								},
-							});
-						}
-					}
-				})
-
-				// #endif
-				// #ifndef MP-TOUTIAO
-				this.$request('common.ifxunipay').then(res => {
-
-					if (res.data.xunipay_switch == 0) {
-						this.getPay(order_sn, payment, platform)
-					} else {
-						// #ifdef MP-WEIXIN
-						var iosd = wx.getSystemInfoSync()
-
-						if (this.iosIsPay && iosd.platform == 'ios') {
-							this.getPay(order_sn, payment, platform)
-
-						} else {
-
-							this.xGetPay(order_sn, payment, platform)
-						}
-						// #endif
-						// #ifndef MP-WEIXIN
-						this.getPay(order_sn, payment, platform)
-						// #endif
-
-					}
-				})
-				// #endif
-
-
-			},
-			// 发起 小程序/公众号 支付
-			xunipay(pay) {
-				var that = this
-				// #ifdef MP-WEIXIN
-				const SDKVersion = wx.getSystemInfoSync().SDKVersion
-
-				if (that.compareVersion(SDKVersion, '2.19.2') >= 0 || wx.canIUse('requestVirtualPayment')) {
-					wx.requestVirtualPayment({
-						signData: JSON.stringify({
-							offerId: pay.signData.offerId,
-							buyQuantity: pay.signData.buyQuantity,
-							env: pay.signData.env,
-							currencyType: pay.signData.currencyType,
-							platform: pay.signData.platform,
-							productId: pay.signData.productId,
-							goodsPrice: pay.signData.goodsPrice,
-							outTradeNo: pay.signData.outTradeNo,
-							attach: pay.signData.attach,
-						}),
-						paySig: pay.paySig,
-						signature: pay.signature,
-						mode: pay.mode,
-						success(res) {
-							//console.log('requestVirtualPayment success', res)
-							uni.showToast({
-								title: '支付成功',
-								icon: 'none',
-								duration: 2000
-							});
-							that.buttonLoading = false
-							that.getPageData()
-							uni.hideLoading()
-
-
-						},
-						fail({
-							errMsg,
-							errCode
-						}) {
-							//console.error(errMsg, errCode)
-							uni.showToast({
-								title: errMsg,
-								icon: 'none',
-								duration: 2000
-							});
-							that.buttonLoading = false
-							uni.hideLoading()
-						},
-					})
-				} else {
-					//console.log('当前用户的客户端版本不支持 wx.requestVirtualPayment')
-
-					uni.showToast({
-						title: '当前用户的客户端版本不支持小程序虚拟支付',
-						icon: 'none',
-						duration: 2000
-					});
-					that.buttonLoading = false
-					uni.hideLoading()
-
-				}
-				// #endif
-
-			},
-			pay(pay) {
-				var that = this
-				// #ifdef MP-WEIXIN
-				uni.requestPayment({
-					timeStamp: pay.timeStamp,
-					nonceStr: pay.nonceStr,
-					package: pay.package,
-					signType: pay.signType,
-					paySign: pay.paySign,
-					success: success => {
-						uni.showToast({
-							title: '支付成功',
-							icon: 'none',
-							duration: 2000
-						});
-						that.buttonLoading = false
-						that.getPageData()
-						uni.hideLoading()
-					},
-					fail: fail => {
-						uni.showToast({
-							title: '支付失败',
-							icon: 'none',
-							duration: 2000
-						});
-						that.buttonLoading = false
-						uni.hideLoading()
-					}
-				})
-				// #endif
-
-				// #ifdef H5
-				WeixinJSBridge.invoke(
-					'getBrandWCPayRequest', {
-						"appId": pay.appId, // 公众号ID，由商户传入     
-						"timeStamp": pay.timeStamp, // 时间戳，自1970年以来的秒数     
-						"nonceStr": pay.nonceStr, // 随机串     
-						"package": pay.package, // 订单详情扩展字符串
-						"signType": pay.signType, // 微信签名方式：     
-						"paySign": pay.paySign // 微信签名 
-					},
-					res => {
-						if (res.err_msg == "get_brand_wcpay_request:ok") {
-							uni.showToast({
-								title: '支付成功',
-								icon: 'none',
-								duration: 2000
-							});
-							that.buttonLoading = false
-							that.getPageData()
-							uni.hideLoading()
-						} else {
-							uni.showToast({
-								title: '支付失败',
-								icon: 'none',
-								duration: 2000
-							});
-							that.buttonLoading = false
-							uni.hideLoading()
-						}
-					});
-				// #endif
-				// #ifdef APP-PLUS
-				// APP
-				uni.getProvider({
-					service: "payment",
-					success: e => {
-						const type = e.provider.includes('wxpay')
-						type && uni.requestPayment({
-							"provider": "wxpay",
-							"orderInfo": pay,
-							success: success => {
-								uni.showToast({
-									title: '支付成功',
-									icon: 'none',
-									duration: 2000
-								});
-								that.buttonLoading = false
-								that.getPageData()
-								uni.hideLoading()
-
-							},
-							fail: fail => {
-								if (fail.errCode === -8) {
-									uni.showToast({
-										title: '未安装微信客户端',
-										icon: 'none',
-										duration: 2000
-									});
-									that.buttonLoading = false
-									uni.hideLoading()
-								} else {
-									uni.showToast({
-										title: '支付失败',
-										icon: 'none',
-										duration: 2000
-									});
-									that.buttonLoading = false
-									uni.hideLoading()
-								}
-							}
-						})
-					},
-					fail: e => {
-						that.payFail("获取iap支付通道失败")
-					}
-				});
-				// #endif
-
-
-			},
-			//个人信息处理
-			getPageData() {
-				this.getUserInfo().then(res => {
-					if (res.code === 1) {
-						// this.userInfo = { avatar: res.data.avatar }
-						this.userInfo = res.data
-
-					}
-				})
-			},
-			//判断微信js版本用
-			compareVersion(_v1, _v2) {
-				if (typeof _v1 !== 'string' || typeof _v2 !== 'string') return 0
-
-				const v1 = _v1.split('.')
-				const v2 = _v2.split('.')
-				const len = Math.max(v1.length, v2.length)
-
-				while (v1.length < len) {
-					v1.push('0')
-				}
-				while (v2.length < len) {
-					v2.push('0')
-				}
-
-				for (let i = 0; i < len; i++) {
-					const num1 = parseInt(v1[i], 10)
-					const num2 = parseInt(v2[i], 10)
-
-					if (num1 > num2) {
-						return 1
-					} else if (num1 < num2) {
-						return -1
-					}
-				}
-
-				return 0
-			},
 			refreshPage() {
 				this.getUserInfo && this.getUserInfo()
-				this.mggTrue && this.mggTrue()
-				this.dealerLevelList && this.dealerLevelList()
 				this.richtext && this.initMenuList(this.richtext)
 			},
 
@@ -1428,31 +989,47 @@
 					border-bottom: 1rpx solid #f0f0f0;
 
 					.left {
+						flex: 1;
+						min-width: 0;
 						color: #222;
 
 						.line1 {
-							font-size: 32rpx;
+							font-size: 30rpx;
 							font-weight: bold;
 							color: #222;
+							line-height: 1.4;
 						}
 
 						.line2 {
-							font-size: 24rpx;
-							margin-top: 16rpx;
+							font-size: 22rpx;
+							margin-top: 10rpx;
 							color: #888;
+							line-height: 1.4;
 						}
 					}
 
 					.right {
-						width: 156rpx;
-						height: 60rpx;
+						flex-shrink: 0;
+						height: 64rpx;
+						margin-left: 20rpx;
 
 						:deep(.u-button) {
 							background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%) !important;
 							border: none !important;
 							color: #fff !important;
+							border-radius: 32rpx !important;
+							padding: 0 28rpx !important;
+							font-size: 26rpx !important;
+							white-space: nowrap !important;
+							height: 64rpx !important;
+							line-height: 64rpx !important;
 							&::after { border: none !important; }
 						}
+					}
+
+					.left {
+						flex: 1;
+						min-width: 0;
 					}
 				}
 
@@ -1547,8 +1124,8 @@
 				.menu-grid {
 					display: grid;
 					grid-template-columns: repeat(4, 1fr);
-					gap: 20rpx;
-					padding: 20rpx;
+					gap: 8rpx;
+					padding: 16rpx 0;
 				}
 
 				.menu-item {
@@ -1556,12 +1133,17 @@
 					flex-direction: column;
 					align-items: center;
 					justify-content: center;
-					padding: 10rpx;
+					padding: 16rpx 6rpx;
+					border-radius: 12rpx;
+
+					&:active {
+						background: #f5f0ff;
+					}
 
 					.icon {
-						width: 36rpx;
-						height: 38rpx;
-						margin-bottom: 16rpx;
+						width: 44rpx;
+						height: 44rpx;
+						margin-bottom: 12rpx;
 						display: flex;
 						align-items: center;
 						justify-content: center;
@@ -1574,8 +1156,11 @@
 
 					.text {
 						font-size: 24rpx;
-						color: #444;
+						color: #555;
 						text-align: center;
+						line-height: 1.4;
+						word-break: break-word;
+						width: 100%;
 					}
 				}
 			}

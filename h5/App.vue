@@ -6,8 +6,6 @@
 	import checkappupdate from '@/common/utils/checkappupdate.js'
 	import api from '@/common/request/api.js'
 	// #endif
-	import {imgAxios} from "@/components/jqueryImg.js"
-
 	import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
 	export default {
 		globalData:{
@@ -92,12 +90,6 @@
 			
 		},
 		async  onShow() {
-			// #ifdef H5
-			
-			imgAxios().then(res=>{
-				
-			})
-			// #endif
 			//小程序自动登陆
 			this.isLogin()
 			console.log('App Show')
@@ -114,22 +106,8 @@
 		},
 		methods: {
 			
-			async isLogin(){
-				// #ifdef H5
-				
-				const obj = {
-					host: this.$WXOA_CALLBACK,
-					event: 'login',
-				};
-				const payload = encodeURIComponent(JSON.stringify(obj));
-				const redirect_uri = encodeURIComponent(`${this.$BASE_URL}/addons/drama/user/wxOfficialAccountOauth/sign/${this.$SIGN}?payload=${payload}`);
-				const oauthUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${this.$store.state.app.appid}&redirect_uri=${redirect_uri}&response_type=code&scope=snsapi_userinfo&state=1`
-				const page = getCurrentPages();
-				const prevPage = page[page.length - 2]
-				const lastPage = prevPage.__page__.fullPath
-				uni.setStorageSync("lastPage", lastPage);
-				window.location.href = oauthUrl;
-				// #endif
+			isLogin(){
+				// 新后端使用 token 认证，无需 WeChat H5 OAuth 跳转
 			},
 			...mapActions("user", ["getUserInfo"]),
 			...mapActions("app", ["getConfigInfo"]),

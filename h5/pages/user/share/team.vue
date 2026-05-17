@@ -1,38 +1,47 @@
- 
 
 
 <template>
 	<view class="page_content">
 		<!-- #ifndef MP-TOUTIAO -->
-			<view class="head_content">
-			<CustomNavbar title="团队管理"></CustomNavbar>
+		<view class="head_content">
+			<CustomNavbar :title="$t('team.title')"></CustomNavbar>
 		</view>
 		<!-- #endif -->
-		
+
 		<view class="main_content">
 			<scroll-view class="scroll_view" :scroll-y="true" @scrolltolower="scrollBottom">
 				<view class="scroll_content">
-					<view class="top_card" :style="'background:'+isBgColor" >
-						<view class="text1">{{ info.count }}人</view>
-						<view class="text2">直推用户{{ info.count_direct }}人  间推用户{{ info.count_indirect }}人</view>
+					<!-- 统计卡片 -->
+					<view class="top_card">
+						<view class="stat_total">
+							<text class="stat_num">{{ info.count }}</text>
+							<text class="stat_unit">{{ $t('team.person') }}</text>
+						</view>
+						<view class="stat_sub">
+							<text class="sub_item">{{ $t('team.directCount', [info.count_direct]) }}</text>
+							<text class="sub_divider">·</text>
+							<text class="sub_item">{{ $t('team.indirectCount', [info.count_indirect]) }}</text>
+						</view>
 					</view>
+
+					<!-- 团队列表 -->
 					<view class="content_box">
-						<view class="title">团队信息</view>
+						<view class="section_title">{{ $t('team.teamInfo') }}</view>
 						<view class="list_box" v-if="list.length">
 							<view class="item" v-for="(item, index) in list" :key="index">
-								<view class="left">
-									<view class="photo">
-										<image class="image" :src="item.avatar" mode="aspectFill"></image>
-									</view>
-									<view class="info">
-										<view class="text1">{{ item.nickname }}</view>
-										<view class="text2">{{ item.createtime }}</view>
+								<view class="item_left">
+									<image class="avatar" :src="item.avatar" mode="aspectFill"></image>
+									<view class="item_info">
+										<view class="nickname">{{ item.nickname }}</view>
+										<view class="join_time">{{ item.createtime }}</view>
 									</view>
 								</view>
-								<view class="right">{{ item.type == '1' ? '直推' : '间推' }}用户</view>
+								<view class="type_tag" :class="item.type == '1' ? 'direct' : 'indirect'">
+									{{ item.type == '1' ? $t('team.direct') : $t('team.indirect') }}
+								</view>
 							</view>
 						</view>
-						<view class="be_empty" v-else>没有团队信息</view>
+						<view class="empty_tip" v-else>{{ $t('team.noData') }}</view>
 					</view>
 				</view>
 			</scroll-view>
@@ -44,7 +53,6 @@
 	export default {
 		data() {
 			return {
-				isBgColor: `#5E72F7`,
 				info: {
 					count: 0,
 					count_direct: 0,
@@ -68,13 +76,13 @@
 					page: this.page,
 					pagesize: this.pagesize
 				}).then(res => {
-					if(res.code === 1) {
+					if (res.code === 1) {
 						this.info = {
 							count: res.data.count,
 							count_direct: res.data.count_direct,
 							count_indirect: res.data.count_indirect
 						}
-						if(res.data.reseller_user && res.data.reseller_user.length) {
+						if (res.data.reseller_user && res.data.reseller_user.length) {
 							this.list = this.list.concat(res.data.reseller_user)
 						} else {
 							this.page--
@@ -88,119 +96,144 @@
 
 <style lang="scss" scoped>
 	.page_content {
+		background: #f5f6ff;
+		min-height: 100vh;
+
 		.main_content {
+			height: calc(100vh - 88rpx);
 			overflow: hidden;
-			
+
 			.scroll_view {
 				height: 100%;
-				
+
 				.scroll_content {
-					padding: 24rpx 40rpx 60rpx 40rpx;
+					padding: 24rpx 28rpx 60rpx;
 				}
 			}
 
 			.top_card {
-				height: 220rpx;
-				border-radius: 16rpx;
-				background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
-				position: relative;
+				background: linear-gradient(135deg, #5E72F7 0%, #9354FF 100%);
+				border-radius: 28rpx;
+				padding: 40rpx;
+				box-shadow: 0 8rpx 32rpx rgba(94, 114, 247, 0.35);
 				display: flex;
 				flex-direction: column;
-				justify-content: center;
 				align-items: center;
-				font-weight: bold;
-				color: #fff;
-				
-				&::before {
-					content: "";
-					width: 100%;
-					height: 100%;
-					position: absolute;
-					top: 0;
-					left: 0;
-					background-image: url('https://img.nymaite.com/video_short/images/texture.png');
-					background-repeat: no-repeat;
-					background-size: 100% 100%;
+				margin-bottom: 24rpx;
+
+				.stat_total {
+					display: flex;
+					align-items: baseline;
+					gap: 8rpx;
+					margin-bottom: 16rpx;
+
+					.stat_num {
+						font-size: 72rpx;
+						font-weight: 900;
+						color: #fff;
+						line-height: 1;
+					}
+
+					.stat_unit {
+						font-size: 28rpx;
+						font-weight: 600;
+						color: rgba(255, 255, 255, 0.85);
+					}
 				}
-				
-				.text1 {
-					font-size: 40rpx;
-					margin-bottom: 20rpx;
-				}
-				
-				.text2 {
-					font-size: 32rpx;
+
+				.stat_sub {
+					display: flex;
+					align-items: center;
+					gap: 16rpx;
+
+					.sub_item {
+						font-size: 26rpx;
+						color: rgba(255, 255, 255, 0.8);
+					}
+
+					.sub_divider {
+						font-size: 26rpx;
+						color: rgba(255, 255, 255, 0.4);
+					}
 				}
 			}
-			
-			.content_box {
-				margin-top: 40rpx;
 
-				.title {
-					font-size: 36rpx;
+			.content_box {
+				background: #fff;
+				border-radius: 24rpx;
+				padding: 32rpx;
+				box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
+
+				.section_title {
+					font-size: 30rpx;
 					font-weight: 700;
-					color: rgba(39, 45, 47, 1);
+					color: #1a1a1a;
+					margin-bottom: 24rpx;
+					padding-left: 12rpx;
+					border-left: 6rpx solid #5E72F7;
 				}
-				
+
 				.list_box {
 					.item {
-						padding: 40rpx 0;
-						border-bottom: 2rpx solid rgba(240, 240, 240, 1);
 						display: flex;
 						align-items: center;
 						justify-content: space-between;
-					
-						.left {
+						padding: 24rpx 0;
+						border-bottom: 1rpx solid #f5f5f5;
+
+						&:last-child { border-bottom: none; }
+
+						.item_left {
 							display: flex;
 							align-items: center;
-							
-							.photo {
-								width: 100rpx;
-								height: 100rpx;
+							gap: 20rpx;
+
+							.avatar {
+								width: 88rpx;
+								height: 88rpx;
 								border-radius: 20rpx;
-								background: #fff;
-								box-shadow: 0 0 60rpx 0 rgba(202, 202, 202, 0.3);
-								overflow: hidden;
-								display: flex;
-								align-items: center;
-								justify-content: center;
-								
-								.image {
-									width: 100%;
-									height: 100%;
-								}
+								flex-shrink: 0;
 							}
-							
-							.info {
-								margin-left: 40rpx;
-								
-								.text1 {
-									font-size: 32rpx;
+
+							.item_info {
+								.nickname {
+									font-size: 30rpx;
 									font-weight: 700;
-									color: #272D2F;
-									margin-bottom: 12rpx;
+									color: #1a1a1a;
+									margin-bottom: 8rpx;
 								}
-								
-								.text2 {
-									font-size: 24rpx;
-									color: #A5ACB6;
+
+								.join_time {
+									font-size: 22rpx;
+									color: #aaa;
 								}
 							}
 						}
-						
-						.right {
-							font-size: 32rpx;
-							font-weight: 700;
-							color: #000;
+
+						.type_tag {
+							font-size: 24rpx;
+							font-weight: 600;
+							padding: 6rpx 20rpx;
+							border-radius: 20rpx;
+
+							&.direct {
+								background: #eef0ff;
+								color: #5E72F7;
+							}
+
+							&.indirect {
+								background: #f3eeff;
+								color: #9354FF;
+							}
 						}
 					}
 				}
-				
-				.be_empty {
-					font-size: 28rpx;
-					color: #999;
+
+				.empty_tip {
 					text-align: center;
-					padding: 40rpx 0;
+					font-size: 28rpx;
+					color: #bbb;
+					padding: 60rpx 0;
 				}
 			}
 		}

@@ -1,38 +1,48 @@
 
+
 <template>
 	<view class="page_content">
 		<!-- #ifndef MP-TOUTIAO -->
 		<view class="head_content">
-			<CustomNavbar title="佣金明细"></CustomNavbar>
+			<CustomNavbar :title="$t('brokerage.title')"></CustomNavbar>
 		</view>
 		<!-- #endif -->
-		
+
 		<view class="main_content">
-			<scroll-view class="scroll_view" :scroll-y="true" @scrolltolower="scrollBottom" >
+			<scroll-view class="scroll_view" :scroll-y="true" @scrolltolower="scrollBottom">
 				<view class="scroll_content">
-					<view class="top_card" :style="'background:'+isBgColor">
-						<view class="text1">{{ info.sum }}元</view>
-						<view class="text2">总订单数量{{ info.count }}</view>
+					<!-- 统计卡片 -->
+					<view class="top_card">
+						<view class="stat_amount">{{ info.sum }}<text class="unit">{{ $t('brokerage.yuan') }}</text></view>
+						<view class="stat_orders">{{ $t('brokerage.totalOrders', [info.count]) }}</view>
 					</view>
+
+					<!-- 佣金列表 -->
 					<view class="content_box">
-						<view class="title">佣金信息</view>
+						<view class="section_title">{{ $t('brokerage.commissionInfo') }}</view>
 						<view class="list_box" v-if="list.length">
 							<view class="item" v-for="(item, index) in list" :key="index">
-								<view class="line">
-									<text class="bold">{{ item.nickname }}</text>
-									<text>推荐关系：{{ item.type_text }}</text>
+								<view class="item_top">
+									<text class="nickname">{{ item.nickname }}</text>
+									<text class="relation_tag">{{ item.type_text }}</text>
 								</view>
-								<view class="line">
-									<text>分佣：{{ item.money }}元</text>
-									<text>充值金额：{{ item.pay_money }}元</text>
+								<view class="item_row">
+									<view class="item_col">
+										<text class="col_label">{{ $t('brokerage.commission') }}</text>
+										<text class="col_value accent">{{ item.money }}{{ $t('brokerage.yuan') }}</text>
+									</view>
+									<view class="item_col">
+										<text class="col_label">{{ $t('brokerage.rechargeAmount') }}</text>
+										<text class="col_value">{{ item.pay_money }}{{ $t('brokerage.yuan') }}</text>
+									</view>
 								</view>
-								<view class="line">
-									<text>类型：{{ item.order_type_text }}</text>
-									<text>{{ item.createtime }}</text>
+								<view class="item_footer">
+									<text class="item_type">{{ item.order_type_text }}</text>
+									<text class="item_time">{{ item.createtime }}</text>
 								</view>
 							</view>
 						</view>
-						<view class="be_empty" v-else>没有佣金信息</view>
+						<view class="empty_tip" v-else>{{ $t('brokerage.noData') }}</view>
 					</view>
 				</view>
 			</scroll-view>
@@ -44,7 +54,6 @@
 	export default {
 		data() {
 			return {
-				isBgColor: `#5E72F7`,
 				info: {
 					sum: 0,
 					count: 0
@@ -67,12 +76,12 @@
 					page: this.page,
 					pagesize: this.pagesize
 				}).then(res => {
-					if(res.code === 1) {
+					if (res.code === 1) {
 						this.info = {
 							sum: res.data.sum,
 							count: res.data.count
 						}
-						if(res.data.list && res.data.list.length) {
+						if (res.data.list && res.data.list.length) {
 							this.list = this.list.concat(res.data.list)
 						} else {
 							this.page--
@@ -86,86 +95,142 @@
 
 <style lang="scss" scoped>
 	.page_content {
+		background: #f5f6ff;
+		min-height: 100vh;
+
 		.main_content {
+			height: calc(100vh - 88rpx);
 			overflow: hidden;
-			
+
 			.scroll_view {
 				height: 100%;
-				
+
 				.scroll_content {
-					padding: 24rpx 40rpx 60rpx 40rpx;
+					padding: 24rpx 28rpx 60rpx;
 				}
 			}
-			
+
 			.top_card {
-				height: 220rpx;
-				border-radius: 16rpx;
-				background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
-				position: relative;
+				background: linear-gradient(135deg, #5E72F7 0%, #9354FF 100%);
+				border-radius: 28rpx;
+				padding: 40rpx;
+				box-shadow: 0 8rpx 32rpx rgba(94, 114, 247, 0.35);
 				display: flex;
 				flex-direction: column;
-				justify-content: center;
 				align-items: center;
-				font-weight: bold;
-				color: #fff;
-				
-				&::before {
-					content: "";
-					width: 100%;
-					height: 100%;
-					position: absolute;
-					top: 0;
-					left: 0;
-					background-image: url('https://img.nymaite.com/video_short/images/texture.png');
-					background-repeat: no-repeat;
-					background-size: 100% 100%;
+				margin-bottom: 24rpx;
+
+				.stat_amount {
+					font-size: 64rpx;
+					font-weight: 900;
+					color: #fff;
+					line-height: 1;
+					margin-bottom: 16rpx;
+
+					.unit {
+						font-size: 28rpx;
+						font-weight: 600;
+						margin-left: 4rpx;
+					}
 				}
-				
-				.text1 {
-					font-size: 40rpx;
-					margin-bottom: 20rpx;
-				}
-				
-				.text2 {
-					font-size: 32rpx;
+
+				.stat_orders {
+					font-size: 26rpx;
+					color: rgba(255, 255, 255, 0.8);
 				}
 			}
-			
+
 			.content_box {
-				margin-top: 40rpx;
-				
-				.title {
-					font-size: 36rpx;
+				background: #fff;
+				border-radius: 24rpx;
+				padding: 32rpx;
+				box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
+
+				.section_title {
+					font-size: 30rpx;
 					font-weight: 700;
-					color: rgba(39, 45, 47, 1);
+					color: #1a1a1a;
+					margin-bottom: 24rpx;
+					padding-left: 12rpx;
+					border-left: 6rpx solid #5E72F7;
 				}
-				
+
 				.list_box {
 					.item {
-						padding: 32rpx 0;
-						border-bottom: 2rpx solid rgba(240, 240, 240, 1);
-						
-						.line {
+						padding: 24rpx 0;
+						border-bottom: 1rpx solid #f5f5f5;
+
+						&:last-child { border-bottom: none; }
+
+						.item_top {
 							display: flex;
 							align-items: center;
 							justify-content: space-between;
-							font-size: 28rpx;
-							color: rgba(39, 45, 47, 1);
-							line-height: 52rpx;
-							
-							.bold {
-								font-size: 32rpx;
+							margin-bottom: 16rpx;
+
+							.nickname {
+								font-size: 30rpx;
 								font-weight: 700;
+								color: #1a1a1a;
+							}
+
+							.relation_tag {
+								font-size: 22rpx;
+								color: #5E72F7;
+								background: #eef0ff;
+								padding: 4rpx 16rpx;
+								border-radius: 20rpx;
+							}
+						}
+
+						.item_row {
+							display: flex;
+							gap: 32rpx;
+							margin-bottom: 12rpx;
+
+							.item_col {
+								display: flex;
+								align-items: center;
+								gap: 8rpx;
+
+								.col_label {
+									font-size: 24rpx;
+									color: #999;
+								}
+
+								.col_value {
+									font-size: 28rpx;
+									font-weight: 600;
+									color: #333;
+
+									&.accent { color: #5E72F7; }
+								}
+							}
+						}
+
+						.item_footer {
+							display: flex;
+							align-items: center;
+							justify-content: space-between;
+
+							.item_type {
+								font-size: 22rpx;
+								color: #aaa;
+							}
+
+							.item_time {
+								font-size: 22rpx;
+								color: #aaa;
 							}
 						}
 					}
 				}
-				
-				.be_empty {
-					font-size: 28rpx;
-					color: #999;
+
+				.empty_tip {
 					text-align: center;
-					padding: 40rpx 0;
+					font-size: 28rpx;
+					color: #bbb;
+					padding: 60rpx 0;
 				}
 			}
 		}

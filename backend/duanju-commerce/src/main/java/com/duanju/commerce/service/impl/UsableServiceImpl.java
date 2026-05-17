@@ -49,7 +49,7 @@ public class UsableServiceImpl implements UsableService {
     public List<Usable> listAll(Integer siteId) {
         return usableMapper.selectList(new LambdaQueryWrapper<Usable>()
                 .eq(Usable::getSiteId, siteId)
-                .eq(Usable::getStatus, "normal")
+                .eq(Usable::getStatus, "1")
                 .orderByDesc(Usable::getWeigh));
     }
 
@@ -62,7 +62,7 @@ public class UsableServiceImpl implements UsableService {
     @Transactional(rollbackFor = Exception.class)
     public UsableOrder createOrder(Integer siteId, Long userId, Long usableId, String payType, String platform) {
         Usable usable = usableMapper.selectById(usableId);
-        if (usable == null || !"normal".equals(usable.getStatus())) {
+        if (usable == null || !"1".equals(usable.getStatus())) {
             throw ServiceException.of(msg("error.usable.not.found"));
         }
 

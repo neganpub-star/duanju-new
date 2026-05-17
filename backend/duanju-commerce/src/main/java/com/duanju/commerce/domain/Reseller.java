@@ -14,6 +14,8 @@ public class Reseller extends BaseEntity {
 
     private Integer siteId;
     private String name;
+    /** 多语言名称 JSON，如 {"zh-CN":"普通分销商","en":"Regular Reseller"} */
+    private String nameI18n;
     private String image;
     private String content;
 

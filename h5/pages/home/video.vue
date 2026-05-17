@@ -12,7 +12,7 @@
 			</view>
 			<!-- #endif -->
 			<swiper class="swiper" circular :vertical="true" :duration="300" :current="current" @change="swiperChange">
-				<swiper-item class="swiper_item" v-for="(item, index) in videoData" :key="index"  :disable-touch="true"	>
+				<swiper-item class="swiper_item" v-for="(item, index) in videoData" :key="index">
 					<view class="videos" v-if="videoIndex == index" @click="videoClick"  >
 						<!-- #ifdef H5 -->
 						<video class="video" :id="'video' + item.id" :ref="'video' + item.id"
@@ -291,6 +291,13 @@
 		},
 		onUnload() {
 			uni.$off('loginSuccess', this.refreshPage)
+			// #ifdef H5
+			if (this._touchPlayHandler) {
+				document.removeEventListener('touchstart', this._touchPlayHandler)
+				document.removeEventListener('click', this._touchPlayHandler)
+				this._touchPlayHandler = null
+			}
+			// #endif
 		},
 		onShow() {
 			this.tabChange = true
@@ -309,7 +316,9 @@
 			  
 			// #ifdef H5
 			if(this.originData.length) {
-				this.videoPlay()
+				this.$nextTick(() => {
+					this.videoPlay()
+				})
 			}
 			// #endif
 		},
@@ -321,6 +330,14 @@
 		onHide() {
 			this.videoPause()
 			this.tabChange = false
+			// #ifdef H5
+			if (this._touchPlayHandler) {
+				document.removeEventListener('touchstart', this._touchPlayHandler)
+				document.removeEventListener('click', this._touchPlayHandler)
+				this._touchPlayHandler = null
+			}
+			this._pendingPlay = false
+			// #endif
 		},
 		onShareAppMessage(res) {
 			// #ifdef MP-WEIXIN
@@ -522,27 +539,11 @@
 				this.currentTime = 0
 				this.isDrag = false
 				this.isPlayError = false
-				// H5自动播放
+				// H5自动播放：nextTick 等 DOM 渲染后用原生 play() 尝试（可捕获 autoplay 策略拒绝）
 				// #ifdef H5
-				if(this.$utils.platforms() === 'wxOfficialAccount' && uni.getSystemInfoSync().platform == 'ios') {
-					WeixinJSBridge.invoke('getNetworkType', {}, (e) => {
-						this.videoPlay()
-					})
-				} else {
-					if(this.videoAutoplay == 1) {
-						const timer = setTimeout(() => {
-							this.videoPlay()
-							clearTimeout(timer)
-						}, 500)
-					} else {
-						if(init != 1) {
-							const timer = setTimeout(() => {
-								this.videoPlay()
-								clearTimeout(timer)
-							}, 500)
-						}
-					}
-				}
+				this.$nextTick(() => {
+					this.videoPlay()
+				})
 				// #endif
 			},
 			// swiper切换
@@ -574,13 +575,63 @@
 			},
 			// 播放
 			videoPlay() {
-		
+				// #ifdef H5
+				const item = this.originData[this.originIndex]
+				if (!item) return
+				try {
+					// UniApp H5 的 <video> id 挂在 wrapper 上，需 querySelector 找到真实 video 元素
+					const wrapper = document.getElementById('video' + item.id)
+					if (!wrapper) return
+					const el = wrapper.tagName === 'VIDEO' ? wrapper : wrapper.querySelector('video')
+					if (!el) return
+					const p = el.play()
+					if (p !== undefined) {
+						p.then(() => {
+							this.isPlaying = true
+							this._pendingPlay = false
+						}).catch((err) => {
+							if (err && err.name === 'AbortError') {
+								// src 刚切换导致加载中断，短暂等待后重试
+								setTimeout(() => this.videoPlay(), 150)
+							} else {
+								// NotAllowedError：autoplay 策略阻止，等用户手势
+								this._pendingPlay = true
+								this.isPlaying = false
+								this._addPlayOnTouchListener()
+							}
+						})
+					} else {
+						this.isPlaying = true
+					}
+				} catch (e) {
+					// 降级：直接用 UniApp 上下文播放
+					const video = this.getVideoCtx()
+					if (video) { video.play(); this.isPlaying = true }
+				}
+				return
+				// #endif
 				const video = this.getVideoCtx()
 				if(!video) return
-				
 				video.play()
 				this.isPlaying = true
 			},
+			// #ifdef H5
+			_addPlayOnTouchListener() {
+				if (this._touchPlayHandler) return
+				this._touchPlayHandler = () => {
+					if (this._pendingPlay) {
+						this._pendingPlay = false
+						document.removeEventListener('touchstart', this._touchPlayHandler)
+						document.removeEventListener('click', this._touchPlayHandler)
+						this._touchPlayHandler = null
+						this.videoPlay()
+					}
+				}
+				// 同时监听 touchstart（移动端）和 click（PC 端）
+				document.addEventListener('touchstart', this._touchPlayHandler)
+				document.addEventListener('click', this._touchPlayHandler)
+			},
+			// #endif
 			// 暂停
 			videoPause() {
 			
