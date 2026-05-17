@@ -218,11 +218,17 @@
               <el-form-item label="时长(秒)">
                 <el-input-number v-model="epForm.duration" :min="0" style="width:140px" />
               </el-form-item>
-              <el-form-item label="是否免费">
+              <el-form-item label="解锁方式">
                 <el-radio-group v-model="epForm.isFree">
-                  <el-radio :value="0">付费</el-radio>
                   <el-radio :value="1">免费</el-radio>
+                  <el-radio :value="0">付费</el-radio>
                 </el-radio-group>
+              </el-form-item>
+              <el-form-item v-if="epForm.isFree === 0" label="解锁价格">
+                <el-input-number v-model="epForm.price" :min="0" :precision="0" :step="10" style="width:160px" />
+                <span style="margin-left:8px;color:#999;font-size:12px">
+                  积分（0 = VIP专属，>0 = 可用积分单集解锁）
+                </span>
               </el-form-item>
               <el-form-item label="状态">
                 <el-radio-group v-model="epForm.status">
@@ -460,7 +466,7 @@ function openEpForm(row) {
     const nextNum = episodes.value.length > 0
       ? Math.max(...episodes.value.map(e => e.episodeNum)) + 1
       : 1
-    epForm.value = { episodeNum: nextNum, isFree: 0, status: 1 }
+    epForm.value = { episodeNum: nextNum, isFree: 0, price: 0, status: 1 }
     supportedLangs.value.forEach(l => { epI18nForm[l.code] = '' })
   }
   epActiveTab.value = 'basic'
