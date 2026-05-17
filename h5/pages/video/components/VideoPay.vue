@@ -58,6 +58,7 @@
 					</view>
 					<view class="badge" v-if="item.flag">{{ item.flag }}</view>
 				</view>
+				<view class="p_section_title" v-if="iosIsPay && vipData.length">{{ $t('vip.selectPlan') }}</view>
 				<view class="p_vip_section" v-if="iosIsPay && vipData.length">
 					<view class="vip-card" v-for="(item, index) in vipData" :key="'vip-'+index" @click="recharge('member', item.id, item.price)">
 						<view class="vc-name">{{ vipPlanName(item.days) }}</view>
@@ -70,35 +71,6 @@
 						<view class="vc-original" v-else></view>
 						<view class="vc-btn">{{ $t('vip.activateNow') }}</view>
 						<view class="vc-badge" v-if="item.flag">{{ item.flag }}</view>
-					</view>
-				</view>
-				<view class="item item2" :style="'background:'+isColor" @click="gotoPage('/pages/user/integral/task')">
-					<view class="content">
-						<view class="line1">
-							<text class="text1">{{ $t('videopay.freePoints') }}</text>
-						</view>
-						<view class="line2">
-							<text class="text1">{{ $t('videopay.earnByTask') }}</text>
-						</view>
-					</view>
-				</view>
-				<!-- #ifdef MP-WEIXIN -->
-				<view class="item item2" :style="'background:'+isColor" v-if="token && ad" @click="$emit('showAd'), $emit('close')">
-					<view class="content">
-						<view class="line1">
-							<text class="text1">{{ $t('videopay.dailyTask') }}</text>
-						</view>
-						<view class="line2">
-							<text class="text1">{{ $t('videopay.watchToEarn') }}</text>
-						</view>
-					</view>
-				</view>
-				<!-- #endif -->
-				<view class="item item2" :style="'background:'+isColor" @click="jumpView('/pages/user/info/contact')">
-					<view class="content">
-						<view class="line1">
-							<text class="text1">{{ $t('user.contactUs') }}</text>
-						</view>
 					</view>
 				</view>
 			</view>
@@ -794,7 +766,7 @@
 		.popup {
 			width: 100%;
 			min-height: 60%;
-			background: #fff;
+			background: #f5f6ff;
 			border-radius: 24rpx 24rpx 0 0;
 			position: absolute;
 			bottom: 0;
@@ -859,9 +831,10 @@
 				justify-content: space-between;
 				align-items: center;
 				font-size: 28rpx;
-				padding: 16rpx 24rpx;
-				background: #f6f7ff;
-				border-radius: 12rpx;
+				padding: 18rpx 24rpx;
+				background: #fff;
+				border-radius: 14rpx;
+				box-shadow: 0 2rpx 8rpx rgba(94, 114, 247, 0.08);
 
 				.left {
 					display: flex;
@@ -878,9 +851,19 @@
 				}
 			}
 			
+			.p_section_title {
+				font-size: 26rpx;
+				font-weight: 600;
+				color: #9354FF;
+				padding: 24rpx 4rpx 12rpx;
+				border-left: 6rpx solid #9354FF;
+				padding-left: 16rpx;
+				margin-top: 24rpx;
+			}
+
 			.p_list {
 				flex: 1;
-				margin-top: 40rpx;
+				margin-top: 0;
 				display: flex;
 				flex-wrap: wrap;
 				align-content: flex-start;
@@ -970,7 +953,7 @@
 
 				.vip-card {
 					width: calc((100% - 20rpx) / 2);
-					min-height: 260rpx;
+					min-height: 240rpx;
 					margin-bottom: 20rpx;
 
 					&:nth-child(2n) {
@@ -978,6 +961,8 @@
 					}
 					border-radius: 20rpx;
 					background: #fff;
+					border: 1rpx solid #e8eaff;
+					box-shadow: 0 4rpx 16rpx rgba(94, 114, 247, 0.1);
 					position: relative;
 					overflow: hidden;
 					display: flex;
