@@ -1070,6 +1070,9 @@
 			},
 			// 播放错误
 			videoError() {
+				// v-else 里的备用 video 元素 src=null 时浏览器会触发 error，需过滤掉
+				const ep = this.videoData[this.videoIndex]
+				if (!ep || !ep.url) return
 				this.isPlayError = true
 				this.isLoading = false
 			},
