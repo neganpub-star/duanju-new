@@ -58,11 +58,10 @@
 					</view>
 					<view class="badge" v-if="item.flag">{{ item.flag }}</view>
 				</view>
-				<view class="p_recharge_btn" v-if="iosIsPay" @click.stop="goRecharge">
-					<text class="label">{{ $t('videopay.rechargePoints') }}</text>
-					<text class="arrow">›</text>
+				<view class="p_section_header" v-if="iosIsPay && vipData.length">
+					<text class="title">{{ $t('vip.selectPlan') }}</text>
+					<text class="recharge-link" @click.stop="goRecharge">{{ $t('videopay.rechargePoints') }} ›</text>
 				</view>
-				<view class="p_section_title" v-if="iosIsPay && vipData.length">{{ $t('vip.selectPlan') }}</view>
 				<view class="p_vip_section" v-if="iosIsPay && vipData.length">
 					<view class="vip-card" v-for="(item, index) in vipData" :key="'vip-'+index" @click="recharge('member', item.id, item.price)">
 						<view class="vc-name">{{ vipPlanName(item.days) }}</view>
@@ -860,38 +859,26 @@
 				}
 			}
 
-			.p_recharge_btn {
+			.p_section_header {
 				display: flex;
 				flex-direction: row;
 				align-items: center;
 				justify-content: space-between;
-				background: linear-gradient(135deg, #f0f2ff 0%, #e8eaff 100%);
-				border: 1rpx solid #d0d5ff;
-				border-radius: 14rpx;
-				padding: 24rpx 28rpx;
-				margin-top: 20rpx;
-
-				.label {
-					font-size: 28rpx;
-					font-weight: 600;
-					color: #5E72F7;
-				}
-
-				.arrow {
-					font-size: 36rpx;
-					color: #9354FF;
-					line-height: 1;
-				}
-			}
-			
-			.p_section_title {
-				font-size: 26rpx;
-				font-weight: 600;
-				color: #9354FF;
-				padding: 24rpx 4rpx 12rpx;
-				border-left: 6rpx solid #9354FF;
-				padding-left: 16rpx;
 				margin-top: 24rpx;
+				padding: 0 4rpx 12rpx 16rpx;
+				border-left: 6rpx solid #9354FF;
+
+				.title {
+					font-size: 26rpx;
+					font-weight: 600;
+					color: #9354FF;
+				}
+
+				.recharge-link {
+					font-size: 24rpx;
+					color: #9354FF;
+					opacity: 0.75;
+				}
 			}
 
 			.p_list {
