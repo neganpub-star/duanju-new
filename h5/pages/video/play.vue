@@ -440,6 +440,12 @@
 					this.videoData[1] = this.originData[1]
 				}
 				// #endif
+				// #ifdef H5
+				const ep = this.originData[newValue]
+				if (ep && ep.id && this.videoInfo.id) {
+					history.replaceState(null, '', `/#/pages/video/play?id=${this.videoInfo.id}&episodeId=${ep.id}`)
+				}
+				// #endif
 			},
 			token(newValue, oldValue) {
 				// #ifdef MP-WEIXIN
