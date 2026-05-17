@@ -1201,6 +1201,17 @@
 				// 进度文本
 				this.dragStarTime = this.$utils.formatTime(this.currentTime)
 				this.dragEndTime = this.$utils.formatTime(this.duration)
+				// #ifdef H5
+				// 每5秒把进度写入URL，刷新后可从当前位置恢复
+				const now = Date.now()
+				if (!this._lastUrlSync || now - this._lastUrlSync > 5000) {
+					this._lastUrlSync = now
+					const ep = this.originData[this.originIndex]
+					if (ep && ep.id && this.videoInfo.id && this.currentTime > 0) {
+						history.replaceState(null, '', `/#/pages/video/play?id=${this.videoInfo.id}&episodeId=${ep.id}&t=${this.currentTime}`)
+					}
+				}
+				// #endif
 			},
 			formatTime(ts) {
 				const date = new Date(ts * 1000)
