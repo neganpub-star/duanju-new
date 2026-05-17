@@ -794,71 +794,87 @@
 		.popup {
 			width: 100%;
 			min-height: 60%;
-			background: #000;
-			border-radius: 20rpx 20rpx 0 0;
+			background: #fff;
+			border-radius: 24rpx 24rpx 0 0;
 			position: absolute;
 			bottom: 0;
 			left: 0;
 			z-index: 1;
-			color: #fff;
+			color: #1a1a1a;
 			padding: 0 40rpx 60rpx 40rpx;
-			border-top: 2rpx solid #333;
+			border-top: none;
+			box-shadow: 0 -4rpx 30rpx rgba(94, 114, 247, 0.12);
 			display: flex;
 			flex-direction: column;
-			
+
+			// 顶部渐变色条，视觉与VIP中心统一
+			&::before {
+				content: '';
+				display: block;
+				height: 6rpx;
+				background: linear-gradient(90deg, #6e7ff3 0%, #9354FF 100%);
+				border-radius: 24rpx 24rpx 0 0;
+				margin: 0 -40rpx;
+				margin-bottom: 0;
+			}
+
 			.p_head {
 				display: flex;
 				flex-direction: row;
 				justify-content: space-between;
 				position: relative;
-				padding: 30rpx 0;
+				padding: 28rpx 0;
 				font-size: 32rpx;
-				
+
 				.left {
 					flex: 1;
 					display: flex;
 					flex-direction: row;
-					
+
 					.text1 {
 						font-weight: 700;
 						line-height: 48rpx;
+						color: #1a1a1a;
 					}
-					
+
 					.text2 {
 						font-size: 24rpx;
-						color: rgba(#fff, 0.5);
+						color: rgba(#1a1a1a, 0.4);
 						margin: 0 40rpx;
 						white-space: nowrap;
 						line-height: 48rpx;
 					}
 				}
-				
+
 				.right {
-					color: #5E72F7;
+					color: #9354FF;
 					white-space: nowrap;
 					margin-left: 20rpx;
 				}
 			}
-			
+
 			.p_text {
 				display: flex;
 				flex-direction: row;
 				justify-content: space-between;
 				align-items: center;
 				font-size: 28rpx;
-				
+				padding: 16rpx 24rpx;
+				background: #f6f7ff;
+				border-radius: 12rpx;
+
 				.left {
 					display: flex;
 					flex-direction: row;
 					align-items: center;
-					
+
 					.text2 {
 						color: #5E72F7;
 					}
 				}
-				
+
 				.right {
-					color: rgba(#fff, 0.7);
+					color: rgba(#1a1a1a, 0.5);
 				}
 			}
 			
@@ -1040,6 +1056,7 @@
 				font-size: 24rpx;
 				text-align: center;
 				margin-top: 20rpx;
+				color: rgba(#1a1a1a, 0.4);
 			}
 		}
 	}
