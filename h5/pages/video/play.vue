@@ -964,6 +964,8 @@
 						this.videoData[this.videoIndex].url = res.data.url
 						this.isNeedToPay = false
 						this.isShowPay = false
+						// 积分可能被扣减，刷新余额
+						this.$store.dispatch('user/getUserInfo')
 						// #ifdef H5
 						if(this.$utils.platforms() === 'wxOfficialAccount' && uni.getSystemInfoSync().platform == 'ios') {
 							WeixinJSBridge.invoke('getNetworkType', {}, (e) => {

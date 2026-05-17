@@ -125,11 +125,11 @@
 			},
 		},
 		created() {
-			this.isColor = `#9354FF`,
-			
+			this.isColor = `#9354FF`
 			this.getIntegralList()
 			this.getVipList()
-			
+			// 弹窗打开时刷新余额（v-if 每次重建组件，show watcher 不会触发初始值）
+			this.token && this.getUserInfo()
 		},
 		methods: {
 			...mapActions('user', ['getUserInfo']),
