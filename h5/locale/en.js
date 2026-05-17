@@ -142,6 +142,11 @@ export default {
     activateNow: 'Get Now',
     expiredAt: 'Expires',
     vipDays: 'VIP Days',
+    trialCard: 'Trial Card',
+    weeklyVip: 'Weekly VIP',
+    monthlyVip: 'Monthly VIP',
+    quarterlyVip: 'Quarterly VIP',
+    annualVip: 'Annual VIP',
   },
   points: {
     title: 'Buy Points',

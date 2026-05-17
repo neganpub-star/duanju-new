@@ -148,6 +148,11 @@ export default {
     activateNow: '立即开通',
     expiredAt: '有效期至',
     vipDays: 'VIP天数',
+    trialCard: '体验卡',
+    weeklyVip: '周卡VIP',
+    monthlyVip: '月卡VIP',
+    quarterlyVip: '季卡VIP',
+    annualVip: '年卡VIP',
   },
   // 积分/点数
   points: {

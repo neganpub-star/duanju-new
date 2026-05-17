@@ -58,16 +58,19 @@
 					</view>
 					<view class="badge" v-if="item.flag">{{ item.flag }}</view>
 				</view>
-				<view class="item" v-if="iosIsPay" v-for="(item, index) in vipData" :key="index" @click="recharge('member', item.id, item.price)">
-					<view class="content">
-						<view class="line1">
-							<text class="text1">{{ item.price }}/{{ item.type_text }}</text>
+				<view class="p_vip_section" v-if="iosIsPay && vipData.length">
+					<view class="vip-card" v-for="(item, index) in vipData" :key="'vip-'+index" @click="recharge('member', item.id, item.price)">
+						<view class="vc-name">{{ vipPlanName(item.days) }}</view>
+						<view class="vc-days" v-if="item.days">{{ item.days }}{{ $t('common.days') }}</view>
+						<view class="vc-price">
+							<text class="vc-currency">¥</text>
+							<text class="vc-amount">{{ item.price }}</text>
 						</view>
-						<view class="line2">
-							<text class="text2">{{ $t('videopay.vipBenefit') }}</text>
-						</view>
+						<view class="vc-original" v-if="item.originalPrice && item.originalPrice !== item.price">{{ $t('vip.originalPrice') }}{{ item.originalPrice }}</view>
+						<view class="vc-original" v-else></view>
+						<view class="vc-btn">{{ $t('vip.activateNow') }}</view>
+						<view class="vc-badge" v-if="item.flag">{{ item.flag }}</view>
 					</view>
-					<view class="tips">{{ $t('vip.activateVip') }}</view>
 				</view>
 				<view class="item item2" :style="'background:'+isColor" @click="gotoPage('/pages/user/integral/task')">
 					<view class="content">
@@ -158,6 +161,15 @@
 		},
 		methods: {
 			...mapActions('user', ['getUserInfo']),
+			// 根据天数返回当前语言的套餐名称
+			vipPlanName(days) {
+				if (!days) return this.$t('vip.activateVip')
+				if (days <= 3)  return this.$t('vip.trialCard')
+				if (days <= 7)  return this.$t('vip.weeklyVip')
+				if (days <= 31) return this.$t('vip.monthlyVip')
+				if (days <= 93) return this.$t('vip.quarterlyVip')
+				return this.$t('vip.annualVip')
+			},
 			gotoPage(url) {
 				if(!this.token) return this.$u.toast(this.$t('common.loginFirst'))
 				// #ifdef MP-WEIXIN
@@ -935,6 +947,93 @@
 				}
 			}
 			
+			.p_vip_section {
+				width: 100%;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 20rpx;
+				margin-bottom: 20rpx;
+
+				.vip-card {
+					width: calc(50% - 10rpx);
+					min-height: 260rpx;
+					border-radius: 20rpx;
+					background: #fff;
+					position: relative;
+					overflow: hidden;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					padding: 24rpx 16rpx 20rpx;
+					box-sizing: border-box;
+
+					.vc-name {
+						font-size: 28rpx;
+						font-weight: 700;
+						color: #1a1a1a;
+						text-align: center;
+					}
+
+					.vc-days {
+						font-size: 22rpx;
+						color: #999;
+						margin-top: 6rpx;
+					}
+
+					.vc-price {
+						display: flex;
+						align-items: flex-end;
+						margin-top: 12rpx;
+
+						.vc-currency {
+							font-size: 26rpx;
+							font-weight: 700;
+							color: #5E72F7;
+							padding-bottom: 8rpx;
+						}
+
+						.vc-amount {
+							font-size: 56rpx;
+							font-weight: 700;
+							color: #5E72F7;
+							line-height: 1;
+						}
+					}
+
+					.vc-original {
+						font-size: 22rpx;
+						color: #bbb;
+						text-decoration: line-through;
+						margin-top: 6rpx;
+						min-height: 30rpx;
+					}
+
+					.vc-btn {
+						margin-top: auto;
+						padding-top: 16rpx;
+						width: 100%;
+						padding: 12rpx 0;
+						border-radius: 40rpx;
+						border: 2rpx solid #5E72F7;
+						color: #5E72F7;
+						font-size: 24rpx;
+						text-align: center;
+						font-weight: 600;
+					}
+
+					.vc-badge {
+						position: absolute;
+						top: 0;
+						right: 0;
+						padding: 4rpx 16rpx;
+						font-size: 22rpx;
+						background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+						border-radius: 0 20rpx 0 20rpx;
+						color: #fff;
+					}
+				}
+			}
+
 			.p_info {
 				font-size: 24rpx;
 				text-align: center;
