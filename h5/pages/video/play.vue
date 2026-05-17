@@ -780,7 +780,9 @@
 							}
 							this.originData = res.data.episodes_list.map(ep => ({
 								...ep,
-								image: ep.image || res.data.image
+								image: ep.image || res.data.image,
+								url: ep.url ? encodeURI(decodeURI(ep.url)) : ep.url,
+								hlsUrl: ep.hlsUrl ? encodeURI(decodeURI(ep.hlsUrl)) : ep.hlsUrl,
 							}))
 
 							 if(this.isTzt){
@@ -961,7 +963,9 @@
 				
 				this.$request('video.play', obj,false).then(res => {
 					if(res.code === 1) {
-						this.videoData[this.videoIndex].url = res.data.url
+						// encodeURI(decodeURI()) 对已编码/未编码的URL均安全，防止中文/空格导致播放失败
+						const rawUrl = res.data.url || res.data.hlsUrl || ''
+						this.videoData[this.videoIndex].url = rawUrl ? encodeURI(decodeURI(rawUrl)) : rawUrl
 						this.isNeedToPay = false
 						this.isShowPay = false
 						// 积分可能被扣减，刷新余额
