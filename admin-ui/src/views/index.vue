@@ -38,6 +38,39 @@
       </el-col>
     </el-row>
 
+    <!-- 资金流水统计：今日/本周/本月/本年 × 订单收入/余额入账/已打款提现 -->
+    <div class="fund-section">
+      <div class="section-title">
+        <el-icon><Money /></el-icon>
+        <span>资金流水</span>
+      </div>
+      <div class="fund-cards">
+        <div
+          v-for="(item, idx) in fundCards"
+          :key="item.label"
+          class="fund-card"
+          :class="`fund-card--${idx}`"
+        >
+          <div class="fund-header">
+            <div class="fund-icon"><el-icon><component :is="item.icon" /></el-icon></div>
+            <div class="fund-period">{{ item.label }}</div>
+          </div>
+          <div class="fund-row fund-row--primary">
+            <span class="fund-sub">订单收入</span>
+            <span class="fund-num revenue">¥{{ formatMoney(item.revenue) }}</span>
+          </div>
+          <div class="fund-row">
+            <span class="fund-sub">余额入账</span>
+            <span class="fund-num income">¥{{ formatMoney(item.income) }}</span>
+          </div>
+          <div class="fund-row">
+            <span class="fund-sub">已打款</span>
+            <span class="fund-num withdraw">¥{{ formatMoney(item.withdraw) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 快捷入口 -->
     <el-row :gutter="16" style="margin-top:16px">
       <el-col :span="24">
@@ -58,10 +91,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import request from '@/utils/request'
+import { Sunny, Calendar, DataLine, TrendCharts, Money } from '@element-plus/icons-vue'
 
 const stats = ref({})
+const fundStats = ref({})
 
 const statCards = [
   { key: 'totalUsers',  subKey: 'todayUsers', label: '总用户数',  subLabel: '今日新增', color: '#409eff', icon: 'User' },
@@ -83,6 +118,18 @@ const shortcuts = [
   { label: '参数配置', path: '/system-config/storage', icon: 'Setting', color: '#34495e' },
 ]
 
+const fundCards = computed(() => [
+  { label: '今日', icon: Sunny,       revenue: fundStats.value.todayRevenue, income: fundStats.value.todayIncome, withdraw: fundStats.value.todayWithdraw },
+  { label: '本周', icon: Calendar,    revenue: fundStats.value.weekRevenue,  income: fundStats.value.weekIncome,  withdraw: fundStats.value.weekWithdraw },
+  { label: '本月', icon: DataLine,    revenue: fundStats.value.monthRevenue, income: fundStats.value.monthIncome, withdraw: fundStats.value.monthWithdraw },
+  { label: '本年', icon: TrendCharts, revenue: fundStats.value.yearRevenue,  income: fundStats.value.yearIncome,  withdraw: fundStats.value.yearWithdraw },
+])
+
+function formatMoney(v) {
+  const n = Number(v) || 0
+  return n.toFixed(2)
+}
+
 async function loadStats() {
   try {
     const res = await request({ url: '/admin/system/stats', method: 'get', params: { siteId: 1 } })
@@ -90,7 +137,17 @@ async function loadStats() {
   } catch {}
 }
 
-onMounted(loadStats)
+async function loadFundStats() {
+  try {
+    const res = await request({ url: '/admin/commerce/wallet/stats', method: 'get', params: { siteId: 1 } })
+    fundStats.value = res.data || {}
+  } catch {}
+}
+
+onMounted(() => {
+  loadStats()
+  loadFundStats()
+})
 </script>
 
 <style scoped lang="scss">
@@ -124,6 +181,82 @@ onMounted(loadStats)
     .sub-val { color: #67c23a; margin-left: 4px; font-weight: 600; }
   }
 }
+
+/* 资金流水统计 */
+.fund-section {
+  margin-bottom: 16px;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+  margin: 4px 0 10px;
+}
+.fund-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.fund-card {
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.fund-card:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); }
+.fund-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  opacity: 0.05;
+  pointer-events: none;
+}
+.fund-card--0::before { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+.fund-card--1::before { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+.fund-card--2::before { background: linear-gradient(135deg, #fa709a, #fee140); }
+.fund-card--3::before { background: linear-gradient(135deg, #f5576c, #fa709a); }
+
+.fund-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px;
+}
+.fund-icon {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 15px;
+  flex-shrink: 0;
+}
+.fund-card--0 .fund-icon { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+.fund-card--1 .fund-icon { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+.fund-card--2 .fund-icon { background: linear-gradient(135deg, #fa709a, #fee140); }
+.fund-card--3 .fund-icon { background: linear-gradient(135deg, #f5576c, #fa709a); }
+.fund-period { font-size: 13px; font-weight: 600; color: #303133; }
+
+.fund-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 3px 0;
+  font-size: 12px;
+}
+.fund-row--primary {
+  padding-bottom: 6px;
+  border-bottom: 1px dashed #f0f0f0;
+  margin-bottom: 4px;
+}
+.fund-sub { color: #909399; }
+.fund-num { font-weight: 700; font-variant-numeric: tabular-nums; }
+.fund-row--primary .fund-num { font-size: 17px; }
+.fund-row:not(.fund-row--primary) .fund-num { font-size: 13px; }
+.fund-num.revenue  { color: #5048e5; }
+.fund-num.income   { color: #67c23a; }
+.fund-num.withdraw { color: #f56c6c; }
 
 .card-title { font-weight: 600; font-size: 14px; }
 

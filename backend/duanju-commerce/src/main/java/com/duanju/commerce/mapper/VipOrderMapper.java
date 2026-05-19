@@ -55,4 +55,11 @@ public interface VipOrderMapper extends BaseMapper<VipOrder> {
                                      @Param("status") Integer status,
                                      @Param("mobile") String mobile,
                                      @Param("nickname") String nickname);
+
+    /** 统计指定时间段内已支付 VIP 订单的实付总额 */
+    @Select("SELECT COALESCE(SUM(pay_fee), 0) FROM vs_drama_vip_order " +
+            "WHERE site_id = #{siteId} AND status IN (1, 2) AND delete_time IS NULL " +
+            "AND create_time >= #{start}")
+    java.math.BigDecimal sumPayFeeFrom(@Param("siteId") Integer siteId,
+                                       @Param("start") java.time.LocalDateTime start);
 }

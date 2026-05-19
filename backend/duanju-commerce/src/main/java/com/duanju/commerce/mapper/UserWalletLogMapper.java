@@ -31,15 +31,21 @@ public interface UserWalletLogMapper extends BaseMapper<UserWalletLog> {
                                            @Param("mobile") String mobile,
                                            @Param("nickname") String nickname);
 
-    /** 统计指定时间段内的正向流水（充值/收入）总额 */
+    /**
+     * 统计指定时间段内的余额(money)正向流水总额
+     * 只统计 wallet_type='money'，避免和点数/积分混算单位
+     */
     @Select("SELECT COALESCE(SUM(wallet), 0) FROM vs_drama_user_wallet_log " +
-            "WHERE site_id = #{siteId} AND wallet > 0 AND delete_time IS NULL " +
-            "AND create_time >= #{start}")
+            "WHERE site_id = #{siteId} AND wallet > 0 AND wallet_type = 'money' " +
+            "AND delete_time IS NULL AND create_time >= #{start}")
     BigDecimal sumIncomeFrom(@Param("siteId") Integer siteId, @Param("start") LocalDateTime start);
 
-    /** 统计指定时间段内的提现申请总额（status != -1 表示未拒绝） */
+    /**
+     * 统计指定时间段内已实际打款的提现总额
+     * status=1 表示审核通过且已打款,口径不含待审核与已拒绝
+     */
     @Select("SELECT COALESCE(SUM(money), 0) FROM vs_drama_user_wallet_apply " +
-            "WHERE site_id = #{siteId} AND status != -1 AND delete_time IS NULL " +
+            "WHERE site_id = #{siteId} AND status = 1 AND delete_time IS NULL " +
             "AND create_time >= #{start}")
     BigDecimal sumWithdrawFrom(@Param("siteId") Integer siteId, @Param("start") LocalDateTime start);
 }
