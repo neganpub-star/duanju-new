@@ -48,7 +48,7 @@ mysql -uroot -p duanju < backend/sql/导入真实剧集数据.sql
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/duanju?...
+    url: jdbc:mysql://127.0.0.1:3306/duanju-new?...
     username: root
     password: 你的密码
 ```
