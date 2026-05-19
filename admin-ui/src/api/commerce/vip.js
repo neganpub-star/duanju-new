@@ -15,3 +15,6 @@ export function deleteVip(id) {
 export function listVipOrder(params) {
   return request({ url: '/admin/commerce/vip/orders', method: 'get', params })
 }
+export function statsVipOrder(params) {
+  return request({ url: '/admin/commerce/vip/orders/stats', method: 'get', params })
+}

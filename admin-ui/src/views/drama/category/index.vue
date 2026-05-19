@@ -104,7 +104,14 @@
       <el-table-column label="图标" width="120" align="center">
         <template #default="{ row }">
           <div v-if="isImageUrl(row.image)" class="icon-preview">
-            <el-image :src="row.image" :preview-src-list="[row.image]" preview-teleported fit="cover" />
+            <el-image :src="row.image" :preview-src-list="[row.image]" preview-teleported fit="cover">
+              <template #error>
+                <div class="icon-empty" title="图片加载失败">无</div>
+              </template>
+              <template #placeholder>
+                <div class="icon-empty">无</div>
+              </template>
+            </el-image>
           </div>
           <el-tooltip v-else-if="row.image" :content="row.image" placement="top">
             <div class="icon-class">
@@ -112,7 +119,7 @@
               <span>{{ row.image }}</span>
             </div>
           </el-tooltip>
-          <span v-else class="text-muted">—</span>
+          <div v-else class="icon-empty" title="未设置图标">无</div>
         </template>
       </el-table-column>
 
@@ -491,6 +498,7 @@ getList()
   width: 48px; height: 48px;
   border-radius: 8px;
   border: 1px solid #eee;
+  background: #f5f7fa;
 }
 .icon-class {
   display: inline-flex; align-items: center; gap: 4px;
@@ -503,6 +511,19 @@ getList()
 }
 .icon-class span {
   max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* 图标缺失/加载失败的占位：保持与图片同尺寸，对齐表格视觉 */
+.icon-empty {
+  width: 48px; height: 48px;
+  border-radius: 8px;
+  background: #f4f6f9;
+  border: 1px dashed #dcdfe6;
+  color: #909399;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
 }
 
 /* 排序徽章 */

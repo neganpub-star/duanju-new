@@ -6,6 +6,7 @@ import com.duanju.commerce.domain.Vip;
 import com.duanju.commerce.domain.VipOrder;
 import com.duanju.commerce.mapper.VipMapper;
 import com.duanju.commerce.mapper.VipOrderMapper;
+import com.duanju.commerce.vo.VipOrderStatsVO;
 import com.duanju.commerce.vo.VipOrderVO;
 import com.duanju.common.core.domain.R;
 import com.duanju.common.core.page.PageQuery;
@@ -68,5 +69,16 @@ public class AdminVipController {
         String nick = StringUtils.hasText(nickname) ? nickname : null;
         vipOrderMapper.selectWithUserPage(page, siteId, status, mob, nick);
         return R.ok(PageResult.of(page));
+    }
+
+    @Operation(summary = "VIP订单全量统计（与列表筛选条件一致）")
+    @GetMapping("/orders/stats")
+    public R<VipOrderStatsVO> orderStats(@RequestParam(defaultValue = "1") Integer siteId,
+                                         @RequestParam(required = false) Integer status,
+                                         @RequestParam(required = false) String mobile,
+                                         @RequestParam(required = false) String nickname) {
+        String mob = StringUtils.hasText(mobile) ? mobile : null;
+        String nick = StringUtils.hasText(nickname) ? nickname : null;
+        return R.ok(vipOrderMapper.selectOrderStats(siteId, status, mob, nick));
     }
 }
