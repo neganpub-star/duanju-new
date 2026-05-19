@@ -124,73 +124,110 @@
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
 
     <!-- 编辑对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="600px" append-to-body class="usable-dialog">
-      <el-tabs v-model="activeTab">
-        <!-- 基本信息 -->
+    <el-dialog
+      v-model="dialog.visible"
+      width="640px"
+      append-to-body
+      class="app-dialog"
+      :show-close="false"
+    >
+      <template #header>
+        <div class="app-dialog__header">
+          <div class="app-dialog__title">
+            <el-icon class="app-dialog__icon"><Coin /></el-icon>
+            <span>{{ dialog.title }}</span>
+            <el-tag v-if="form.id" effect="light" type="primary" round size="small" class="app-dialog__tag">#{{ form.id }}</el-tag>
+          </div>
+          <el-icon class="app-dialog__close" @click="dialog.visible = false"><Close /></el-icon>
+        </div>
+      </template>
+
+      <el-tabs v-model="activeTab" class="app-dialog__tabs">
         <el-tab-pane label="基本信息" name="basic">
-          <el-form ref="formRef" :model="form" :rules="rules" label-width="90px">
-            <el-form-item label="默认名称" prop="title">
-              <el-input v-model="form.title" placeholder="简体中文名称（必填，作为默认回退）" />
-            </el-form-item>
-            <el-form-item label="点数" prop="usable">
-              <el-input-number v-model="form.usable" :min="1" />
-            </el-form-item>
-            <el-form-item label="赠送点数">
-              <el-input-number v-model="form.giveUsable" :min="0" />
-            </el-form-item>
-            <el-form-item label="价格" prop="price">
-              <el-input-number v-model="form.price" :min="0" :precision="2" />
-            </el-form-item>
-            <el-form-item label="首充价">
-              <el-input-number v-model="form.firstPrice" :min="0" :precision="2" placeholder="留空不启用" />
-            </el-form-item>
-            <el-form-item label="划线价">
-              <el-input-number v-model="form.originalPrice" :min="0" :precision="2" />
-            </el-form-item>
-            <el-form-item label="排序">
-              <el-input-number v-model="form.weigh" :min="0" />
-            </el-form-item>
-            <el-form-item label="状态">
-              <el-radio-group v-model="form.status">
-                <el-radio value="1">上架</el-radio>
-                <el-radio value="0">下架</el-radio>
-              </el-radio-group>
-            </el-form-item>
+          <el-form ref="formRef" :model="form" :rules="rules" label-width="92px">
+            <div class="app-section">
+              <div class="app-section__title"><span class="app-section__bar"></span>套餐基础信息</div>
+              <el-form-item label="默认名称" prop="title">
+                <el-input v-model="form.title" placeholder="简体中文名称（必填，作为多语言回退）" />
+              </el-form-item>
+              <el-form-item label="点数" prop="usable">
+                <el-input-number v-model="form.usable" :min="1" style="width:160px" />
+                <span class="app-hint">实际到账点数</span>
+              </el-form-item>
+              <el-form-item label="赠送点数">
+                <el-input-number v-model="form.giveUsable" :min="0" style="width:160px" />
+                <span class="app-hint">充值后额外赠送的点数</span>
+              </el-form-item>
+            </div>
+
+            <div class="app-section app-section--highlight">
+              <div class="app-section__title"><span class="app-section__bar"></span>价格设置</div>
+              <el-form-item label="实际价格" prop="price">
+                <el-input-number v-model="form.price" :min="0" :precision="2" style="width:160px" />
+              </el-form-item>
+              <el-form-item label="首充价">
+                <el-input-number v-model="form.firstPrice" :min="0" :precision="2" style="width:160px" placeholder="留空不启用" />
+                <span class="app-hint">仅首次充值享受</span>
+              </el-form-item>
+              <el-form-item label="划线价">
+                <el-input-number v-model="form.originalPrice" :min="0" :precision="2" style="width:160px" />
+                <span class="app-hint">展示用，原价划线效果</span>
+              </el-form-item>
+            </div>
+
+            <div class="app-section">
+              <div class="app-section__title"><span class="app-section__bar"></span>上架与排序</div>
+              <el-form-item label="上架状态">
+                <el-radio-group v-model="form.status" class="app-segment">
+                  <el-radio-button value="1">
+                    <el-icon><CircleCheck /></el-icon> 上架
+                  </el-radio-button>
+                  <el-radio-button value="0">
+                    <el-icon><Hide /></el-icon> 下架
+                  </el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="排序">
+                <el-input-number v-model="form.weigh" :min="0" style="width:160px" />
+                <span class="app-hint">数字越大排越前</span>
+              </el-form-item>
+            </div>
           </el-form>
         </el-tab-pane>
 
-        <!-- 每个语言 tab -->
         <el-tab-pane
           v-for="lang in supportedLangs"
           :key="lang.code"
           :label="lang.label"
           :name="lang.code"
         >
-          <el-form label-width="90px" style="margin-top:8px">
-            <el-form-item label="套餐名称">
-              <el-input
-                v-model="i18nForm[lang.code].title"
-                :placeholder="`${lang.label}套餐名称`"
-              />
-            </el-form-item>
-            <el-form-item label="套餐描述">
-              <el-input
-                v-model="i18nForm[lang.code].desc"
-                type="textarea"
-                :rows="5"
-                :placeholder="`${lang.label}套餐描述（支持 HTML）`"
-              />
-            </el-form-item>
-            <el-form-item label="描述预览" v-if="i18nForm[lang.code].desc">
-              <div class="preview-box" v-html="i18nForm[lang.code].desc" />
-            </el-form-item>
+          <el-form label-width="92px">
+            <div class="app-section">
+              <div class="app-section__title"><span class="app-section__bar"></span>{{ lang.label }} 内容</div>
+              <el-form-item label="套餐名称">
+                <el-input v-model="i18nForm[lang.code].title" :placeholder="`${lang.label}套餐名称`" />
+              </el-form-item>
+              <el-form-item label="套餐描述">
+                <el-input
+                  v-model="i18nForm[lang.code].desc"
+                  type="textarea"
+                  :rows="5"
+                  :placeholder="`${lang.label}套餐描述（支持 HTML）`"
+                />
+              </el-form-item>
+              <el-form-item label="描述预览" v-if="i18nForm[lang.code].desc">
+                <div class="preview-box" v-html="i18nForm[lang.code].desc" />
+              </el-form-item>
+            </div>
           </el-form>
         </el-tab-pane>
       </el-tabs>
 
       <template #footer>
-        <el-button @click="dialog.visible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
+        <div class="app-dialog__footer">
+          <el-button @click="dialog.visible = false">取消</el-button>
+          <el-button type="primary" :icon="Check" @click="submitForm">确定保存</el-button>
+        </div>
       </template>
     </el-dialog>
   </div>
@@ -201,7 +238,7 @@ import { listUsable, addUsable, updateUsable, deleteUsable } from '@/api/commerc
 import { listConfig } from '@/api/system/config'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
-  Plus, Edit, Delete, Search, Refresh, Coin, CircleCheck, Hide, Present,
+  Plus, Edit, Delete, Search, Refresh, Coin, CircleCheck, Hide, Present, Close, Check,
 } from '@element-plus/icons-vue'
 
 const LANG_LABELS = { 'zh-CN': '简体中文', 'zh-TW': '繁體中文', en: 'English' }
@@ -520,13 +557,6 @@ getList()
   font-size: 13px;
   color: #333;
   width: 100%;
-}
-
-/* 弹窗 */
-.usable-dialog :deep(.el-dialog__header) {
-  padding: 16px 20px;
-  border-bottom: 1px solid #f0f0f0;
-  margin-right: 0;
 }
 
 /* 暗黑模式 */

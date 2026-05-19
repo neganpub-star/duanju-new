@@ -453,3 +453,53 @@
     }
   }
 }
+
+/* ============ 暗黑模式覆盖：让 theme-light 也跟随全局深色 ============
+   注意 sidebar.scss 顶部所有规则在 #app 内（specificity 含 1 个 ID），
+   所以这里必须用 html.dark #app 前缀才能压过原 `&.theme-light` 的 !important */
+html.dark #app .sidebar-theme-wrapper.theme-light {
+  background: var(--sidebar-bg, #141414) !important;
+  border-right-color: #2c2c2c !important;
+  box-shadow: none !important;
+
+  .el-menu-item,
+  .el-sub-menu__title,
+  .submenu-title-noDropdown {
+    color: #cfcfcf !important;
+
+    .svg-icon { color: #9aa0a6; }
+
+    &:hover {
+      background: rgba(129, 140, 248, 0.10) !important;
+      color: #a5b4fc !important;
+      .svg-icon { color: #a5b4fc; }
+    }
+  }
+
+  .el-menu-item.is-active {
+    background: linear-gradient(90deg,
+      rgba(129, 140, 248, 0.22) 0%,
+      rgba(129, 140, 248, 0.04) 100%) !important;
+    color: #a5b4fc !important;
+
+    &::before { background: #a5b4fc !important; }
+    .svg-icon { color: #a5b4fc !important; }
+  }
+
+  /* 嵌套子菜单背景透明，跟随容器 */
+  .el-sub-menu .el-menu,
+  .el-sub-menu .el-sub-menu__title,
+  .el-menu .el-sub-menu .el-menu-item {
+    background-color: transparent !important;
+  }
+
+  /* 折叠时弹出的子菜单 */
+  .el-menu--popup {
+    background: var(--sidebar-bg, #141414) !important;
+  }
+}
+
+/* 同时让 logo 容器/分隔线在 dark 下也跟随 */
+html.dark #app .sidebar-theme-wrapper.theme-light .sidebar-logo-container {
+  background: var(--sidebar-bg, #141414) !important;
+}

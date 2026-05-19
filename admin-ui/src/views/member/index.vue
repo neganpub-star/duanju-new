@@ -30,7 +30,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="用户" min-width="200">
+      <el-table-column label="用户" width="280">
         <template #default="{ row }">
           <div class="user-cell">
             <el-image v-if="row.avatar" :src="row.avatar" class="user-avatar" fit="cover">
@@ -46,7 +46,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="点数余额" width="120" align="center">
+      <el-table-column label="点数余额" min-width="140" align="center">
         <template #default="{ row }">
           <div class="pts-badge">
             <span class="pts-num">{{ row.usable || 0 }}</span>
@@ -55,7 +55,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="VIP 状态" width="180" align="center">
+      <el-table-column label="VIP 状态" min-width="200" align="center">
         <template #default="{ row }">
           <div v-if="vipState(row).valid" class="vip-chip vip-chip--active">
             <el-icon><GoldMedal /></el-icon>
@@ -71,7 +71,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="分销身份" width="160" align="center">
+      <el-table-column label="分销身份" min-width="180" align="center">
         <template #default="{ row }">
           <div v-if="resellerState(row).valid" class="reseller-chip" :style="{ background: levelBg(row.resellerLevel), color: levelColor(row.resellerLevel) }">
             <el-icon><Medal /></el-icon>
@@ -81,7 +81,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="注册时间" width="180" align="center">
+      <el-table-column label="注册时间" min-width="180" align="center">
         <template #default="{ row }">
           <div class="time-cell">
             <span class="time-abs">{{ row.createTime ? row.createTime.slice(0,10) : '—' }}</span>
@@ -107,40 +107,71 @@
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
 
     <!-- 赠送点数弹窗 -->
-    <el-dialog title="赠送解锁点数" v-model="givePointsVisible" width="420px" append-to-body class="give-dialog">
+    <el-dialog
+      v-model="givePointsVisible"
+      width="480px"
+      append-to-body
+      class="app-dialog"
+      :show-close="false"
+    >
+      <template #header>
+        <div class="app-dialog__header">
+          <div class="app-dialog__title">
+            <el-icon class="app-dialog__icon"><Present /></el-icon>
+            <span>赠送解锁点数</span>
+            <el-tag v-if="currentUser?.id" effect="light" type="primary" round size="small" class="app-dialog__tag">#{{ currentUser.id }}</el-tag>
+          </div>
+          <el-icon class="app-dialog__close" @click="givePointsVisible = false"><Close /></el-icon>
+        </div>
+      </template>
+
       <div class="dialog-hint">
         <el-icon><InfoFilled /></el-icon>
         <span>点数到账后可用于解锁付费剧集</span>
       </div>
-      <el-form label-width="80px">
-        <el-form-item label="用户">
-          <div class="dialog-user">
-            <el-image v-if="currentUser?.avatar" :src="currentUser.avatar" class="dialog-avatar" fit="cover">
-              <template #error><div class="avatar-empty small">无</div></template>
-            </el-image>
-            <div v-else class="avatar-empty small">无</div>
-            <div class="dialog-user-info">
-              <span class="dialog-user-name">{{ currentUser?.nickname || '—' }}</span>
-              <span class="dialog-user-mobile">{{ currentUser?.mobile || '未绑定' }}</span>
+
+      <div class="app-section">
+        <div class="app-section__title"><span class="app-section__bar"></span>用户信息</div>
+        <el-form label-width="92px">
+          <el-form-item label="用户">
+            <div class="dialog-user">
+              <el-image v-if="currentUser?.avatar" :src="currentUser.avatar" class="dialog-avatar" fit="cover">
+                <template #error><div class="avatar-empty small">无</div></template>
+              </el-image>
+              <div v-else class="avatar-empty small">无</div>
+              <div class="dialog-user-info">
+                <span class="dialog-user-name">{{ currentUser?.nickname || '—' }}</span>
+                <span class="dialog-user-mobile">{{ currentUser?.mobile || '未绑定' }}</span>
+              </div>
             </div>
-          </div>
-        </el-form-item>
-        <el-form-item label="当前点数">
-          <div class="pts-badge">
-            <span class="pts-num">{{ currentUser?.usable || 0 }}</span>
-            <span class="pts-unit">点</span>
-          </div>
-        </el-form-item>
-        <el-form-item label="赠送数量" required>
-          <el-input-number v-model="giveForm.amount" :min="1" :precision="0" :step="10" style="width:100%" />
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="giveForm.memo" placeholder="如：活动赠送、补偿等" />
-        </el-form-item>
-      </el-form>
+          </el-form-item>
+          <el-form-item label="当前点数">
+            <div class="pts-badge">
+              <span class="pts-num">{{ currentUser?.usable || 0 }}</span>
+              <span class="pts-unit">点</span>
+            </div>
+          </el-form-item>
+        </el-form>
+      </div>
+
+      <div class="app-section app-section--warning">
+        <div class="app-section__title"><span class="app-section__bar"></span>赠送内容</div>
+        <el-form label-width="92px">
+          <el-form-item label="赠送数量" required>
+            <el-input-number v-model="giveForm.amount" :min="1" :precision="0" :step="10" style="width:100%" />
+            <span class="app-hint">单位：点</span>
+          </el-form-item>
+          <el-form-item label="备注">
+            <el-input v-model="giveForm.memo" placeholder="如：活动赠送、补偿等" />
+          </el-form-item>
+        </el-form>
+      </div>
+
       <template #footer>
-        <el-button @click="givePointsVisible = false">取消</el-button>
-        <el-button type="warning" :loading="submitting" @click="submitGivePoints">确认赠送</el-button>
+        <div class="app-dialog__footer">
+          <el-button @click="givePointsVisible = false">取消</el-button>
+          <el-button type="warning" :icon="Present" :loading="submitting" @click="submitGivePoints">确认赠送</el-button>
+        </div>
       </template>
     </el-dialog>
   </div>
@@ -150,7 +181,7 @@
 import { listDramaUser, rechargeUser } from '@/api/duanju/user'
 import { ElMessage } from 'element-plus'
 import {
-  Search, Refresh, Present, User, GoldMedal, Medal, InfoFilled,
+  Search, Refresh, Present, User, GoldMedal, Medal, InfoFilled, Close,
 } from '@element-plus/icons-vue'
 
 const loading = ref(false)
@@ -371,12 +402,7 @@ getList()
 .empty-icon { font-size: 56px; color: #dcdfe6; }
 .empty-text { color: #909399; font-size: 14px; }
 
-/* 弹窗 */
-.give-dialog :deep(.el-dialog__header) {
-  padding: 16px 20px;
-  border-bottom: 1px solid #f0f0f0;
-  margin-right: 0;
-}
+/* 弹窗内提示 */
 .dialog-hint {
   display: flex; align-items: center; gap: 6px;
   padding: 10px 12px;
@@ -384,7 +410,6 @@ getList()
   border-radius: 8px;
   color: #606266;
   font-size: 13px;
-  margin-bottom: 16px;
 }
 .dialog-user {
   display: flex; align-items: center; gap: 8px;

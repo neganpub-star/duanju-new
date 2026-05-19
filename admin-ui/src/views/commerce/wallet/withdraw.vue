@@ -145,36 +145,97 @@
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
 
     <!-- 审核弹窗 -->
-    <el-dialog title="审核提现" v-model="approveVisible" width="440px" append-to-body class="approve-dialog">
-      <el-descriptions :column="1" border size="small" class="mb16">
-        <el-descriptions-item label="用户">{{ currentRow?.nickname }} · {{ currentRow?.mobile }}</el-descriptions-item>
-        <el-descriptions-item label="申请金额">¥{{ currentRow?.money }}</el-descriptions-item>
-        <el-descriptions-item label="实际到账">¥{{ currentRow?.actualMoney }}</el-descriptions-item>
-        <el-descriptions-item label="操作">
-          <el-tag :type="approveActionTag.type" effect="light" size="small">
-            <el-icon style="vertical-align:-2px;margin-right:4px"><component :is="approveActionTag.icon" /></el-icon>
-            {{ approveActionTag.label }}
-          </el-tag>
-        </el-descriptions-item>
-      </el-descriptions>
-      <el-form label-width="60px">
-        <el-form-item label="备注">
-          <el-input v-model="approveForm.remark" type="textarea" :rows="3" placeholder="备注信息（选填）" />
-        </el-form-item>
-      </el-form>
+    <el-dialog
+      v-model="approveVisible"
+      width="520px"
+      append-to-body
+      class="app-dialog"
+      :show-close="false"
+    >
+      <template #header>
+        <div class="app-dialog__header">
+          <div class="app-dialog__title">
+            <el-icon class="app-dialog__icon"><Wallet /></el-icon>
+            <span>审核提现</span>
+            <el-tag v-if="currentRow?.id" effect="light" type="primary" round size="small" class="app-dialog__tag">#{{ currentRow.id }}</el-tag>
+          </div>
+          <el-icon class="app-dialog__close" @click="approveVisible = false"><Close /></el-icon>
+        </div>
+      </template>
+
+      <div class="app-section">
+        <div class="app-section__title"><span class="app-section__bar"></span>提现信息</div>
+        <el-descriptions :column="1" border size="small">
+          <el-descriptions-item label="用户">{{ currentRow?.nickname }} · {{ currentRow?.mobile }}</el-descriptions-item>
+          <el-descriptions-item label="申请金额">
+            <span class="amount-large">¥{{ currentRow?.money }}</span>
+          </el-descriptions-item>
+          <el-descriptions-item label="实际到账">
+            <span class="amount-actual">¥{{ currentRow?.actualMoney }}</span>
+          </el-descriptions-item>
+          <el-descriptions-item label="操作">
+            <el-tag :type="approveActionTag.type" effect="light" size="small">
+              <el-icon><component :is="approveActionTag.icon" /></el-icon>
+              <span>{{ approveActionTag.label }}</span>
+            </el-tag>
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
+
+      <div class="app-section" :class="approveForm.status === -1 ? 'app-section--warning' : 'app-section--highlight'">
+        <div class="app-section__title">
+          <span class="app-section__bar"></span>
+          {{ approveForm.status === -1 ? '驳回备注' : '审核备注' }}
+        </div>
+        <el-form label-width="60px">
+          <el-form-item label="备注">
+            <el-input v-model="approveForm.remark" type="textarea" :rows="3" placeholder="备注信息（选填）" />
+          </el-form-item>
+        </el-form>
+      </div>
+
       <template #footer>
-        <el-button @click="approveVisible = false">取消</el-button>
-        <el-button :type="approveForm.status === -1 ? 'danger' : 'primary'" :loading="submitting" @click="submitApprove">确定</el-button>
+        <div class="app-dialog__footer">
+          <el-button @click="approveVisible = false">取消</el-button>
+          <el-button
+            :type="approveForm.status === -1 ? 'danger' : 'primary'"
+            :icon="approveForm.status === -1 ? CircleClose : Check"
+            :loading="submitting"
+            @click="submitApprove"
+          >{{ approveForm.status === -1 ? '确认驳回' : '确认通过' }}</el-button>
+        </div>
       </template>
     </el-dialog>
 
     <!-- 收款信息详情 -->
-    <el-dialog title="收款账户信息" v-model="detailVisible" width="380px" append-to-body>
-      <el-descriptions :column="1" border size="small">
-        <el-descriptions-item v-for="(v, k) in parsedApplyInfo" :key="k" :label="infoLabel(k)">{{ v }}</el-descriptions-item>
-      </el-descriptions>
+    <el-dialog
+      v-model="detailVisible"
+      width="440px"
+      append-to-body
+      class="app-dialog"
+      :show-close="false"
+    >
+      <template #header>
+        <div class="app-dialog__header">
+          <div class="app-dialog__title">
+            <el-icon class="app-dialog__icon"><CreditCard /></el-icon>
+            <span>收款账户信息</span>
+          </div>
+          <el-icon class="app-dialog__close" @click="detailVisible = false"><Close /></el-icon>
+        </div>
+      </template>
+
+      <div class="app-section">
+        <div class="app-section__title"><span class="app-section__bar"></span>账户详情</div>
+        <el-descriptions :column="1" border size="small">
+          <el-descriptions-item v-for="(v, k) in parsedApplyInfo" :key="k" :label="infoLabel(k)">{{ v }}</el-descriptions-item>
+        </el-descriptions>
+      </div>
+
       <template #footer>
-        <el-button @click="detailVisible = false">关闭</el-button>
+        <div class="app-dialog__footer">
+          <el-button type="primary" @click="detailVisible = false">关闭</el-button>
+        </div>
       </template>
     </el-dialog>
   </div>
@@ -186,7 +247,7 @@ import { ElMessage } from 'element-plus'
 import {
   Search, Refresh, Wallet, Right, CopyDocument, View,
   Clock, CircleCheck, CircleClose, SuccessFilled, WarningFilled,
-  ChatDotRound, CreditCard, Money,
+  ChatDotRound, CreditCard, Money, Close, Check,
 } from '@element-plus/icons-vue'
 
 const loading = ref(false)
@@ -504,13 +565,9 @@ getList()
 .empty-icon { font-size: 56px; color: #dcdfe6; }
 .empty-text { color: #909399; font-size: 14px; }
 
-/* 弹窗 */
-.approve-dialog :deep(.el-dialog__header) {
-  padding: 16px 20px;
-  border-bottom: 1px solid #f0f0f0;
-  margin-right: 0;
-}
-.mb16 { margin-bottom: 16px; }
+/* 提现金额展示 */
+.amount-large { font-size: 16px; font-weight: 700; color: #f56c6c; font-variant-numeric: tabular-nums; }
+.amount-actual { font-size: 16px; font-weight: 700; color: #67c23a; font-variant-numeric: tabular-nums; }
 
 /* 暗黑模式 */
 html.dark .stat-card,

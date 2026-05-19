@@ -276,4 +276,39 @@ onMounted(() => {
     display: flex; align-items: center; justify-content: center;
   }
 }
+
+/* ============ 暗黑模式适配 ============ */
+html.dark {
+  .stat-card,
+  .fund-card,
+  :deep(.el-card),
+  :deep(.box-card) {
+    background: #1f1f1f;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  }
+  .stat-value { color: #e5e7eb; }
+  .stat-label { color: #909399; }
+  .stat-sub { color: #6e6e6e; }
+
+  .section-title { color: #e5e7eb; }
+  .card-title { color: #e5e7eb; }
+
+  .fund-period { color: #e5e7eb; }
+  .fund-sub { color: #909399; }
+  .fund-row--primary { border-bottom-color: #2c2c2c; }
+  .fund-card::before { opacity: 0.10; }
+
+  .shortcut-item {
+    color: #cfcfcf;
+    &:hover { background: rgba(129, 140, 248, 0.10); }
+  }
+
+  /* el-card 头部 */
+  :deep(.el-card__header) {
+    background: #1f1f1f;
+    border-bottom-color: #2c2c2c;
+    color: #e5e7eb;
+  }
+  :deep(.el-card__body) { color: #cfcfcf; }
+}
 </style>

@@ -21,13 +21,31 @@ export function deleteConfig(key) {
   return request({ url: `/admin/system/config/${encodeURIComponent(key)}`, method: 'delete' })
 }
 
-export function uploadFile(file) {
+export function uploadFile(file, onProgress) {
   const formData = new FormData()
   formData.append('file', file)
   return request({
     url: '/admin/upload',
     method: 'post',
     headers: { 'Content-Type': 'multipart/form-data' },
-    data: formData
+    data: formData,
+    timeout: 0,
+    onUploadProgress: (e) => {
+      if (typeof onProgress === 'function' && e && e.total) {
+        onProgress(Math.round((e.loaded * 100) / e.total))
+      }
+    }
+  })
+}
+
+/**
+ * 远程 URL 入库：本平台 OSS 直接返回；外部 URL 后端下载并转存到 OSS，返回新 URL
+ */
+export function fetchRemoteUrl(url) {
+  return request({
+    url: '/admin/upload/remote',
+    method: 'post',
+    data: { url },
+    timeout: 0
   })
 }

@@ -181,4 +181,21 @@ function markAllRead() {
   font-size: 11px;
   color: #bbb;
 }
+
+/* 暗黑模式 */
+html.dark {
+  .notice-popover .notice-header {
+    background: #2a2a2a;
+    border-bottom-color: #3a3a3a;
+    color: #e5e7eb;
+  }
+  .notice-popover .notice-item {
+    border-bottom-color: #2c2c2c;
+    &:hover { background: rgba(129, 140, 248, 0.10); }
+  }
+  .notice-popover .notice-item-title { color: #e5e7eb; }
+  .notice-popover .notice-item-date,
+  .notice-popover .notice-loading,
+  .notice-popover .notice-empty { color: #6e6e6e; }
+}
 </style>

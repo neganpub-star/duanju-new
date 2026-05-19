@@ -130,70 +130,106 @@
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
 
     <!-- 编辑对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="540px" append-to-body class="reseller-dialog">
-      <el-tabs v-model="activeTab">
-        <!-- 基本信息 -->
+    <el-dialog
+      v-model="dialog.visible"
+      width="640px"
+      append-to-body
+      class="app-dialog"
+      :show-close="false"
+    >
+      <template #header>
+        <div class="app-dialog__header">
+          <div class="app-dialog__title">
+            <el-icon class="app-dialog__icon"><Medal /></el-icon>
+            <span>{{ dialog.title }}</span>
+            <el-tag v-if="form.level" effect="light" type="primary" round size="small" class="app-dialog__tag">Lv{{ form.level }}</el-tag>
+          </div>
+          <el-icon class="app-dialog__close" @click="dialog.visible = false"><Close /></el-icon>
+        </div>
+      </template>
+
+      <el-tabs v-model="activeTab" class="app-dialog__tabs">
         <el-tab-pane label="基本信息" name="basic">
-          <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" style="margin-top:8px">
-            <el-form-item label="套餐名" prop="name">
-              <el-input v-model="form.name" placeholder="简体中文名称（作为默认回退）" />
-            </el-form-item>
-            <el-form-item label="等级" prop="level">
-              <el-input-number v-model="form.level" :min="1" :max="9" />
-            </el-form-item>
-            <el-form-item label="有效天数" prop="expire">
-              <el-input-number v-model="form.expire" :min="1" />
-            </el-form-item>
-            <el-form-item label="价格" prop="price">
-              <el-input-number v-model="form.price" :min="0" :precision="2" />
-            </el-form-item>
-            <el-form-item label="直接佣金(%)" prop="direct">
-              <el-input-number v-model="form.direct" :min="0" :max="100" :precision="2" />
-            </el-form-item>
-            <el-form-item label="间接佣金(%)" prop="indirect">
-              <el-input-number v-model="form.indirect" :min="0" :max="100" :precision="2" />
-            </el-form-item>
-            <el-form-item label="状态">
-              <el-radio-group v-model="form.status">
-                <el-radio value="normal">上架</el-radio>
-                <el-radio value="hidden">下架</el-radio>
-              </el-radio-group>
-            </el-form-item>
+          <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
+            <div class="app-section">
+              <div class="app-section__title"><span class="app-section__bar"></span>套餐基础信息</div>
+              <el-form-item label="套餐名" prop="name">
+                <el-input v-model="form.name" placeholder="简体中文名称（作为多语言回退）" />
+              </el-form-item>
+              <el-form-item label="等级" prop="level">
+                <el-input-number v-model="form.level" :min="1" :max="9" style="width:160px" />
+                <span class="app-hint">1 ~ 9，数字越大等级越高</span>
+              </el-form-item>
+              <el-form-item label="有效天数" prop="expire">
+                <el-input-number v-model="form.expire" :min="1" style="width:160px" />
+                <span class="app-hint">购买后有效期，单位：天</span>
+              </el-form-item>
+            </div>
+
+            <div class="app-section app-section--highlight">
+              <div class="app-section__title"><span class="app-section__bar"></span>价格与佣金</div>
+              <el-form-item label="实际价格" prop="price">
+                <el-input-number v-model="form.price" :min="0" :precision="2" style="width:160px" />
+              </el-form-item>
+              <el-form-item label="直接佣金" prop="direct">
+                <el-input-number v-model="form.direct" :min="0" :max="100" :precision="2" style="width:160px" />
+                <span class="app-hint">%，直接下级订单分成比例</span>
+              </el-form-item>
+              <el-form-item label="间接佣金" prop="indirect">
+                <el-input-number v-model="form.indirect" :min="0" :max="100" :precision="2" style="width:160px" />
+                <span class="app-hint">%，二级下级订单分成比例</span>
+              </el-form-item>
+            </div>
+
+            <div class="app-section">
+              <div class="app-section__title"><span class="app-section__bar"></span>上架状态</div>
+              <el-form-item label="状态">
+                <el-radio-group v-model="form.status" class="app-segment">
+                  <el-radio-button value="normal">
+                    <el-icon><CircleCheck /></el-icon> 上架
+                  </el-radio-button>
+                  <el-radio-button value="hidden">
+                    <el-icon><Hide /></el-icon> 下架
+                  </el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+            </div>
           </el-form>
         </el-tab-pane>
 
-        <!-- 多语言 tab -->
         <el-tab-pane
           v-for="lang in supportedLangs"
           :key="lang.code"
           :label="lang.label"
           :name="lang.code"
         >
-          <el-form label-width="100px" style="margin-top:8px">
-            <el-form-item label="套餐名称">
-              <el-input
-                v-model="i18nForm[lang.code].name"
-                :placeholder="`${lang.label}套餐名称（留空则显示默认中文名）`"
-              />
-            </el-form-item>
-            <el-form-item label="套餐描述">
-              <el-input
-                v-model="i18nForm[lang.code].content"
-                type="textarea"
-                :rows="4"
-                :placeholder="`${lang.label}套餐描述（支持 HTML，留空则不展示）`"
-              />
-            </el-form-item>
-            <el-form-item label="描述预览" v-if="i18nForm[lang.code].content">
-              <div class="preview-box" v-html="i18nForm[lang.code].content" />
-            </el-form-item>
+          <el-form label-width="100px">
+            <div class="app-section">
+              <div class="app-section__title"><span class="app-section__bar"></span>{{ lang.label }} 内容</div>
+              <el-form-item label="套餐名称">
+                <el-input v-model="i18nForm[lang.code].name" :placeholder="`${lang.label}套餐名称（留空则显示默认中文名）`" />
+              </el-form-item>
+              <el-form-item label="套餐描述">
+                <el-input
+                  v-model="i18nForm[lang.code].content"
+                  type="textarea"
+                  :rows="4"
+                  :placeholder="`${lang.label}套餐描述（支持 HTML，留空则不展示）`"
+                />
+              </el-form-item>
+              <el-form-item label="描述预览" v-if="i18nForm[lang.code].content">
+                <div class="preview-box" v-html="i18nForm[lang.code].content" />
+              </el-form-item>
+            </div>
           </el-form>
         </el-tab-pane>
       </el-tabs>
 
       <template #footer>
-        <el-button @click="dialog.visible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
+        <div class="app-dialog__footer">
+          <el-button @click="dialog.visible = false">取消</el-button>
+          <el-button type="primary" :icon="Check" @click="submitForm">确定保存</el-button>
+        </div>
       </template>
     </el-dialog>
   </div>
@@ -204,7 +240,7 @@ import { listReseller, addReseller, updateReseller, deleteReseller } from '@/api
 import { listConfig } from '@/api/system/config'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
-  Plus, Edit, Delete, Search, Refresh, Medal, CircleCheck, Hide,
+  Plus, Edit, Delete, Search, Refresh, Medal, CircleCheck, Hide, Close, Check,
 } from '@element-plus/icons-vue'
 
 const LANG_LABELS = { 'zh-CN': '简体中文', 'zh-TW': '繁體中文', en: 'English' }
@@ -510,13 +546,6 @@ getList()
   font-size: 13px;
   color: #333;
   width: 100%;
-}
-
-/* 弹窗 */
-.reseller-dialog :deep(.el-dialog__header) {
-  padding: 16px 20px;
-  border-bottom: 1px solid #f0f0f0;
-  margin-right: 0;
 }
 
 /* 暗黑模式 */

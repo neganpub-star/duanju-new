@@ -57,7 +57,23 @@
 				</view>
 			</view>
 
-			<!-- 说明内容 -->
+			<!-- 分销商权益（默认展示，填充空白并强化营销点） -->
+			<view class="benefits_card" v-if="levelData.length">
+				<view class="section_title">{{ $t('dealer.benefitsTitle') }}</view>
+				<view class="benefits_list">
+					<view class="benefit_item" v-for="(b, i) in benefitList" :key="i">
+						<view class="benefit_icon" :style="{ background: b.bg }">
+							<text class="benefit_emoji">{{ b.icon }}</text>
+						</view>
+						<view class="benefit_text">
+							<view class="benefit_title">{{ $t(b.titleKey) }}</view>
+							<view class="benefit_desc">{{ $t(b.descKey) }}</view>
+						</view>
+					</view>
+				</view>
+			</view>
+
+			<!-- 说明内容（后台富文本，可选） -->
 			<view class="desc_card" v-if="msg">
 				<u-parse :content="msg"></u-parse>
 			</view>
@@ -98,7 +114,13 @@
 				dredgeLevel: 0,
 				maxLevel: 0,
 				dredge: { resellerId: null },
-				userInfo: {}
+				userInfo: {},
+				benefitList: [
+					{ icon: '💰', bg: 'linear-gradient(135deg, #fff4d6, #ffd166)', titleKey: 'dealer.benefit1Title', descKey: 'dealer.benefit1Desc' },
+					{ icon: '⚡', bg: 'linear-gradient(135deg, #e0e7ff, #818cf8)', titleKey: 'dealer.benefit2Title', descKey: 'dealer.benefit2Desc' },
+					{ icon: '👥', bg: 'linear-gradient(135deg, #d1fae5, #34d399)', titleKey: 'dealer.benefit3Title', descKey: 'dealer.benefit3Desc' },
+					{ icon: '⏳', bg: 'linear-gradient(135deg, #fde2f3, #f472b6)', titleKey: 'dealer.benefit4Title', descKey: 'dealer.benefit4Desc' }
+				]
 			}
 		},
 		computed: {
@@ -401,6 +423,72 @@
 							line-height: 1.6;
 						}
 					}
+				}
+			}
+
+			.benefits_card {
+				background: #fff;
+				border-radius: 24rpx;
+				padding: 32rpx;
+				box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
+				margin-bottom: 24rpx;
+
+				.section_title {
+					font-size: 30rpx;
+					font-weight: 700;
+					color: #1a1a1a;
+					margin-bottom: 24rpx;
+					padding-left: 12rpx;
+					border-left: 6rpx solid #5E72F7;
+				}
+
+				.benefits_list {
+					display: flex;
+					flex-direction: column;
+					gap: 20rpx;
+				}
+
+				.benefit_item {
+					display: flex;
+					align-items: center;
+					gap: 20rpx;
+					padding: 18rpx 20rpx;
+					background: #f8f9ff;
+					border-radius: 18rpx;
+				}
+
+				.benefit_icon {
+					width: 72rpx;
+					height: 72rpx;
+					border-radius: 16rpx;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					flex-shrink: 0;
+					box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
+
+					.benefit_emoji {
+						font-size: 38rpx;
+						line-height: 1;
+					}
+				}
+
+				.benefit_text {
+					flex: 1;
+					min-width: 0;
+				}
+
+				.benefit_title {
+					font-size: 28rpx;
+					font-weight: 700;
+					color: #1a1a1a;
+					margin-bottom: 4rpx;
+				}
+
+				.benefit_desc {
+					font-size: 24rpx;
+					color: #888;
+					line-height: 1.5;
 				}
 			}
 

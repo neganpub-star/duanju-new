@@ -1,0 +1,55 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="DuanJu Logo">
+  <defs>
+    <!-- 主色渐变：紫色 → 粉色（与系统主题 #5048e5 衔接） -->
+    <linearGradient id="djBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"  stop-color="#5048e5"/>
+      <stop offset="55%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+
+    <!-- 顶部高光：让方形有玻璃质感 -->
+    <linearGradient id="djHL" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"  stop-color="#ffffff" stop-opacity="0.28"/>
+      <stop offset="55%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- 播放按钮微微的内阴影感 -->
+    <linearGradient id="djTri" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"  stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f3f4f6"/>
+    </linearGradient>
+
+    <!-- 柔和外发光 -->
+    <filter id="djGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1.2" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 圆角主体 -->
+  <rect x="2" y="2" width="44" height="44" rx="13" ry="13" fill="url(#djBg)"/>
+
+  <!-- 顶部高光 -->
+  <rect x="2" y="2" width="44" height="44" rx="13" ry="13" fill="url(#djHL)"/>
+
+  <!-- 细边描边（保证两种主题下边缘清晰） -->
+  <rect x="2.5" y="2.5" width="43" height="43" rx="12.5" ry="12.5"
+        fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+
+  <!-- 装饰：右上小圆点（流光感） -->
+  <circle cx="36" cy="12" r="1.6" fill="#ffffff" opacity="0.6"/>
+
+  <!-- 播放三角（圆角） -->
+  <path d="M19.2 15.6
+           Q19.2 14 20.6 14.8
+           L33.4 22.6
+           Q34.8 23.5 33.4 24.4
+           L20.6 32.2
+           Q19.2 33 19.2 31.4
+           Z"
+        fill="url(#djTri)"
+        filter="url(#djGlow)"/>
+</svg>

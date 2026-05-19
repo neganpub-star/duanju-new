@@ -159,50 +159,116 @@
     </el-table>
 
     <!-- 新增/编辑对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="560px" append-to-body class="category-dialog">
-      <el-tabs v-model="activeTab">
-        <!-- 基本信息 -->
+    <el-dialog
+      v-model="dialog.visible"
+      width="600px"
+      append-to-body
+      class="app-dialog"
+      :show-close="false"
+    >
+      <template #header>
+        <div class="app-dialog__header">
+          <div class="app-dialog__title">
+            <el-icon class="app-dialog__icon"><Menu /></el-icon>
+            <span>{{ dialog.title }}</span>
+            <el-tag v-if="form.id" effect="light" type="primary" round size="small" class="app-dialog__tag">#{{ form.id }}</el-tag>
+          </div>
+          <el-icon class="app-dialog__close" @click="dialog.visible = false"><Close /></el-icon>
+        </div>
+      </template>
+
+      <el-tabs v-model="activeTab" class="app-dialog__tabs">
         <el-tab-pane label="基本信息" name="basic">
-          <el-form ref="formRef" :model="form" :rules="rules" label-width="90px" style="margin-top:8px">
-            <el-form-item label="默认名称" prop="name">
-              <el-input v-model="form.name" placeholder="中文名称（必填，作为默认回退）" />
-            </el-form-item>
-            <el-form-item label="图标">
-              <el-input v-model="form.image" placeholder="图标URL或class" />
-            </el-form-item>
-            <el-form-item label="排序">
-              <el-input-number v-model="form.weigh" :min="0" />
-            </el-form-item>
-            <el-form-item label="状态">
-              <el-radio-group v-model="form.status">
-                <el-radio value="normal">正常</el-radio>
-                <el-radio value="hidden">隐藏</el-radio>
-              </el-radio-group>
-            </el-form-item>
+          <el-form ref="formRef" :model="form" :rules="rules" label-width="92px">
+            <div class="app-section">
+              <div class="app-section__title"><span class="app-section__bar"></span>基础信息</div>
+              <el-form-item label="默认名称" prop="name">
+                <el-input v-model="form.name" placeholder="中文名称（必填，作为多语言回退）" />
+              </el-form-item>
+            </div>
+
+            <div class="app-section app-section--highlight">
+              <div class="app-section__title">
+                <span class="app-section__bar"></span>分类图标
+                <el-tag v-if="form.image" type="success" size="small" effect="light" round>已设置</el-tag>
+                <el-tag v-else type="info" size="small" effect="light" round>未设置</el-tag>
+              </div>
+              <el-form-item label="图标">
+                <div class="icon-uploader">
+                  <el-upload
+                    action="#"
+                    :show-file-list="false"
+                    :before-upload="beforeIconUpload"
+                    :http-request="(opt) => handleIconUpload(opt.file)"
+                    accept="image/*"
+                  >
+                    <div v-if="form.image" class="icon-preview-wrap">
+                      <el-image :src="form.image" class="icon-preview-img" fit="cover" />
+                      <div class="icon-mask">
+                        <el-icon><Edit /></el-icon>
+                        <span>更换</span>
+                      </div>
+                    </div>
+                    <div v-else class="upload-placeholder">
+                      <el-icon class="upload-icon"><Plus /></el-icon>
+                      <span>点击上传图标</span>
+                    </div>
+                  </el-upload>
+                  <el-button
+                    v-if="form.image"
+                    link
+                    type="danger"
+                    size="small"
+                    :icon="Delete"
+                    class="icon-clear-btn"
+                    @click="form.image = ''"
+                  >移除图标</el-button>
+                </div>
+              </el-form-item>
+            </div>
+
+            <div class="app-section">
+              <div class="app-section__title"><span class="app-section__bar"></span>显示与排序</div>
+              <el-form-item label="显示状态">
+                <el-radio-group v-model="form.status" class="app-segment">
+                  <el-radio-button value="normal">
+                    <el-icon><CircleCheck /></el-icon> 正常
+                  </el-radio-button>
+                  <el-radio-button value="hidden">
+                    <el-icon><Hide /></el-icon> 隐藏
+                  </el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="排序">
+                <el-input-number v-model="form.weigh" :min="0" style="width:160px" />
+                <span class="app-hint">数字越大排越前</span>
+              </el-form-item>
+            </div>
           </el-form>
         </el-tab-pane>
 
-        <!-- 每个语言 tab -->
         <el-tab-pane
           v-for="lang in supportedLangs"
           :key="lang.code"
           :label="lang.label"
           :name="lang.code"
         >
-          <el-form label-width="90px" style="margin-top:8px">
-            <el-form-item label="分类名称">
-              <el-input
-                v-model="i18nForm[lang.code]"
-                :placeholder="`${lang.label}分类名称`"
-              />
-            </el-form-item>
+          <el-form label-width="92px">
+            <div class="app-section">
+              <div class="app-section__title"><span class="app-section__bar"></span>{{ lang.label }} 内容</div>
+              <el-form-item label="分类名称">
+                <el-input v-model="i18nForm[lang.code]" :placeholder="`${lang.label}分类名称`" />
+              </el-form-item>
+            </div>
           </el-form>
         </el-tab-pane>
       </el-tabs>
 
       <template #footer>
-        <el-button @click="dialog.visible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
+        <div class="app-dialog__footer">
+          <el-button @click="dialog.visible = false">取消</el-button>
+          <el-button type="primary" :icon="Check" @click="submitForm">确定保存</el-button>
+        </div>
       </template>
     </el-dialog>
   </div>
@@ -210,10 +276,10 @@
 
 <script setup>
 import { listCategory, addCategory, updateCategory, deleteCategory } from '@/api/drama/category'
-import { listConfig } from '@/api/system/config'
+import { listConfig, uploadFile } from '@/api/system/config'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
-  Plus, Edit, Delete, Search, Refresh, Menu, CircleCheck, Hide, Picture, ChatLineSquare,
+  Plus, Edit, Delete, Search, Refresh, Menu, CircleCheck, Hide, Picture, ChatLineSquare, Close, Check,
 } from '@element-plus/icons-vue'
 
 const LANG_LABELS = { 'zh-CN': '简体中文', 'zh-TW': '繁體中文', en: 'English' }
@@ -349,6 +415,20 @@ async function handleDelete(row) {
   await deleteCategory(row.id)
   ElMessage.success('删除成功')
   getList()
+}
+
+function beforeIconUpload(file) {
+  const isImage = file.type.startsWith('image/')
+  const isLt2M = file.size / 1024 / 1024 < 2
+  if (!isImage) ElMessage.error('只能上传图片文件')
+  if (!isLt2M) ElMessage.error('图标不能超过 2MB')
+  return isImage && isLt2M
+}
+
+async function handleIconUpload(file) {
+  const res = await uploadFile(file)
+  form.value.image = res.data
+  ElMessage.success('上传成功')
 }
 
 async function submitForm() {
@@ -561,12 +641,38 @@ getList()
 .empty-icon { font-size: 56px; color: #dcdfe6; }
 .empty-text { color: #909399; font-size: 14px; }
 
-/* 弹窗 */
-.category-dialog :deep(.el-dialog__header) {
-  padding: 16px 20px;
-  border-bottom: 1px solid #f0f0f0;
-  margin-right: 0;
+/* 弹窗内 - 图标上传 */
+.icon-uploader { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.icon-preview-wrap {
+  position: relative;
+  width: 96px; height: 96px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e6e8eb;
+  cursor: pointer;
 }
+.icon-preview-img { width: 100%; height: 100%; display: block; }
+.icon-mask {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px;
+  color: #fff; font-size: 12px;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.icon-preview-wrap:hover .icon-mask { opacity: 1; }
+.icon-mask .el-icon { font-size: 18px; }
+.upload-placeholder {
+  width: 96px; height: 96px;
+  border: 1px dashed #d9d9d9; border-radius: 10px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; color: #8c939d; font-size: 12px; gap: 6px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.upload-placeholder:hover { border-color: var(--el-color-primary); color: var(--el-color-primary); }
+.upload-icon { font-size: 22px; }
+.icon-clear-btn { padding: 0; height: auto; }
 
 /* 暗黑模式适配 */
 html.dark .stat-card,

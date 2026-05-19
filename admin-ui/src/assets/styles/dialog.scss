@@ -1,0 +1,257 @@
+/* ============================================================
+ * 平台统一弹窗样式（业务页通用）
+ *   用法：给 <el-dialog> 加 class="app-dialog"，并用 #header 槽自定义头部
+ *   样式 token 与分集/视频弹窗保持一致
+ * ============================================================ */
+
+/* ---- 弹窗容器 ---- */
+.app-dialog .el-dialog {
+  border-radius: 14px;
+  overflow: hidden;
+  padding: 0;
+}
+.app-dialog .el-dialog__header {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.app-dialog .el-dialog__body {
+  padding: 20px 24px 8px;
+  background: #fafbfc;
+}
+.app-dialog .el-dialog__footer {
+  padding: 14px 24px;
+  border-top: 1px solid #f0f0f0;
+  background: #fff;
+}
+
+/* ---- 自定义头部（浅紫渐变） ---- */
+.app-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #eef2ff 0%, #f8f9ff 100%);
+}
+.app-dialog__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #303133;
+  min-width: 0;
+}
+.app-dialog__icon {
+  font-size: 22px;
+  color: #5048e5;
+  background: rgba(80, 72, 229, 0.12);
+  padding: 6px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.app-dialog__tag {
+  margin-left: 4px;
+}
+.app-dialog__close {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #606266;
+  background: #fff;
+  border: 1px solid #e4e7ed;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.app-dialog__close:hover {
+  background: #f56c6c;
+  border-color: #f56c6c;
+  color: #fff;
+  transform: rotate(90deg);
+  box-shadow: 0 2px 8px rgba(245, 108, 108, 0.4);
+}
+
+/* ---- footer ---- */
+.app-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ---- 表单分组卡 ---- */
+.app-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 20px 4px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f0f0f0;
+}
+.app-section--highlight {
+  background: linear-gradient(180deg, #f8f9ff 0%, #fff 60%);
+  border-color: #e5e9ff;
+}
+.app-section--warning {
+  background: linear-gradient(180deg, #fff8ec 0%, #fff 60%);
+  border-color: #ffe7ba;
+}
+.app-section__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #303133;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #eee;
+}
+.app-section__bar {
+  display: inline-block;
+  width: 4px;
+  height: 14px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #5048e5 0%, #818cf8 100%);
+}
+
+/* ---- 提示文字 ---- */
+.app-hint {
+  margin-left: 10px;
+  font-size: 12px;
+  color: #909399;
+}
+
+/* ---- el-tag 内 icon + 文字强制单行 ---- */
+.app-dialog .el-tag,
+.app-section .el-tag {
+  white-space: nowrap;
+}
+.app-dialog .el-tag .el-tag__content,
+.app-section .el-tag .el-tag__content {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.app-dialog .el-tag .el-icon,
+.app-section .el-tag .el-icon {
+  flex-shrink: 0;
+}
+
+/* ---- 按钮组 radio (segmented control) ---- */
+.app-segment .el-radio-button__inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 18px;
+  font-weight: 600;
+}
+.app-segment .el-radio-button__inner .el-icon { font-size: 13px; }
+.app-segment .el-radio-button:first-child .el-radio-button__inner {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+.app-segment .el-radio-button:last-child .el-radio-button__inner {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* ---- tabs ---- */
+.app-dialog__tabs .el-tabs__header {
+  margin: 0 0 16px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 0 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+.app-dialog__tabs .el-tabs__nav-wrap::after { display: none; }
+.app-dialog__tabs .el-tabs__item {
+  font-weight: 600;
+  height: 44px;
+  line-height: 44px;
+}
+.app-dialog__tabs .el-tabs__active-bar {
+  height: 3px;
+  border-radius: 2px;
+}
+
+/* ---- 暗黑模式 ---- */
+html.dark {
+  /* dialog 容器 */
+  .app-dialog .el-dialog { background: #1f1f1f; }
+  .app-dialog .el-dialog__body { background: #1a1a1a; }
+  .app-dialog .el-dialog__footer { background: #1f1f1f; border-top-color: #2c2c2c; }
+
+  /* 自定义头部 */
+  .app-dialog__header {
+    background: linear-gradient(135deg, #1f1f2f 0%, #1a1a1a 100%);
+    border-bottom-color: #2c2c2c;
+  }
+  .app-dialog__title { color: #e5e7eb; }
+  .app-dialog__icon {
+    color: #a5b4fc;
+    background: rgba(129, 140, 248, 0.18);
+  }
+  .app-dialog__close { background: #2a2a2a; border-color: #3a3a3a; color: #cfcfcf; }
+
+  /* tabs */
+  .app-dialog__tabs .el-tabs__header {
+    background: #1f1f1f;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  }
+  .app-dialog__tabs .el-tabs__item {
+    color: #9aa0a6;
+    &:hover { color: #cfcfcf; }
+    &.is-active { color: var(--el-color-primary, #a5b4fc); }
+  }
+
+  /* 分组卡 */
+  .app-section { background: #1f1f1f; border-color: #2c2c2c; }
+  .app-section--highlight {
+    background: linear-gradient(180deg, #1a1d2f 0%, #1f1f1f 60%);
+    border-color: #2c3052;
+  }
+  .app-section--warning {
+    background: linear-gradient(180deg, #2d2317 0%, #1f1f1f 60%);
+    border-color: #4a3a1c;
+  }
+  .app-section__title {
+    color: #e5e7eb;
+    border-bottom-color: #2c2c2c;
+  }
+
+  /* form label */
+  .app-dialog .el-form-item__label { color: #cfcfcf; }
+
+  /* 输入控件背景 */
+  .app-dialog .el-input__wrapper,
+  .app-dialog .el-textarea__inner,
+  .app-dialog .el-input-number .el-input__wrapper {
+    background: #2a2a2a !important;
+    box-shadow: inset 0 0 0 1px #3a3a3a !important;
+  }
+  .app-dialog .el-input__inner,
+  .app-dialog .el-textarea__inner { color: #e5e7eb !important; }
+  .app-dialog .el-input__wrapper.is-focus,
+  .app-dialog .el-textarea__inner:focus {
+    box-shadow: inset 0 0 0 1px #5048e5 !important;
+  }
+
+  /* hint 文字 */
+  .app-hint { color: #6e6e6e; }
+
+  /* 描述列表（el-descriptions） */
+  .app-section .el-descriptions__cell,
+  .app-section .el-descriptions__label { background: #232323 !important; color: #cfcfcf !important; border-color: #2c2c2c !important; }
+  .app-section .el-descriptions__content { background: #1a1a1a !important; color: #e5e7eb !important; border-color: #2c2c2c !important; }
+
+  /* tag 在 highlight 区里背景适配 */
+  .app-section .el-tag.el-tag--success { background: rgba(103, 194, 58, 0.14); color: #95d475; }
+  .app-section .el-tag.el-tag--info { background: rgba(144, 147, 153, 0.18); color: #b1b3b8; }
+  .app-section .el-tag.el-tag--primary { background: rgba(129, 140, 248, 0.18); color: #a5b4fc; }
+}

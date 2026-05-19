@@ -370,34 +370,37 @@ function handleScroll() {
 </script>
 
 <style lang="scss" scoped>
-$tags-bar-height: 34px;
+$tags-bar-height: 38px;
 
 .tags-view-container {
   height: $tags-bar-height;
   width: 100%;
   background: var(--tags-bg, #fff);
-  border-bottom: 1px solid var(--tags-item-border, #d8dce5);
+  border-bottom: 1px solid var(--tags-item-border, #ebeef5);
   display: flex;
   align-items: center;
   overflow: hidden;
+  padding: 0 4px;
 
-  $btn-width: 28px;
+  $btn-width: 32px;
   $btn-color: #71717a;
-  $btn-hover-bg: #f0f2f5;
-  $btn-hover-color: #303133;
+  $btn-hover-bg: rgba(80, 72, 229, 0.08);
+  $btn-hover-color: #5048e5;
   $btn-disabled-color: #c0c4cc;
-  $divider: 1px solid var(--tags-item-border, #d8dce5);
 
+  /* 左右滚动箭头 */
   .tags-nav-btn {
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     width: $btn-width;
-    height: $tags-bar-height;
+    height: 28px;
+    margin: 0 2px;
     cursor: pointer;
     color: $btn-color;
     font-size: 13px;
+    border-radius: 8px;
     user-select: none;
     transition: background 0.15s, color 0.15s;
 
@@ -410,11 +413,9 @@ $tags-bar-height: 34px;
       color: $btn-disabled-color;
       cursor: not-allowed;
     }
-
-    &--left  { border-right: $divider; }
-    &--right { border-left: $divider; }
   }
 
+  /* tags */
   .tags-view-wrapper {
     flex: 1;
     min-width: 0;
@@ -425,38 +426,47 @@ $tags-bar-height: 34px;
       align-items: center;
       position: relative;
       cursor: pointer;
-      height: 26px;
-      line-height: 26px;
-      border: 1px solid var(--tags-item-border, #d8dce5);
-      color: var(--tags-item-text, #495060);
+      height: 28px;
+      line-height: 28px;
+      border: 1px solid var(--tags-item-border, #e4e7ed);
+      color: var(--tags-item-text, #606266);
       background: var(--tags-item-bg, #fff);
-      padding: 0 8px;
-      font-size: 12px;
-      margin-left: 5px;
-      border-radius: 3px;
+      padding: 0 10px;
+      font-size: 12.5px;
+      margin-left: 6px;
+      border-radius: 8px;
       text-decoration: none;
       vertical-align: middle;
-      padding-top: 2px !important;
+      padding-top: 0 !important;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+      &:hover:not(.active) {
+        background: rgba(80, 72, 229, 0.06);
+        border-color: rgba(80, 72, 229, 0.25);
+        color: #5048e5;
+      }
 
       &:first-of-type { margin-left: 6px; }
-      &:last-of-type  { margin-right: 15px; }
+      &:last-of-type  { margin-right: 12px; }
     }
   }
 
+  /* 默认风格的激活 tag：用主题紫色 + 实心点 */
   &:not(.tags-view-container--chrome) .tags-view-wrapper .tags-view-item.active {
-    background-color: #42b983;
+    background-color: #5048e5;
     color: #fff;
-    border-color: #42b983;
+    border-color: #5048e5;
+    box-shadow: 0 2px 8px rgba(80, 72, 229, 0.28);
 
     &::before {
       content: '';
       background: #fff;
       display: inline-block;
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       position: relative;
-      margin-right: 5px;
+      margin-right: 6px;
     }
   }
 
@@ -464,6 +474,7 @@ $tags-bar-height: 34px;
     content: none !important;
   }
 
+  /* 右侧操作区 */
   .tags-action-dropdown {
     flex-shrink: 0;
     display: flex;
@@ -474,12 +485,14 @@ $tags-bar-height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 4px;
     width: $btn-width;
-    height: $tags-bar-height;
+    height: 28px;
+    margin: 0 2px;
     cursor: pointer;
     color: $btn-color;
     font-size: 13px;
-    border-left: $divider;
+    border-radius: 8px;
     user-select: none;
     transition: background 0.15s, color 0.15s;
 
@@ -489,8 +502,19 @@ $tags-bar-height: 34px;
     }
   }
 
+  /* 刷新按钮（带文字） */
   .tags-refresh-btn {
-    width: 60px;
+    width: auto;
+    padding: 0 12px;
+    font-weight: 600;
+
+    .el-icon {
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    &:hover .el-icon {
+      transform: rotate(180deg);
+    }
   }
 
   .contextmenu {
@@ -660,8 +684,8 @@ $tags-bar-height: 34px;
       }
       
       &:hover {
-        background-color: var(--tags-close-hover, #b4bccc);
-        
+        background-color: #f56c6c;
+
         .el-icon-close {
           color: #fff;
         }

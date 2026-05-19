@@ -21,6 +21,11 @@ const api = {
 			method: 'GET',
 			desc: '国际化配置（支持语种列表）'
 		},
+		upload: {
+			url: '/api/upload',
+			method: 'POST',
+			desc: '文件上传（头像等）'
+		},
 		wxguanggao: {
 			url: '/api/noop',
 			method: 'GET',

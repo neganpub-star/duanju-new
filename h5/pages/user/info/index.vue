@@ -325,21 +325,34 @@
 					filePath: url,
 					name: 'file',
 					header: {
-						'Token': this.token || '',
-						'Sign': this.$SIGN || ''
+						'Authorization': this.token || ''
 					},
 					success: file => {
-						if(file.statusCode == 200) {
-							const data = JSON.parse(file.data)
-							if(data.code === 1) {
-								this.user.avatar = data.data.fullurl
-								this.uploadAvatar = data.data.url
+						try {
+							if(file.statusCode === 200) {
+								const data = typeof file.data === 'string' ? JSON.parse(file.data) : file.data
+								// 新 Java 后端：{ code: 200, data: "<完整URL>", msg: "..." }
+								if(data && data.code === 200 && data.data) {
+									this.user.avatar = data.data
+									this.uploadAvatar = data.data
+									uni.$u && uni.$u.toast && uni.$u.toast('上传成功')
+								} else {
+									uni.$u && uni.$u.toast && uni.$u.toast((data && data.msg) || '上传失败')
+								}
+							} else {
+								uni.$u && uni.$u.toast && uni.$u.toast(`上传失败(${file.statusCode})`)
 							}
+						} catch (e) {
+							console.error('解析上传响应失败', e)
+							uni.$u && uni.$u.toast && uni.$u.toast('上传响应异常')
+						} finally {
+							uni.hideLoading()
 						}
-						uni.hideLoading()
 					},
 					fail: err => {
+						console.error('头像上传失败', err)
 						uni.hideLoading()
+						uni.$u && uni.$u.toast && uni.$u.toast('网络异常，上传失败')
 					}
 				})
 			},

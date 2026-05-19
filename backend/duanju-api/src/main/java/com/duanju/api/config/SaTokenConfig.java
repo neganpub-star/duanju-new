@@ -24,6 +24,7 @@ public class SaTokenConfig implements WebMvcConfigurer {
             SaRouter.match(
                     "/api/user/**",
                     "/api/wallet/**",
+                    "/api/upload",
                     "/api/vip/buy",
                     "/api/usable/buy",
                     "/api/reseller/buy",
