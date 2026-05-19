@@ -85,6 +85,8 @@
 				</view>
 			</u-popup>
 		</view>
+		<!-- 平台统一 Modal -->
+		<AppModal />
 	</view>
 </template>
 
@@ -154,18 +156,11 @@
 						}, 1000);
 						
 					} else if(res.code === 1314) {
-						uni.showModal({
+						this.$appModal({
 							title: '系统提示',
 							content: res.msg,
 							confirmText: '知道了',
-							showCancel: false,
-							success: res => {
-								if (res.confirm) {
-									console.log('用户点击确定');
-								} else if (res.cancel) {
-									console.log('用户点击取消');
-								}
-							}
+							showCancel: false
 						})
 					}
 					this.mobilePopup = false
@@ -173,27 +168,24 @@
 			},
 			// 退出登录
 			logoutClick() {
-				uni.showModal({
+				this.$appModal({
 					title: this.$t('user.logout'),
 					content: this.$t('user.logoutConfirm'),
+					type: 'danger',
 					success: res => {
 						if (res.confirm) {
-							console.log('用户点击确定');
 							this.logout()
-							uni.switchTab({
-								url: '/pages/home/user'
-							});
-						} else if (res.cancel) {
-							console.log('用户点击取消');
+							uni.switchTab({ url: '/pages/home/user' })
 						}
 					}
 				})
 			},
 			// 注销账号
 			deleteClick() {
-				uni.showModal({
+				this.$appModal({
 					title: '注销账号',
 					content: '确认要注销账号吗？',
+					type: 'danger',
 					success: res => {
 						if (res.confirm) {
 							console.log('用户点击确定');

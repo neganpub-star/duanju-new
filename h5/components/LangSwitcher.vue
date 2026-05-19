@@ -1,7 +1,12 @@
 <template>
   <view class="lang-switcher" v-if="showSwitcher" @click="openLangPanel">
     <view class="lang-btn">
-      <text class="lang-icon">🌐</text>
+      <!-- SVG 地球图标（去 emoji 廉价感） -->
+      <svg class="lang-icon" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="9.5" stroke="currentColor" stroke-width="1.4"/>
+        <ellipse cx="12" cy="12" rx="4.2" ry="9.5" stroke="currentColor" stroke-width="1.4"/>
+        <line x1="2.5" y1="12" x2="21.5" y2="12" stroke="currentColor" stroke-width="1.4"/>
+      </svg>
       <text class="lang-text">{{ currentLangLabel }}</text>
     </view>
   </view>
@@ -73,19 +78,31 @@ export default {
   align-items: center;
 }
 .lang-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  padding: 8rpx 16rpx;
-  border-radius: 30rpx;
-  background: rgba(255, 255, 255, 0.15);
+  gap: 8rpx;
+  padding: 10rpx 20rpx;
+  border-radius: 32rpx;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1rpx solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   cursor: pointer;
+  transition: background 0.2s;
+}
+.lang-btn:active {
+  background: rgba(255, 255, 255, 0.28);
 }
 .lang-icon {
-  font-size: 28rpx;
+  width: 26rpx;
+  height: 26rpx;
+  color: #fff;
+  display: inline-block;
 }
 .lang-text {
-  font-size: 22rpx;
+  font-size: 24rpx;
   color: #fff;
-  margin-left: 6rpx;
+  font-weight: 600;
+  letter-spacing: 0.5rpx;
 }
 </style>

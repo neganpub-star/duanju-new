@@ -36,7 +36,7 @@
 							<text class="hot_title u-line-1">{{ item.display_title || item.title }}</text>
 						</view>
 					</view>
-				</view>
+		</view>
 			</template>
 
 			<template v-else>
@@ -61,6 +61,7 @@
 				</view>
 			</template>
 		</scroll-view>
+		<AppModal />
 	</view>
 </template>
 
@@ -117,7 +118,7 @@
 				uni.setStorageSync('search_history', history);
 			},
 			clearHistory() {
-				uni.showModal({
+				this.$appModal({
 					title: this.$t('common.tip'),
 					content: this.$t('search.clearConfirm'),
 					success: (res) => {

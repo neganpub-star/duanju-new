@@ -89,7 +89,8 @@
 				/>
 			</view>
 		</view>
-	</view>
+			<AppModal />
+		</view>
 </template>
 
 <script>
@@ -189,7 +190,7 @@
 					})
 				}
 				if (this.dredgeLevel < this.level) {
-					uni.showModal({
+					this.$appModal({
 						title: this.$t('dealer.tip'),
 						content: this.$t('dealer.lowerLevelTip'),
 						success: r => { if (r.confirm) doBuy() }

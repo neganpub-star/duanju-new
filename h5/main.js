@@ -33,6 +33,12 @@ Vue.component('CustomBackTop', CustomBackTop)
 import CustomTabBar from '@/components/CustomTabBar.vue'
 Vue.component('CustomTabBar', CustomTabBar)
 
+// 全局 Modal 组件（替换 uni.showModal）— App.vue 挂单例，业务通过 this.$appModal(...) 调用
+import AppModal from '@/components/AppModal.vue'
+Vue.component('AppModal', AppModal)
+import { showAppModal } from '@/common/utils/modal.js'
+Vue.prototype.$appModal = showAppModal
+
 
 // import * as system from "@/components/system.js"
 // Vue.prototype.$system = system

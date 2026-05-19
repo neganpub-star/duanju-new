@@ -84,7 +84,8 @@
 				<u-button text="保存信息" :loading="buttonLoading" :customStyle="buttonStyle" @click="submitHandle" />
 			</view>
 		</view>
-	</view>
+			<AppModal />
+		</view>
 </template>
 
 <script>
@@ -236,7 +237,7 @@
 			},
 			// 删除图片
 			deleteImage(id) {
-				uni.showModal({
+				this.$appModal({
 					title: '提示',
 					content: '确认要删除此项？',
 					success: (res) => {

@@ -37,7 +37,8 @@
 				<view class="button" :style="'background:'+isColor">{{ $t('share.saveImage') }}</view>
 			</view>
 		</view>
-	</view>
+			<AppModal />
+		</view>
 </template>
 
 <script>
@@ -256,7 +257,7 @@
 			},
 			// 报错alert
 			_errAlert(content) {
-				uni.showModal({
+				this.$appModal({
 					title: '提示',
 					content: content
 				});

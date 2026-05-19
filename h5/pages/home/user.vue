@@ -304,7 +304,8 @@
 
 		<!-- <tabBar v-if="tabChange" selectedIndex =3></tabBar> -->
 		<CustomTabBar current="/pages/home/user" />
-	</view>
+			<AppModal />
+		</view>
 </template>
 
 <script>
@@ -597,7 +598,7 @@
 		},
 		onLoad() {
 			if (!this.token) {
-				uni.showModal({
+				this.$appModal({
 					title: '系统提示',
 					content: '请先登录后再使用全部功能',
 					showCancel: false,
@@ -657,7 +658,7 @@
 					this.debug.count++;
 					this.debug.timer = setTimeout(() => {
 						if (this.debug.count >= 5) {
-							uni.showModal({
+							this.$appModal({
 								title: '配置信息',
 								content: `
 									(env => ${env}) -
@@ -769,7 +770,7 @@
 						// #ifdef MP-WEIXIN
 						if (!this.iosIsPay) return this.jumpView('/pages/user/info/contact')
 						// #endif
-						uni.showModal({
+						this.$appModal({
 							title: '开通免广告权限',
 							content: `开通免广告所需费用${this.dredge.total_fee}元`,
 							success: res => {
@@ -964,21 +965,49 @@
 			}
 
 			.vip_card {
-				border-radius: 16rpx;
+				border-radius: 24rpx;
 				overflow: hidden;
 				margin: 24rpx 0;
-				box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.06);
+				box-shadow: 0 8rpx 32rpx rgba(80, 72, 229, 0.25);
 
 				.vip_box {
+					position: relative;
 					width: 100%;
-					min-height: 144rpx;
-					padding: 0 32rpx;
+					min-height: 152rpx;
+					padding: 0 36rpx;
 					box-sizing: border-box;
 					background: #fff;
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
 					border-bottom: 1rpx solid #f0f0f0;
+					overflow: hidden;
+
+					/* 玻璃质感装饰光环 — 右上角柔和光圈 */
+					&::before {
+						content: '';
+						position: absolute;
+						top: -80rpx;
+						right: -80rpx;
+						width: 240rpx;
+						height: 240rpx;
+						background: radial-gradient(closest-side, rgba(255,255,255,0.25), transparent);
+						pointer-events: none;
+						z-index: 0;
+					}
+
+					/* 微妙花纹背景（细斜线）增加质感 */
+					&::after {
+						content: '';
+						position: absolute;
+						inset: 0;
+						background-image: linear-gradient(135deg, rgba(255,255,255,0.06) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.06) 75%, transparent 75%);
+						background-size: 20rpx 20rpx;
+						pointer-events: none;
+						z-index: 0;
+					}
+
+					.left, .right { position: relative; z-index: 1; }
 
 					.left {
 						flex: 1;
@@ -986,16 +1015,17 @@
 						color: #222;
 
 						.line1 {
-							font-size: 30rpx;
-							font-weight: bold;
-							color: #222;
-							line-height: 1.4;
+							font-size: 32rpx;
+							font-weight: 700;
+							color: #fff;
+							line-height: 1.3;
+							letter-spacing: 0.5rpx;
 						}
 
 						.line2 {
-							font-size: 22rpx;
-							margin-top: 10rpx;
-							color: #888;
+							font-size: 24rpx;
+							margin-top: 8rpx;
+							color: rgba(255, 255, 255, 0.78);
 							line-height: 1.4;
 						}
 					}

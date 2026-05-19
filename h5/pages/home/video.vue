@@ -160,7 +160,8 @@
 		<!-- #endif -->
 		<CommentPanel :show="showComment" :video-id="commentVideoId" @close="showComment = false" />
 		<CustomTabBar current="/pages/home/video" />
-	</view>
+			<AppModal />
+		</view>
 </template>
 
 <script>
@@ -248,7 +249,7 @@
 			// AdNumber(newValue, oldValue) {
 			// 	console.log(newValue,'查看变化')
 			// 	if(newValue == 3){
-			// 		uni.showModal({
+			// 		this.$appModal({
 			// 			title: '免广告权限',
 			// 			content: `温馨提示：可在[我的]页面开通免广告权限`,
 			// 			showCancel:false,
@@ -270,7 +271,7 @@
      
 		onLoad() {
 			if (!this.token) {
-				uni.showModal({
+				this.$appModal({
 					title: this.$t('common.tip'),
 					content: this.$t('common.loginFirst'),
 					showCancel: false,

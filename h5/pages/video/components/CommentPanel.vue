@@ -241,7 +241,7 @@ export default {
 			});
 		},
 		deleteComment(item, index) {
-			uni.showModal({
+			this.$appModal({
 				title: this.$t('comment.deleteTitle'),
 				content: this.$t('comment.deleteContent'),
 				cancelText: this.$t('common.cancel'),
@@ -259,7 +259,7 @@ export default {
 			});
 		},
 		deleteReply(reply, parentIndex) {
-			uni.showModal({
+			this.$appModal({
 				title: this.$t('comment.deleteTitle'),
 				content: this.$t('comment.deleteContent'),
 				cancelText: this.$t('common.cancel'),

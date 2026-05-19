@@ -76,7 +76,6 @@
 										</view>
 									</view>
 								</view>
-							</view>
 						</template>
 					</block>
 				</view>
@@ -94,6 +93,7 @@
 		<zero-privacy :onNeed="false" :hideTabBar="true"></zero-privacy>
 		<!-- #endif -->
 		<CustomTabBar current="/pages/home/index" />
+		<AppModal />
 	</view>
 </template>
 
@@ -155,7 +155,7 @@
 		},
 		onLoad() {
 			if (!this.token) {
-				uni.showModal({
+				this.$appModal({
 					title: '系统提示',
 					content: '请先登录后再使用全部功能',
 					showCancel: false,
@@ -611,52 +611,64 @@
 		.img {
 			width: 100%;
 			height: 280rpx;
-			border-radius: 20rpx;
+			border-radius: 24rpx;
 			overflow: hidden;
 			position: relative;
+			box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.08);
+			transition: transform 0.25s ease, box-shadow 0.25s ease;
 
 			.image {
 				width: 100%;
 				height: 100%;
+				transition: transform 0.4s ease;
 			}
 
 			.ep-badge {
 				position: absolute;
-				right: 0;
-				bottom: 0;
-				background: rgba(0, 0, 0, 0.55);
+				right: 8rpx;
+				bottom: 8rpx;
+				background: rgba(0, 0, 0, 0.65);
 				color: #fff;
 				font-size: 20rpx;
-				padding: 4rpx 10rpx;
-				border-radius: 10rpx 0 0 0;
+				font-weight: 600;
+				padding: 4rpx 12rpx;
+				border-radius: 999rpx;
 				white-space: nowrap;
 				line-height: 1.4;
+				backdrop-filter: blur(8rpx);
+				-webkit-backdrop-filter: blur(8rpx);
 			}
 		}
 
+		&:active .img {
+			transform: scale(0.98);
+		}
+
 		.info {
-			margin-top: 14rpx;
+			margin-top: 16rpx;
 
 			.title {
-				font-size: 28rpx;
-				color: #111;
+				font-size: 30rpx;
+				color: #1a1a1a;
 				font-weight: 700;
-				line-height: 1.3;
+				line-height: 1.35;
+				letter-spacing: -0.5rpx;
 			}
 
 			.tags-row {
 				display: flex;
 				flex-wrap: wrap;
 				gap: 8rpx;
-				margin-top: 10rpx;
+				margin-top: 12rpx;
 
 				.tag-pill {
 					font-size: 20rpx;
-					color: #888;
-					background: #f2f2f2;
-					border-radius: 6rpx;
-					padding: 4rpx 12rpx;
-					line-height: 1.4;
+					color: #5a5e66;
+					background: rgba(80, 72, 229, 0.08);
+					border-radius: 10rpx;
+					padding: 4rpx 14rpx;
+					line-height: 1.5;
+					font-weight: 500;
 				}
 			}
 		}

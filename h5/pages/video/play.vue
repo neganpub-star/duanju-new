@@ -301,7 +301,8 @@
 		/>
 		<!-- 调试用：直接显示二维码base64图片 -->
 		<image v-if="shareQrcodeImg" :src="shareQrcodeImg" style="width:120px;height:120px;position:fixed;top:10px;left:10px;z-index:9999;" />
-	</view>
+			<AppModal />
+		</view>
 </template>
 
 <script>
@@ -455,7 +456,7 @@
 			// AdNumber(newValue, oldValue) {
 				
 			// 	if(newValue == 3){
-			// 		uni.showModal({
+			// 		this.$appModal({
 			// 			title: '免广告权限',
 			// 			content: `温馨提示：可在[我的]页面开通免广告权限`,
 			// 			showCancel:false,
@@ -1219,7 +1220,7 @@
 			},
 			handleShare() {
 				if (!this.token) {
-					uni.showModal({
+					this.$appModal({
 						title: '系统提示',
 						content: '本操作需要您进行登录验证',
 						success: res => {
@@ -1738,12 +1739,17 @@
 
 						.text {
 							font-size: 24rpx;
-							color: rgba(255, 255, 255, 0.92);
-							text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+							font-weight: 600;
+							color: rgba(255, 255, 255, 0.95);
+							text-shadow: 0 2rpx 6rpx rgba(0,0,0,0.55);
+							font-variant-numeric: tabular-nums;
+							letter-spacing: 0.5rpx;
+							font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
 
 							&.active {
 								color: #ffe066;
-								font-weight: bold;
+								font-weight: 700;
+								text-shadow: 0 2rpx 8rpx rgba(255, 224, 102, 0.4);
 							}
 						}
 

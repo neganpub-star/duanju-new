@@ -116,7 +116,8 @@
 			</view>
 		</view>
 	
-	</view>
+			<AppModal />
+		</view>
 </template>
 
 <script>
@@ -176,7 +177,7 @@
 		methods: {
 			 onDone(index) {
 			            const prize = this.prizeList[index]
-			            uni.showModal({
+			            this.$appModal({
 			                title: prize.id == 'thanks' ? '很遗憾': '恭喜您',
 			                content: (prize.id !== 'thanks' ? `获得`:'') + prize.name
 			            })

@@ -178,7 +178,7 @@
 					uni.hideLoading()
 				}).catch(err => {
 					this.isCreate = false
-					uni.showModal({
+					this.$appModal({
 						title: '提示',
 						content: `【生成图片失败，请重试】${err}`
 					});
