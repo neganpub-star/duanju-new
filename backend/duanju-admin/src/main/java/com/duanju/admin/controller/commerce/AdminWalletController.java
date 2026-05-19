@@ -8,6 +8,7 @@ import com.duanju.commerce.mapper.UserWalletLogMapper;
 import com.duanju.commerce.mapper.VipOrderMapper;
 import com.duanju.commerce.service.WalletService;
 import com.duanju.commerce.vo.WalletLogVO;
+import com.duanju.commerce.vo.WithdrawStatsVO;
 import com.duanju.commerce.vo.WithdrawVO;
 import com.duanju.common.core.domain.R;
 import com.duanju.common.core.page.PageQuery;
@@ -59,6 +60,12 @@ public class AdminWalletController {
     public R<Void> handleApply(@PathVariable Long id, @RequestBody HandleReq req) {
         walletService.handleWithdraw(id, req.getStatus(), req.getRemark());
         return R.ok();
+    }
+
+    @Operation(summary = "提现申请状态分布统计")
+    @GetMapping("/apply/stats")
+    public R<WithdrawStatsVO> applyStats(@RequestParam(defaultValue = "1") Integer siteId) {
+        return R.ok(walletApplyMapper.selectApplyStats(siteId));
     }
 
     @Operation(summary = "钱包流水（含用户信息）")

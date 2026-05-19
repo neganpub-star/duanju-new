@@ -12,3 +12,6 @@ export function listWalletLog(params) {
 export function getWalletStats(params) {
   return request({ url: '/admin/commerce/wallet/stats', method: 'get', params })
 }
+export function getWithdrawStats(params) {
+  return request({ url: '/admin/commerce/wallet/apply/stats', method: 'get', params })
+}

@@ -1,79 +1,114 @@
 <template>
-  <div class="app-container">
-    <!-- 搜索栏 -->
-    <el-form :model="queryParams" ref="queryRef" :inline="true">
-      <el-form-item label="标题" prop="title">
-        <el-input v-model="queryParams.title" placeholder="请输入视频标题" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="全部" clearable style="width:120px">
-          <el-option label="上架" :value="1" />
-          <el-option label="下架" :value="0" />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-
-    <!-- 操作栏 -->
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button type="primary" icon="Plus" @click="handleAdd">新增</el-button>
-      </el-col>
-    </el-row>
+  <div class="app-container video-page">
+    <!-- 工具栏 -->
+    <div class="toolbar">
+      <el-form :model="queryParams" ref="queryRef" :inline="true" class="toolbar-form">
+        <el-form-item label="标题" prop="title">
+          <el-input v-model="queryParams.title" placeholder="请输入视频标题" clearable style="width:200px" @keyup.enter="handleQuery" />
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-select v-model="queryParams.status" placeholder="全部" clearable style="width:120px">
+            <el-option label="上架" :value="1" />
+            <el-option label="下架" :value="0" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" :icon="Search" @click="handleQuery">搜索</el-button>
+          <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
+          <el-button type="primary" :icon="Plus" @click="handleAdd">新增视频</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
 
     <!-- 表格 -->
-    <el-table v-loading="loading" :data="list" stripe border>
-      <el-table-column label="ID" prop="id" width="70" align="center" />
-      <el-table-column label="封面" width="90" align="center">
+    <el-table v-loading="loading" :data="list" stripe class="video-table" :header-cell-style="headerStyle">
+      <el-table-column label="ID" prop="id" width="80" align="center">
+        <template #default="{ row }">
+          <span class="id-badge">#{{ row.id }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="封面" width="100" align="center">
         <template #default="{ row }">
           <el-image
+            v-if="row.cover"
             :src="row.cover"
             :preview-src-list="[row.cover]"
             preview-teleported
-            style="width:54px;height:76px;border-radius:6px;object-fit:cover;display:block;margin:0 auto"
+            class="cover-thumb"
             fit="cover"
-          />
+          >
+            <template #error>
+              <div class="cover-empty" title="封面加载失败">无</div>
+            </template>
+            <template #placeholder>
+              <div class="cover-empty">无</div>
+            </template>
+          </el-image>
+          <div v-else class="cover-empty" title="未设置封面">无</div>
         </template>
       </el-table-column>
-      <el-table-column label="短剧信息" min-width="180">
+
+      <el-table-column label="短剧信息" min-width="220">
         <template #default="{ row }">
           <div class="drama-title">{{ row.title }}</div>
           <div class="drama-meta">
-            <el-tag size="small" effect="plain" :type="row.status === 1 ? 'success' : 'info'" style="margin-right:4px">
-              {{ row.status === 1 ? '上架' : '下架' }}
+            <el-tag size="small" effect="light" :type="row.status === 1 ? 'success' : 'info'" class="status-tag">
+              <el-icon class="status-icon">
+                <CircleCheck v-if="row.status === 1" />
+                <Hide v-else />
+              </el-icon>
+              <span>{{ row.status === 1 ? '上架' : '下架' }}</span>
             </el-tag>
-            <el-tag v-if="row.is_recommend === 1" size="small" type="warning" effect="plain">推荐</el-tag>
+            <el-tag v-if="row.is_recommend === 1" size="small" type="warning" effect="light" class="rec-tag">
+              <el-icon class="rec-icon"><Star /></el-icon>
+              <span>推荐</span>
+            </el-tag>
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="集数" prop="seriesCount" width="70" align="center">
+
+      <el-table-column label="集数" width="110" align="center">
         <template #default="{ row }">
-          <span class="ep-count">{{ row.seriesCount || 0 }}</span>
-          <span style="font-size:11px;color:#909399"> 集</span>
+          <div class="ep-badge">
+            <span class="ep-num">{{ row.seriesCount || 0 }}</span>
+            <span class="ep-unit">集</span>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column label="权重" prop="weigh" width="70" align="center">
+
+      <el-table-column label="权重" width="100" align="center">
         <template #default="{ row }">
-          <span style="color:#606266">{{ row.weigh }}</span>
+          <span class="weigh-badge" :class="weighClass(row.weigh)">{{ row.weigh ?? 0 }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" width="100" align="center">
+
+      <el-table-column label="创建时间" width="180" align="center">
         <template #default="{ row }">
-          <span style="font-size:12px;color:#909399">{{ row.createTime ? row.createTime.slice(0,10) : '—' }}</span>
+          <div class="time-cell">
+            <span class="time-abs">{{ row.createTime ? row.createTime.slice(0,10) : '—' }}</span>
+            <span v-if="row.createTime" class="time-rel">{{ relativeTime(row.createTime) }}</span>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="190" fixed="right" align="center">
+
+      <el-table-column label="操作" width="220" fixed="right" align="center">
         <template #default="{ row }">
-          <el-button link type="primary" size="small" @click="openEpisodes(row)">分集管理</el-button>
+          <el-button link type="primary" size="small" :icon="VideoPlay" @click="openEpisodes(row)">分集</el-button>
           <el-divider direction="vertical" />
-          <el-button link type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
+          <el-button link type="primary" size="small" :icon="Edit" @click="handleEdit(row)">编辑</el-button>
           <el-divider direction="vertical" />
-          <el-button link type="danger" size="small" @click="handleDelete(row)">删除</el-button>
+          <el-button link type="danger" size="small" :icon="Delete" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
+
+      <template #empty>
+        <div class="empty-state">
+          <el-icon class="empty-icon"><VideoPlay /></el-icon>
+          <div class="empty-text">暂无视频</div>
+          <el-button type="primary" :icon="Plus" @click="handleAdd">新增第一部短剧</el-button>
+        </div>
+      </template>
     </el-table>
 
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
@@ -362,6 +397,28 @@ import { listVideo, addVideo, updateVideo, deleteVideo } from '@/api/drama/video
 import { listEpisodes, addEpisode, updateEpisode, deleteEpisode, transcodeEpisode, batchSetEpisodes } from '@/api/drama/episode'
 import { uploadFile, listConfig } from '@/api/system/config'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import {
+  Plus, Edit, Delete, Search, Refresh, VideoPlay, CircleCheck, Hide, Star,
+} from '@element-plus/icons-vue'
+
+const headerStyle = { background: '#f7f8fa', color: '#303133', fontWeight: 600 }
+
+function weighClass(w) {
+  const v = Number(w) || 0
+  if (v >= 100) return 'weigh-high'
+  if (v >= 50) return 'weigh-mid'
+  return 'weigh-low'
+}
+function relativeTime(t) {
+  if (!t) return ''
+  const diff = (Date.now() - new Date(t).getTime()) / 1000
+  if (diff < 60) return '刚刚'
+  if (diff < 3600) return Math.floor(diff / 60) + ' 分钟前'
+  if (diff < 86400) return Math.floor(diff / 3600) + ' 小时前'
+  if (diff < 30 * 86400) return Math.floor(diff / 86400) + ' 天前'
+  if (diff < 365 * 86400) return Math.floor(diff / (30 * 86400)) + ' 个月前'
+  return Math.floor(diff / (365 * 86400)) + ' 年前'
+}
 
 const LANG_LABELS = { 'zh-CN': '简体中文', 'zh-TW': '繁體中文', en: 'English' }
 
@@ -702,6 +759,127 @@ getList()
 </script>
 
 <style scoped>
+.video-page { padding: 12px; }
+
+/* 工具栏 */
+.toolbar {
+  padding: 10px 14px 0;
+  margin-bottom: 10px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.toolbar-form :deep(.el-form-item) { margin-bottom: 10px; }
+
+/* 表格 */
+.video-table {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.video-table :deep(.el-table__inner-wrapper)::before { display: none; }
+.video-table :deep(.cell) { padding: 6px 10px; line-height: 1.5; }
+.video-table :deep(.el-table__row) td { padding: 8px 0; }
+.video-table :deep(th.el-table__cell) { padding: 8px 0; }
+
+/* ID 徽章 */
+.id-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+  color: #5048e5;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 封面 */
+.cover-thumb {
+  width: 54px; height: 76px;
+  border-radius: 6px;
+  display: block;
+  margin: 0 auto;
+  border: 1px solid #f0f0f0;
+}
+.cover-thumb :deep(img) { object-fit: cover; }
+.cover-empty {
+  width: 54px; height: 76px;
+  border-radius: 6px;
+  background: #f4f6f9;
+  border: 1px dashed #dcdfe6;
+  color: #909399;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  user-select: none;
+}
+
+/* 短剧信息 */
+.drama-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+.drama-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.status-tag :deep(.el-tag__content),
+.status-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  white-space: nowrap;
+}
+.status-icon { font-size: 12px; }
+.rec-tag :deep(.el-tag__content),
+.rec-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  white-space: nowrap;
+}
+.rec-icon { font-size: 12px; }
+
+/* 集数胶囊 */
+.ep-badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  padding: 3px 12px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  color: #1565c0;
+}
+.ep-num { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.ep-unit { font-size: 11px; opacity: 0.7; }
+
+/* 权重徽章 */
+.weigh-badge {
+  display: inline-block;
+  min-width: 40px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.weigh-high { background: #fff3e0; color: #e65100; }
+.weigh-mid  { background: #e3f2fd; color: #1565c0; }
+.weigh-low  { background: #f5f5f5; color: #606266; }
+
+/* 时间 */
+.time-cell { display: flex; flex-direction: column; gap: 0; line-height: 1.3; }
+.time-abs { font-size: 12px; color: #606266; font-variant-numeric: tabular-nums; }
+.time-rel { font-size: 11px; color: #909399; }
+
+/* 空状态 */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  padding: 40px 0;
+}
+.empty-icon { font-size: 56px; color: #dcdfe6; }
+.empty-text { color: #909399; font-size: 14px; }
+
+/* 上传 - 弹窗内 */
 .cover-uploader .cover-preview { width: 120px; height: 160px; display: block; }
 .upload-placeholder {
   width: 120px; height: 160px; border: 1px dashed #d9d9d9; border-radius: 4px;
@@ -710,10 +888,9 @@ getList()
 }
 .upload-placeholder:hover { border-color: var(--el-color-primary); }
 .upload-icon { font-size: 24px; }
+
+/* 分集抽屉 */
 .ep-toolbar { margin-bottom: 12px; }
-.drama-title { font-size: 13px; font-weight: 600; color: #303133; margin-bottom: 6px; line-height: 1.4; }
-.drama-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
-.ep-count { font-size: 15px; font-weight: 700; color: #409eff; }
 
 /* 视频预览 */
 .preview-wrap { display: flex; flex-direction: column; gap: 10px; }
@@ -730,4 +907,14 @@ getList()
   background: #f5f7fa; border-radius: 4px; padding: 6px 10px;
 }
 .url-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* 暗黑模式 */
+html.dark .toolbar,
+html.dark .video-table {
+  background: #1f1f1f;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+html.dark .drama-title { color: #e5e7eb; }
+html.dark .id-badge { background: rgba(80, 72, 229, 0.15); color: #a5b4fc; }
+html.dark .ep-badge { background: rgba(21, 101, 192, 0.15); color: #90caf9; }
 </style>

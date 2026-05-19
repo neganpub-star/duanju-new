@@ -1,33 +1,54 @@
 <template>
-  <div class="app-container">
-    <el-alert type="info" :closable="false" show-icon style="margin-bottom:16px">
-      <template #title>修改后点击"保存配置"生效，无需重启服务。</template>
-    </el-alert>
+  <div class="app-container config-page">
+    <!-- 顶部提示 -->
+    <div class="page-hint">
+      <el-icon class="hint-icon"><InfoFilled /></el-icon>
+      <div class="hint-text">
+        <span class="hint-title">参数配置</span>
+        <span class="hint-desc">修改后点击底部"保存配置"即可生效，无需重启服务。</span>
+      </div>
+    </div>
 
-    <el-tabs v-model="activeTab" v-loading="loading">
-      <el-tab-pane
-        v-for="[group, items] in groupedEntries"
-        :key="group"
-        :label="GROUP_LABELS[group] || group"
-        :name="group"
-      >
+    <!-- 配置卡片 -->
+    <div class="config-card" v-loading="loading">
+      <el-tabs v-model="activeTab" class="config-tabs">
+        <el-tab-pane
+          v-for="[group, items] in groupedEntries"
+          :key="group"
+          :name="group"
+        >
+          <template #label>
+            <span class="tab-label">
+              <el-icon><component :is="GROUP_ICONS[group] || Setting" /></el-icon>
+              <span>{{ GROUP_LABELS[group] || group }}</span>
+            </span>
+          </template>
         <!-- 通用配置：表格 + 增删 -->
         <template v-if="group === 'general'">
-          <div style="margin:16px 0 12px">
-            <el-button type="primary" icon="Plus" @click="openAddDialog">新增配置</el-button>
+          <div class="general-toolbar">
+            <el-button type="primary" :icon="Plus" @click="openAddDialog">新增配置</el-button>
           </div>
-          <el-table :data="items" size="small" border style="max-width:900px">
-            <el-table-column label="键名" prop="configKey" width="240" />
-            <el-table-column label="名称" prop="configName" width="140" />
+          <el-table :data="items" size="small" class="config-table" :header-cell-style="headerStyle">
+            <el-table-column label="键名" prop="configKey" width="260">
+              <template #default="{ row }">
+                <span class="config-key">{{ row.configKey }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="名称" prop="configName" width="160" />
             <el-table-column label="值">
               <template #default="{ row }">
                 <el-input v-model="form[row.configKey]" size="small" />
               </template>
             </el-table-column>
-            <el-table-column label="备注" prop="remark" width="200" show-overflow-tooltip />
-            <el-table-column label="操作" width="80" align="center">
+            <el-table-column label="备注" prop="remark" min-width="180" show-overflow-tooltip>
               <template #default="{ row }">
-                <el-button link type="danger" @click="handleDelete(row.configKey)">删除</el-button>
+                <span v-if="row.remark" class="config-remark-text">{{ row.remark }}</span>
+                <span v-else class="text-muted">—</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="90" align="center">
+              <template #default="{ row }">
+                <el-button link type="danger" size="small" :icon="Delete" @click="handleDelete(row.configKey)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -135,10 +156,12 @@
           </el-form>
         </template>
       </el-tab-pane>
-    </el-tabs>
+      </el-tabs>
+    </div>
 
+    <!-- 浮动保存按钮 -->
     <div class="action-bar">
-      <el-button type="primary" :loading="saving" @click="handleSave">保存配置</el-button>
+      <el-button size="large" type="primary" :icon="DocumentChecked" :loading="saving" @click="handleSave">保存配置</el-button>
     </div>
 
     <!-- 新增配置弹窗 -->
@@ -168,6 +191,10 @@
 <script setup>
 import { listConfig, batchUpdateConfig, addConfig, deleteConfig } from '@/api/system/config'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import {
+  Plus, Delete, Setting, InfoFilled, DocumentChecked,
+  Tools, FolderOpened, VideoPlay, Cellphone,
+} from '@element-plus/icons-vue'
 
 const loading = ref(false)
 const saving = ref(false)
@@ -175,11 +202,19 @@ const configs = ref([])
 const form = reactive({})
 const activeTab = ref('')
 
+const headerStyle = { background: '#f7f8fa', color: '#303133', fontWeight: 600 }
+
 const GROUP_LABELS = {
   general:   '通用配置',
   storage:   '存储配置',
   transcode: '转码配置',
   platform:  '平台配置',
+}
+const GROUP_ICONS = {
+  general:   Tools,
+  storage:   FolderOpened,
+  transcode: VideoPlay,
+  platform:  Cellphone,
 }
 
 // tab 排列顺序
@@ -272,7 +307,101 @@ loadConfig()
 </script>
 
 <style scoped>
-.divider-label { font-size: 12px; color: #909399; }
-.config-remark { margin-left: 8px; color: #909399; font-size: 12px; line-height: 1.4; margin-top: 4px; }
-.action-bar { text-align: center; margin-top: 24px; }
+.config-page {
+  padding: 12px;
+  padding-bottom: 80px;
+}
+
+/* 顶部提示 */
+.page-hint {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #eef2ff 0%, #e0f2fe 100%);
+  border-radius: 10px;
+  border-left: 3px solid #5048e5;
+}
+.hint-icon { font-size: 22px; color: #5048e5; flex-shrink: 0; }
+.hint-text { display: flex; flex-direction: column; line-height: 1.4; }
+.hint-title { font-size: 14px; font-weight: 600; color: #303133; }
+.hint-desc { font-size: 12px; color: #606266; }
+
+/* 配置卡片 */
+.config-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 4px 16px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  min-height: 400px;
+}
+
+/* tabs */
+.config-tabs :deep(.el-tabs__header) { margin-bottom: 8px; }
+.config-tabs :deep(.el-tabs__nav-wrap::after) { background-color: #f0f0f0; }
+.tab-label {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 14px;
+}
+.tab-label .el-icon { font-size: 16px; }
+
+/* 通用配置工具栏与表格 */
+.general-toolbar { margin: 14px 0 12px; }
+.config-table {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+}
+.config-table :deep(.el-table__inner-wrapper)::before { display: none; }
+.config-key {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  color: #606266;
+  background: #f4f6f9;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.config-remark-text { font-size: 12px; color: #909399; }
+.text-muted { color: #c0c4cc; font-size: 12px; }
+
+/* 分组分割线 */
+.divider-label { font-size: 12px; color: #909399; font-weight: 600; }
+
+/* 表单内的备注 */
+.config-remark {
+  margin-left: 8px;
+  color: #909399;
+  font-size: 12px;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+/* 浮动保存按钮 */
+.action-bar {
+  position: sticky;
+  bottom: 0;
+  margin: 24px -12px -12px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid #f0f0f0;
+  text-align: center;
+  z-index: 9;
+}
+.action-bar :deep(.el-button) {
+  min-width: 200px;
+}
+
+/* 暗黑模式 */
+html.dark .page-hint {
+  background: linear-gradient(135deg, rgba(80, 72, 229, 0.15) 0%, rgba(64, 158, 255, 0.15) 100%);
+}
+html.dark .hint-title { color: #e5e7eb; }
+html.dark .config-card,
+html.dark .action-bar {
+  background: #1f1f1f;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+html.dark .config-key { background: #2a2a2a; color: #cfcfcf; }
 </style>
