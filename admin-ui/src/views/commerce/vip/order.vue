@@ -228,28 +228,28 @@ getList()
 </script>
 
 <style scoped>
-.vip-order-page { padding: 16px; }
+.vip-order-page { padding: 12px; }
 
 /* 统计卡片 */
 .stat-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 .stat-card {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 18px 20px;
-  border-radius: 12px;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
   background: #fff;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   transition: transform 0.2s, box-shadow 0.2s;
   position: relative;
   overflow: hidden;
 }
-.stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08); }
+.stat-card:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); }
 .stat-card::before {
   content: ''; position: absolute; inset: 0; opacity: 0.06; pointer-events: none;
 }
@@ -259,48 +259,50 @@ getList()
 .stat-card--gmv::before     { background: linear-gradient(135deg, #f5576c, #fa709a); }
 
 .stat-icon {
-  width: 44px; height: 44px; border-radius: 10px;
+  width: 34px; height: 34px; border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px; color: #fff; flex-shrink: 0;
+  font-size: 18px; color: #fff; flex-shrink: 0;
 }
 .stat-card--total   .stat-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
 .stat-card--paid    .stat-icon { background: linear-gradient(135deg, #43e97b, #38f9d7); }
 .stat-card--pending .stat-icon { background: linear-gradient(135deg, #fa709a, #fee140); }
 .stat-card--gmv     .stat-icon { background: linear-gradient(135deg, #f5576c, #fa709a); }
 
-.stat-body { display: flex; flex-direction: column; gap: 2px; }
-.stat-label { font-size: 12px; color: #909399; }
-.stat-value { font-size: 22px; font-weight: 700; color: #303133; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.stat-body { display: flex; flex-direction: column; gap: 0; line-height: 1.2; }
+.stat-label { font-size: 11px; color: #909399; }
+.stat-value { font-size: 18px; font-weight: 700; color: #303133; line-height: 1.2; font-variant-numeric: tabular-nums; }
 
 /* 工具栏 */
 .toolbar {
-  padding: 14px 16px 0;
-  margin-bottom: 12px;
+  padding: 10px 14px 0;
+  margin-bottom: 10px;
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
-.toolbar-form :deep(.el-form-item) { margin-bottom: 14px; }
+.toolbar-form :deep(.el-form-item) { margin-bottom: 10px; }
 
 /* 表格 */
 .vip-order-table {
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 .vip-order-table :deep(.el-table__inner-wrapper)::before { display: none; }
-.vip-order-table :deep(.cell) { padding: 12px 12px; }
+.vip-order-table :deep(.cell) { padding: 6px 10px; line-height: 1.5; }
+.vip-order-table :deep(.el-table__row) td { padding: 7px 0; }
+.vip-order-table :deep(th.el-table__cell) { padding: 8px 0; }
 
 /* 订单号 */
-.order-sn { display: flex; align-items: center; gap: 6px; }
+.order-sn { display: flex; align-items: center; gap: 4px; }
 .sn-text {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 12px;
+  font-size: 11px;
   color: #606266;
   background: #f4f6f9;
-  padding: 4px 10px;
-  border-radius: 8px;
-  letter-spacing: 0.3px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.2px;
 }
 .sn-copy {
   cursor: pointer;
@@ -310,9 +312,9 @@ getList()
 .sn-copy:hover { color: var(--el-color-primary); }
 
 /* 用户 */
-.user-cell { display: flex; align-items: center; gap: 10px; }
+.user-cell { display: flex; align-items: center; gap: 8px; }
 .user-avatar {
-  width: 36px; height: 36px;
+  width: 32px; height: 32px;
   border-radius: 50%;
   flex-shrink: 0;
   background: #f0f2f5;
@@ -320,60 +322,60 @@ getList()
 }
 .user-avatar :deep(img) { width: 100%; height: 100%; object-fit: cover; }
 .avatar-empty {
-  width: 36px; height: 36px;
+  width: 32px; height: 32px;
   border-radius: 50%;
   background: #f4f6f9;
   border: 1px dashed #dcdfe6;
   color: #909399;
-  font-size: 12px;
+  font-size: 11px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   user-select: none;
 }
-.user-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.user-info { display: flex; flex-direction: column; gap: 0; line-height: 1.35; min-width: 0; }
 .user-name { font-size: 13px; font-weight: 600; color: #303133; }
-.user-mobile { font-size: 12px; color: #909399; }
+.user-mobile { font-size: 11px; color: #909399; }
 
 /* 天数徽章 */
 .days-badge {
   display: inline-flex;
   align-items: baseline;
   gap: 2px;
-  padding: 4px 12px;
-  border-radius: 14px;
+  padding: 2px 10px;
+  border-radius: 12px;
   background: linear-gradient(135deg, #e3f2fd, #bbdefb);
   color: #1565c0;
 }
-.days-num { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
-.days-unit { font-size: 11px; opacity: 0.7; }
+.days-num { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.days-unit { font-size: 10px; opacity: 0.7; }
 
 /* 金额 */
 .money-text {
   display: inline-block;
-  font-size: 16px; font-weight: 700; color: #f56c6c;
+  font-size: 14px; font-weight: 700; color: #f56c6c;
   font-variant-numeric: tabular-nums;
 }
 .money-original {
-  display: block;
-  font-size: 11px; color: #c0c4cc;
+  display: inline-block;
+  font-size: 10px; color: #c0c4cc;
   text-decoration: line-through;
-  margin-top: 2px;
+  margin-left: 4px;
 }
 
 /* 支付方式 chip */
 .pay-chip {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 12px;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
   font-weight: 500;
   white-space: nowrap;
 }
-.pay-icon { font-size: 12px; }
+.pay-icon { font-size: 11px; }
 .pay-wechat     { background: #e7f7ed; color: #07c160; }
 .pay-alipay     { background: #e6f4ff; color: #1677ff; }
 .pay-wallet     { background: #fff7e6; color: #fa8c16; }
@@ -393,11 +395,12 @@ getList()
 
 /* 时间 */
 .time-text {
-  font-size: 12px;
+  font-size: 11px;
   color: #606266;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
-.text-muted { color: #c0c4cc; font-size: 12px; }
+.text-muted { color: #c0c4cc; font-size: 11px; }
 
 /* 空状态 */
 .empty-state {
