@@ -1,16 +1,24 @@
 <template>
   <div class="sidebar-logo-container" :class="{ 'collapse': collapse }">
-    <transition name="sidebarLogoFade">
-      <router-link key="logo" class="sidebar-logo-link" to="/">
+    <router-link key="logo" class="sidebar-logo-link" to="/">
+      <div class="sidebar-logo-wrap">
         <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <transition name="brandFade">
-          <div v-if="!collapse" class="sidebar-brand">
-            <span class="brand-title">短剧后台</span>
-            <span class="brand-subtitle">DRAMA · ADMIN</span>
+        <span class="sidebar-logo-glow"></span>
+      </div>
+      <transition name="brandFade">
+        <div v-if="!collapse" class="sidebar-brand">
+          <div class="brand-title">
+            <span class="brand-title-cn">短剧后台</span>
+            <span class="brand-title-badge">v2</span>
           </div>
-        </transition>
-      </router-link>
-    </transition>
+          <div class="brand-subtitle">
+            <span class="brand-line"></span>
+            <span>DRAMA · ADMIN</span>
+            <span class="brand-line"></span>
+          </div>
+        </div>
+      </transition>
+    </router-link>
   </div>
 </template>
 
@@ -71,13 +79,22 @@ const getLogoDivider = computed(() => {
 
 .sidebar-logo-container {
   position: relative;
-  height: 56px;
-  line-height: 56px;
+  height: 64px;
   background: v-bind(getLogoBackground);
-  text-align: center;
   overflow: hidden;
 
-  // 底部柔和分隔线
+  /* 顶部高光线 */
+  &::before {
+    content: '';
+    position: absolute;
+    left: 12px; right: 12px; top: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #5048e5 30%, #ec4899 70%, transparent);
+    opacity: 0.7;
+    border-radius: 0 0 2px 2px;
+  }
+
+  /* 底部柔和分隔线 */
   &::after {
     content: '';
     position: absolute;
@@ -94,28 +111,55 @@ const getLogoDivider = computed(() => {
   & .sidebar-logo-link {
     height: 100%;
     width: 100%;
-    display: flex;
+    /* sidebar.scss 全局 a { display: inline-block } 优先级更高，必须 !important */
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: nowrap;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 0 16px;
+    text-decoration: none;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
 
-    & .sidebar-logo {
-      width: 36px;
-      height: 36px;
-      vertical-align: middle;
-      border-radius: 10px;
-      box-shadow:
-        0 2px 8px rgba(80, 72, 229, 0.30),
-        0 6px 20px rgba(236, 72, 153, 0.18);
-      transition: transform 0.25s, box-shadow 0.25s;
-    }
-    &:hover .sidebar-logo {
+  /* logo 包装：附加柔光 */
+  .sidebar-logo-wrap {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    flex-grow: 0;
+  }
+  .sidebar-logo-glow {
+    position: absolute;
+    inset: -4px;
+    border-radius: 14px;
+    background: radial-gradient(closest-side, rgba(236, 72, 153, 0.35), transparent 70%);
+    filter: blur(6px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .sidebar-logo {
+    position: relative;
+    z-index: 1;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    box-shadow:
+      0 2px 8px rgba(80, 72, 229, 0.30),
+      0 6px 20px rgba(236, 72, 153, 0.20);
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  & .sidebar-logo-link:hover {
+    .sidebar-logo {
       transform: scale(1.08) rotate(-3deg);
       box-shadow:
-        0 4px 12px rgba(80, 72, 229, 0.42),
-        0 10px 28px rgba(236, 72, 153, 0.28);
+        0 4px 12px rgba(80, 72, 229, 0.45),
+        0 10px 28px rgba(236, 72, 153, 0.30);
     }
-
+    .sidebar-logo-glow { opacity: 1.2; }
   }
 
   /* 品牌文字 */
@@ -123,28 +167,52 @@ const getLogoDivider = computed(() => {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    line-height: 1.15;
+    justify-content: center;
+    gap: 3px;
+    line-height: 1.1;
     white-space: nowrap;
     overflow: hidden;
     min-width: 0;
+    flex: 1 1 auto;
   }
   .brand-title {
-    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .brand-title-cn {
+    font-size: 16px;
     font-weight: 700;
     color: v-bind(getLogoTextColor);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+  .brand-title-badge {
+    font-size: 9px;
+    font-weight: 700;
+    color: #fff;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #5048e5, #ec4899);
     letter-spacing: 0.5px;
-    background: linear-gradient(135deg, #5048e5 0%, #ec4899 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    line-height: 1.2;
   }
   .brand-subtitle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     font-size: 9px;
     font-weight: 600;
     color: v-bind(getLogoTextColor);
-    opacity: 0.45;
-    letter-spacing: 1.4px;
-    margin-top: 1px;
+    opacity: 0.5;
+    letter-spacing: 1.6px;
+  }
+  .brand-line {
+    flex: 1;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.4;
+    max-width: 14px;
   }
 
   /* brand 文字淡入淡出（与 sidebar 折叠联动） */
@@ -159,8 +227,11 @@ const getLogoDivider = computed(() => {
   }
 
   &.collapse {
-    .sidebar-logo-link { gap: 0; }
-    .sidebar-logo { margin-right: 0; }
+    .sidebar-logo-link {
+      gap: 0;
+      padding: 0;
+      justify-content: center !important;
+    }
   }
 }
 </style>

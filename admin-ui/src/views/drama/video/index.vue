@@ -134,7 +134,7 @@
         </div>
       </template>
 
-      <el-tabs v-model="activeTab" class="ep-form-tabs">
+      <el-tabs v-model="activeTab" class="app-dialog__tabs">
         <!-- 基本信息 -->
         <el-tab-pane label="基本信息" name="basic">
           <el-form ref="formRef" :model="form" :rules="rules" label-width="92px" class="ep-form">
@@ -461,7 +461,7 @@
           </div>
         </template>
 
-        <el-tabs v-model="epActiveTab" class="ep-form-tabs">
+        <el-tabs v-model="epActiveTab" class="app-dialog__tabs">
           <!-- 基本信息 -->
           <el-tab-pane label="基本信息" name="basic">
             <el-form ref="epFormRef" :model="epForm" :rules="epRules" label-width="92px" class="ep-form">
@@ -1568,24 +1568,7 @@ html.dark .ep-duration { background: #2a2a2a; color: #cfcfcf; }
   box-shadow: 0 2px 8px rgba(245, 108, 108, 0.4);
 }
 
-/* tabs */
-.ep-form-tabs :deep(.el-tabs__header) {
-  margin: 0 0 16px;
-  background: #fff;
-  border-radius: 10px;
-  padding: 0 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-}
-.ep-form-tabs :deep(.el-tabs__nav-wrap)::after { display: none; }
-.ep-form-tabs :deep(.el-tabs__item) {
-  font-weight: 600;
-  height: 44px;
-  line-height: 44px;
-}
-.ep-form-tabs :deep(.el-tabs__active-bar) {
-  height: 3px;
-  border-radius: 2px;
-}
+/* tabs 样式已由全局 dialog.scss .app-dialog__tabs 接管 */
 
 /* 表单分组卡 */
 .ep-form { margin-top: 0; }
