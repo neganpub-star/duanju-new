@@ -96,25 +96,25 @@ export const constantRoutes = [
     path: '/drama',
     component: Layout,
     redirect: '/drama/video',
-    meta: { title: '短剧管理', icon: 'list' },
+    meta: { title: '短剧管理', icon: 'clipboard' },
     children: [
       {
         path: 'video',
         component: () => import('@/views/drama/video/index'),
         name: 'DramaVideo',
-        meta: { title: '视频管理', icon: 'list' }
+        meta: { title: '视频管理', icon: 'monitor' }
       },
       {
         path: 'category',
         component: () => import('@/views/drama/category/index'),
         name: 'DramaCategory',
-        meta: { title: '分类管理', icon: 'tree' }
+        meta: { title: '分类管理', icon: 'nested' }
       },
       {
         path: 'richtext',
         component: () => import('@/views/drama/richtext/index'),
         name: 'DramaRichText',
-        meta: { title: '协议管理', icon: 'documentation' }
+        meta: { title: '协议管理', icon: 'pdf' }
       }
     ]
   },
@@ -128,7 +128,7 @@ export const constantRoutes = [
         path: 'list',
         component: () => import('@/views/member/index'),
         name: 'MemberList',
-        meta: { title: '用户列表', icon: 'user' }
+        meta: { title: '用户列表', icon: 'people' }
       }
     ]
   },
@@ -148,19 +148,19 @@ export const constantRoutes = [
         path: 'vip-order',
         component: () => import('@/views/commerce/vip/order'),
         name: 'CommerceVipOrder',
-        meta: { title: 'VIP订单', icon: 'documentation' }
+        meta: { title: 'VIP订单', icon: 'shopping' }
       },
       {
         path: 'usable',
         component: () => import('@/views/commerce/usable/index'),
         name: 'CommerceUsable',
-        meta: { title: '点数套餐', icon: 'form' }
+        meta: { title: '点数套餐', icon: 'rate' }
       },
       {
         path: 'reseller',
         component: () => import('@/views/commerce/reseller/index'),
         name: 'CommerceReseller',
-        meta: { title: '分销套餐', icon: 'form' }
+        meta: { title: '分销套餐', icon: 'skill' }
       },
       {
         path: 'wallet-log',
@@ -172,7 +172,7 @@ export const constantRoutes = [
         path: 'withdraw',
         component: () => import('@/views/commerce/wallet/withdraw'),
         name: 'Withdraw',
-        meta: { title: '提现审核', icon: 'form' }
+        meta: { title: '提现审核', icon: 'server' }
       }
     ]
   },
@@ -186,7 +186,7 @@ export const constantRoutes = [
         path: 'storage',
         component: () => import('@/views/system/config/index'),
         name: 'SystemConfig',
-        meta: { title: '参数配置', icon: 'edit' }
+        meta: { title: '参数配置', icon: 'tool' }
       }
     ]
   }

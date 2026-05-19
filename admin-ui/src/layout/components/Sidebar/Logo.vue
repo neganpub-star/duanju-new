@@ -1,13 +1,8 @@
 <template>
   <div class="sidebar-logo-container" :class="{ 'collapse': collapse }">
     <transition name="sidebarLogoFade">
-      <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
+      <router-link key="logo" class="sidebar-logo-link" to="/">
         <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 v-else class="sidebar-title">{{ title }}</h1>
-      </router-link>
-      <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 class="sidebar-title">{{ title }}</h1>
       </router-link>
     </transition>
   </div>
@@ -50,6 +45,12 @@ const getLogoTextColor = computed(() => {
   }
   return sideTheme.value === 'theme-dark' ? '#fff' : variables.menuLightText
 })
+
+// Logo 底部分隔线颜色（浅/暗主题分别可见）
+const getLogoDivider = computed(() => {
+  if (settingsStore.isDark) return 'rgba(255, 255, 255, 0.08)'
+  return sideTheme.value === 'theme-dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'
+})
 </script>
 
 <style lang="scss" scoped>
@@ -64,39 +65,51 @@ const getLogoTextColor = computed(() => {
 
 .sidebar-logo-container {
   position: relative;
-  height: 50px;
-  line-height: 50px;
+  height: 56px;
+  line-height: 56px;
   background: v-bind(getLogoBackground);
   text-align: center;
   overflow: hidden;
 
+  // 底部柔和分隔线
+  &::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      v-bind(getLogoDivider) 50%,
+      transparent 100%);
+  }
+
   & .sidebar-logo-link {
     height: 100%;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 
     & .sidebar-logo {
       width: 32px;
       height: 32px;
       vertical-align: middle;
-      margin-right: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      transition: transform 0.25s;
+    }
+    &:hover .sidebar-logo {
+      transform: scale(1.06);
     }
 
-    & .sidebar-title {
-      display: inline-block;
-      margin: 0;
-      color: v-bind(getLogoTextColor);
-      font-weight: 600;
-      line-height: 50px;
-      font-size: 14px;
-      font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
-      vertical-align: middle;
-    }
   }
 
   &.collapse {
-    .sidebar-logo {
-      margin-right: 0px;
-    }
+    .sidebar-logo-link { gap: 0; }
+    .sidebar-logo { margin-right: 0; }
   }
 }
 </style>
