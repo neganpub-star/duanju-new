@@ -32,15 +32,15 @@
 						<view  v-else class="video" style="background-color: #fff;position: relative;z-index: 2;padding: 40px 0;">
 							
 							<view v-if=" daoTime!=0" style="display: flex;flex-direction: column;align-items: center;" >
-								<view style="font-size: 16px;font-weight: 700;color: #5E72F7;margin-bottom: 60rpx;">{{ $t('video.nextBetter') }}</view>
-								<view style="font-size: 14px; color: #5E72F7;margin-bottom: 40rpx;">
+								<view style="font-size: 16px;font-weight: 700;color: var(--dj-primary);margin-bottom: 60rpx;">{{ $t('video.nextBetter') }}</view>
+								<view style="font-size: 14px; color: var(--dj-primary);margin-bottom: 40rpx;">
 									{{ $t('video.adCountdown', [daoTime]) }}
 								</view>
 								
 								
 							</view>
 							<view v-else style="display: flex;flex-direction: column;align-items: center;" >
-								<view style="font-size: 65rpx;font-weight: 700;color: #5E72F7;margin-bottom: 60rpx;padding-top: 36rpx;">{{ $t('video.continueWatch') }}</view>
+								<view style="font-size: 65rpx;font-weight: 700;color: var(--dj-primary);margin-bottom: 60rpx;padding-top: 36rpx;">{{ $t('video.continueWatch') }}</view>
 								
 							</view>
 							<!-- <view style="width: 100%;height: 200rpx;"> -->
@@ -815,7 +815,7 @@
 				width: 80rpx;
 				height: 80rpx;
 				border-radius: 50%;
-				background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+				background: $dj-gradient-primary;
 				outline: none;
 				background-image: url('https://img.nymaite.com/video_short/icons/jifen.png');
 				background-size: cover;
@@ -1053,13 +1053,13 @@
 								font-size: 28rpx;
 								
 								&.active {
-									color: #5E72F7;
+									color: var(--dj-primary);
 								}
 							}
 							
 							.btn {
 								display: block;
-								background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+								background: $dj-gradient-primary;
 								color: #fff;
 								box-sizing: border-box;
 								font-size: 28rpx;
@@ -1165,13 +1165,13 @@
 								// 	width: 100%;
 								// 	height: 100px;
 								// 	background: #fff;
-								// 	background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+								// 	background: $dj-gradient-primary;
 								// }
 				
 								.btn {
 									float: right;
 									clear: both;
-									background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+									background: $dj-gradient-primary;
 									border: none;
 									color: #fff;
 									line-height: 40rpx;

@@ -53,7 +53,7 @@
 						</view>
 					</view>
 					<view class="nodata" v-if="!contents.list.length && contents.status == 'nomore'">
-						<u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/data.png" :text="$t('search.noResults')"></u-empty>
+						<EmptyState type="search" :text="$t('search.noResults')" />
 					</view>
 					<view class="liststatus" v-if="contents.list.length">
 						<u-loadmore :status="contents.status" :line="true" :nomoreText="$t('home.noMore')" :loadmoreText="$t('home.loadMore')" />
@@ -65,7 +65,9 @@
 </template>
 
 <script>
+	import EmptyState from '@/components/EmptyState.vue'
 	export default {
+		components: { EmptyState },
 		data() {
 			return {
 				contents: {
@@ -238,7 +240,7 @@
 	.search_btn {
 		padding: 15rpx 35rpx;
 		margin-left: 20rpx;
-		background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+		background: $dj-gradient-primary;
 		border-radius: 30rpx;
 		box-shadow: 0 4rpx 12rpx rgba(94, 114, 247, 0.2);
 		transition: all 0.2s ease-in-out;

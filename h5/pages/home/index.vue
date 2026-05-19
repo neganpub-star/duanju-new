@@ -81,7 +81,7 @@
 					</block>
 				</view>
 				<view class="nodata" v-if="!videoList.length && status == 'nomore'">
-					<u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/data.png" :text="$t('common.noData')" />
+					<EmptyState type="search" />
 				</view>
 				<view class="liststatus" v-else>
 					<u-loadmore :status="status" :line="true" :nomoreText="$t('home.noMore')" :loadmoreText="$t('home.loadMore')" />
@@ -100,8 +100,9 @@
 <script>
 	import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
 	import CustomTabBar from '@/components/CustomTabBar.vue'
+	import EmptyState from '@/components/EmptyState.vue'
 	export default {
-		components: { CustomTabBar },
+		components: { CustomTabBar, EmptyState },
 		data() {
 			return {
 				navbarTitle: this.$store.state.app.title || '影视视频',
@@ -382,7 +383,7 @@
 	}
 
 	.header_new {
-		background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+		background: $dj-gradient-primary;
 		padding: 20rpx 30rpx 60rpx;
 		border-bottom-left-radius: 25rpx;
 		border-bottom-right-radius: 25rpx;
@@ -459,7 +460,7 @@
 		&.active {
 			color: #fff;
 			font-weight: 600;
-			background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+			background: $dj-gradient-primary;
 			box-shadow: 0 4rpx 14rpx rgba(94, 114, 247, 0.35);
 		}
 	}
@@ -566,7 +567,7 @@
 			}
 			
 			&.collect {
-				background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+				background: $dj-gradient-primary;
 				border: none;
 			}
 

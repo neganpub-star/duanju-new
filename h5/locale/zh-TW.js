@@ -11,6 +11,8 @@ export default {
     save: '儲存',
     loading: '載入中...',
     noData: '暫無數據',
+    noResults: '未找到相關內容',
+    loadFailed: '載入失敗，請稍後重試',
     noMore: '沒有更多了',
     networkError: '網絡連接失敗，請稍後重試',
     success: '操作成功',
@@ -360,5 +362,6 @@ export default {
     wxNotInstalled: '未安裝微信客戶端',
     pointsUnit: '點數',
     rechargePoints: '充值點數',
+    rechargeMore: '充值點數，解鎖更多劇集',
   },
 }

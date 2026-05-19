@@ -13,6 +13,8 @@ export default {
     save: '保存',
     loading: '加载中...',
     noData: '暂无数据',
+    noResults: '未找到相关内容',
+    loadFailed: '加载失败，请稍后重试',
     noMore: '没有更多了',
     networkError: '网络连接失败，请稍后重试',
     success: '操作成功',
@@ -385,5 +387,6 @@ export default {
     wxNotInstalled: '未安装微信客户端',
     pointsUnit: '点数',
     rechargePoints: '充值点数',
+    rechargeMore: '充值点数，解锁更多剧集',
   },
 }

@@ -16,9 +16,7 @@
 				:scroll-top="scrollTop"
 				@scrolltolower="loadMore"
 			>
-				<view v-if="!list.length && status === 'nomore'" class="empty-tip">
-					<text>{{ $t('comment.noComments') }}</text>
-				</view>
+				<EmptyState v-if="!list.length && status === 'nomore'" type="comment" size="mini" :text="$t('comment.noComments')" />
 
 				<view
 					class="comment-item"
@@ -40,7 +38,7 @@
 								<text class="action-text">{{ item.replyCount > 0 ? item.replyCount : $t('comment.reply') }}</text>
 							</view>
 							<view class="action-item like-btn" :class="{ liked: item.isLiked }" @click="toggleLike(item, index)">
-								<u-icon :name="item.isLiked ? 'heart-fill' : 'heart'" :color="item.isLiked ? '#5E72F7' : '#bbb'" size="15"></u-icon>
+								<u-icon :name="item.isLiked ? 'heart-fill' : 'heart'" :color="item.isLiked ? '$dj-primary' : '#bbb'" size="15"></u-icon>
 								<text class="action-text" :class="{ liked: item.isLiked }">{{ item.likes || '' }}</text>
 							</view>
 							<view class="action-item del-btn" v-if="item.isOwn" @click="deleteComment(item, index)">
@@ -60,7 +58,7 @@
 										<text class="action-text">{{ $t('comment.reply') }}</text>
 									</view>
 									<view class="action-item like-btn" :class="{ liked: r.isLiked }" @click="toggleLike(r, -1, index)">
-										<u-icon :name="r.isLiked ? 'heart-fill' : 'heart'" :color="r.isLiked ? '#5E72F7' : '#bbb'" size="13"></u-icon>
+										<u-icon :name="r.isLiked ? 'heart-fill' : 'heart'" :color="r.isLiked ? '$dj-primary' : '#bbb'" size="13"></u-icon>
 										<text class="action-text" :class="{ liked: r.isLiked }">{{ r.likes || '' }}</text>
 									</view>
 									<view class="action-item del-btn" v-if="r.isOwn" @click="deleteReply(r, index)">
@@ -74,7 +72,7 @@
 								@click="loadReplies(item, index)"
 							>
 								<text>{{ $t('comment.viewReplies', [item.replyCount]) }}</text>
-								<u-icon name="arrow-down" color="#5E72F7" size="12"></u-icon>
+								<u-icon name="arrow-down" color="$dj-primary" size="12"></u-icon>
 							</view>
 						</view>
 					</view>
@@ -110,8 +108,10 @@
 </template>
 
 <script>
+import EmptyState from '@/components/EmptyState.vue'
 export default {
 	name: 'CommentPanel',
+	components: { EmptyState },
 	props: {
 		show: { type: Boolean, default: false },
 		videoId: { type: [Number, String], default: null },
@@ -417,7 +417,7 @@ export default {
 		color: #bbb;
 
 		&.liked {
-			color: #5E72F7;
+			color: $dj-primary;
 		}
 	}
 }
@@ -438,7 +438,7 @@ export default {
 		align-items: center;
 
 		.reply-nickname {
-			color: #5E72F7;
+			color: $dj-primary;
 			font-weight: 600;
 		}
 
@@ -463,7 +463,7 @@ export default {
 		align-items: center;
 		gap: 8rpx;
 		font-size: 24rpx;
-		color: #5E72F7;
+		color: $dj-primary;
 		margin-top: 8rpx;
 		cursor: pointer;
 	}
@@ -524,7 +524,7 @@ export default {
 		}
 
 		&.active {
-			background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+			background: $dj-gradient-primary;
 		}
 	}
 }

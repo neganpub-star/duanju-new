@@ -138,7 +138,7 @@
 
 			/* 收益卡片 */
 			.earn_card {
-				background: linear-gradient(135deg, #5E72F7 0%, #9354FF 100%);
+				background: $dj-gradient-primary;
 				border-radius: 28rpx;
 				padding: 40rpx 36rpx 32rpx;
 				box-shadow: 0 8rpx 32rpx rgba(94, 114, 247, 0.35);
@@ -257,7 +257,7 @@
 					box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
 
 					&.active {
-						background: linear-gradient(135deg, #5E72F7 0%, #9354FF 100%);
+						background: $dj-gradient-primary;
 						box-shadow: 0 4rpx 20rpx rgba(94, 114, 247, 0.35);
 
 						.menu_label {
@@ -311,7 +311,7 @@
 						color: #222;
 						margin-bottom: 24rpx;
 						padding-left: 12rpx;
-						border-left: 6rpx solid #5E72F7;
+						border-left: 6rpx solid $dj-primary;
 					}
 
 					.desc_item {

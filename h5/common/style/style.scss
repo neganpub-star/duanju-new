@@ -1,3 +1,24 @@
+/* ============ 把 SCSS token 同步成 CSS 变量 ============
+   为什么需要这一步：
+     - SCSS token（$dj-*）是编译时常量，只能在 .scss 里用
+     - JS 对象里的 inline style（如 u-button 的 customStyle）需要 CSS 变量
+     - 这里把品牌色/渐变/文字色挂到 :root，JS 写 background: 'var(--dj-gradient-primary)' 即可
+     - 改 SCSS token 时，编译生成的 CSS var 值也会同步变化
+   ============================================================ */
+:root {
+  --dj-primary: #{$dj-primary};
+  --dj-primary-deep: #{$dj-primary-deep};
+  --dj-primary-soft: #{$dj-primary-soft};
+  --dj-accent: #{$dj-accent};
+  --dj-gradient-primary: #{$dj-gradient-primary};
+  --dj-gradient-accent: #{$dj-gradient-accent};
+  --dj-shadow-primary: #{$dj-shadow-primary};
+  --dj-text-primary: #{$dj-text-primary};
+  --dj-text-inverse: #{$dj-text-inverse};
+  --dj-bg-base: #{$dj-bg-base};
+  --dj-bg-page: #{$dj-bg-page};
+  --dj-bg-soft: #{$dj-bg-soft};
+}
 
 view,
 scroll-view,

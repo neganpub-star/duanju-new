@@ -316,22 +316,14 @@
 	} from "vuex"
 	import LangSwitcher from '@/components/LangSwitcher.vue'
 	import CustomTabBar from '@/components/CustomTabBar.vue'
+	import { primaryBtn } from '@/common/utils/buttonStyle.js'
 	export default {
 		components: { LangSwitcher, CustomTabBar },
 		data() {
 			return {
-				isBgColor: `#5E72F7`,
+				isBgColor: `var(--dj-primary)`,
 				isStatus: getApp().globalData.status,
-				buttonStyle: {
-					width: '100%',
-					height: '100%',
-					border: 'none',
-					fontSize: '24rpx',
-					color: '#fff',
-					background: 'linear-gradient(90deg, #5E72F7 0%, #9354FF 100%)',
-					borderRadius: '32rpx',
-					fontWeight: 'bold'
-				},
+				buttonStyle: primaryBtn({ height: '100%', fontSize: '24rpx', borderRadius: '32rpx' }),
 				cardListTwo: [{
 						id: 1,
 						img: 'https://img.nymaite.com/video_short/images/watched.png',
@@ -1014,7 +1006,7 @@
 						margin-left: 20rpx;
 
 						:deep(.u-button) {
-							background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%) !important;
+							background: $dj-gradient-primary !important;
 							border: none !important;
 							color: #fff !important;
 							border-radius: 32rpx !important;
@@ -1045,7 +1037,7 @@
 					font-weight: 600;
 
 					.left {
-						color: #5E72F7;
+						color: $dj-primary;
 						font-weight: 600;
 					}
 
@@ -1229,7 +1221,7 @@
 		position: relative;
 		padding: 0 30rpx 30rpx;
 		margin-bottom: 20rpx;
-		background: linear-gradient(135deg, #5E72F7 0%, #9354FF 100%);
+		background: $dj-gradient-primary;
 		border-radius: 0 0 40rpx 40rpx;
 		overflow: hidden;
 

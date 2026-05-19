@@ -279,7 +279,7 @@
 					color: #1a1a2e;
 					margin-bottom: 28rpx;
 					padding-left: 4rpx;
-					border-left: 6rpx solid #5E72F7;
+					border-left: 6rpx solid $dj-primary;
 					padding-left: 16rpx;
 				}
 
@@ -304,14 +304,14 @@
 
 						&.hot {
 							background: linear-gradient(160deg, #eef0ff 0%, #f3eaff 100%);
-							border-color: #5E72F7;
+							border-color: $dj-primary;
 							box-shadow: 0 4rpx 20rpx rgba(94, 114, 247, 0.18);
 						}
 
 						.hot_badge {
 							position: absolute;
 							top: -2rpx; right: -2rpx;
-							background: linear-gradient(135deg, #5E72F7, #9354FF);
+							background: $dj-gradient-primary;
 							color: #fff;
 							font-size: 20rpx;
 							font-weight: bold;
@@ -340,14 +340,14 @@
 							.unit {
 								font-size: 26rpx;
 								font-weight: 700;
-								color: #5E72F7;
+								color: $dj-primary;
 								margin-bottom: 4rpx;
 							}
 
 							.price_num {
 								font-size: 56rpx;
 								font-weight: 900;
-								color: #5E72F7;
+								color: $dj-primary;
 								line-height: 1;
 							}
 						}
@@ -364,7 +364,7 @@
 							height: 64rpx;
 							line-height: 64rpx;
 							text-align: center;
-							color: #5E72F7;
+							color: $dj-primary;
 							font-size: 26rpx;
 							font-weight: bold;
 							background: #eef0ff;
@@ -372,7 +372,7 @@
 							border: 1.5rpx solid #c5caff;
 
 							&.hot_btn {
-								background: linear-gradient(135deg, #5E72F7 0%, #9354FF 100%);
+								background: $dj-gradient-primary;
 								color: #fff;
 								border: none;
 								box-shadow: 0 4rpx 16rpx rgba(94,114,247,0.35);
@@ -396,7 +396,7 @@
 					font-size: 32rpx;
 					color: #1a1a2e;
 					font-weight: 800;
-					border-left: 6rpx solid #5E72F7;
+					border-left: 6rpx solid $dj-primary;
 					padding-left: 16rpx;
 				}
 			}

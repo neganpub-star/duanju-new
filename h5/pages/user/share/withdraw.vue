@@ -83,27 +83,20 @@
 						</view>
 					</view>
 				</view>
-				<view class="empty_tip" v-else>{{ $t('withdraw.noRecord') }}</view>
+				<EmptyState v-else type="wallet" size="mini" :text="$t('withdraw.noRecord')" />
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import { primaryBtn } from '@/common/utils/buttonStyle.js'
+	import EmptyState from '@/components/EmptyState.vue'
 	export default {
+		components: { EmptyState },
 		data() {
 			return {
-				buttonStyle: {
-					width: '100%',
-					height: '100rpx',
-					border: 'none',
-					fontSize: '30rpx',
-					color: '#fff',
-					background: 'linear-gradient(90deg, #5E72F7 0%, #9354FF 100%)',
-					borderRadius: '16rpx',
-					margin: '0',
-					fontWeight: 'bold'
-				},
+				buttonStyle: primaryBtn(),
 				buttonLoading: false,
 				types: [[
 					{ id: 1, type: 'wechat', label: '' },
@@ -264,7 +257,7 @@
 						display: flex;
 						align-items: center;
 						gap: 8rpx;
-						color: #5E72F7;
+						color: $dj-primary;
 						font-weight: 600;
 
 						.arrow {
@@ -292,7 +285,7 @@
 					.currency {
 						font-size: 36rpx;
 						font-weight: 700;
-						color: #5E72F7;
+						color: $dj-primary;
 						margin-right: 12rpx;
 					}
 
@@ -317,7 +310,7 @@
 					color: #1a1a1a;
 					margin-bottom: 24rpx;
 					padding-left: 12rpx;
-					border-left: 6rpx solid #5E72F7;
+					border-left: 6rpx solid $dj-primary;
 				}
 
 				.record_item {
@@ -366,7 +359,7 @@
 						border-radius: 20rpx;
 
 						&.status_0 { background: #fff8e6; color: #f0a500; }
-						&.status_1 { background: #eef0ff; color: #5E72F7; }
+						&.status_1 { background: #eef0ff; color: $dj-primary; }
 						&.status_2 { background: #e8f5e9; color: #2e7d32; }
 						&.status_-1 { background: #ffeaea; color: #e53935; }
 					}

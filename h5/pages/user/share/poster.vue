@@ -60,7 +60,7 @@
 		},
 		data() {
 			return {
-				isColor: `#9354FF`,
+				isColor: `$dj-primary-deep`,
 				posterBackground: '', // 海报背景图片
 				backgroundColor: '', // 背景颜色
 				
@@ -374,7 +374,7 @@
 					line-height: 80rpx;
 					color: #fff;
 					font-size: 32rpx;
-					background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+					background: $dj-gradient-primary;
 					border-radius: 16rpx;
 					text-align: center;
 					margin-top: -24rpx;

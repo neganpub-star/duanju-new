@@ -13,7 +13,7 @@
 			<view class="update_content">
 				<rich-text :nodes="info.content"></rich-text>
 				<view class="bar" v-if="!showConfirmButton">
-					<u-line-progress :percentage="info.percent" :showText="false" activeColor="#5E72F7"></u-line-progress>
+					<u-line-progress :percentage="info.percent" :showText="false" activeColor="$dj-primary"></u-line-progress>
 					<view class="tip">正在下载，请稍后...</view>
 				</view>
 			</view>
@@ -92,7 +92,7 @@
 
 <style lang="scss">
 	page {
-		background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+		background: $dj-gradient-primary;
 	}
 </style>
 <style lang="scss" scoped>

@@ -80,33 +80,25 @@
 		</view>
 
 		<view class="footer_content" v-if="levelData.length">
-			<u-button
-				:text="$t('dealer.activateNow')"
-				v-if="dredgeLevel != 0"
-				:loading="buttonLoading"
-				:customStyle="buttonStyle"
-				@click="dredgeDealer"
-			/>
+			<view class="primary-btn-wrap" v-if="dredgeLevel != 0">
+				<u-button
+					:text="$t('dealer.activateNow')"
+					:loading="buttonLoading"
+					:customStyle="buttonStyle"
+					@click="dredgeDealer"
+				/>
+			</view>
 		</view>
 	</view>
 </template>
 
 <script>
 	import { mapGetters, mapActions } from "vuex"
+	import { primaryBtn } from '@/common/utils/buttonStyle.js'
 	export default {
 		data() {
 			return {
-				buttonStyle: {
-					width: '100%',
-					height: '100rpx',
-					border: 'none',
-					fontSize: '32rpx',
-					color: '#fff',
-					background: 'linear-gradient(90deg, #5E72F7 0%, #9354FF 100%)',
-					borderRadius: '16rpx',
-					margin: '0',
-					fontWeight: 'bold'
-				},
+				buttonStyle: primaryBtn({ fontSize: '32rpx' }),
 				buttonLoading: false,
 				msg: '',
 				levelData: [],
@@ -244,23 +236,23 @@
 
 <style lang="scss" scoped>
 	.page_content {
-		background: #f5f6ff;
+		background: $dj-bg-soft;
 		min-height: 100vh;
 
 		.main_content {
-			padding: 24rpx 28rpx 160rpx;
+			padding: $dj-spacing-base 28rpx 160rpx;
 
 			.user_card {
-				background: linear-gradient(135deg, #5E72F7 0%, #9354FF 100%);
-				border-radius: 28rpx;
-				padding: 36rpx 32rpx 28rpx;
-				box-shadow: 0 8rpx 32rpx rgba(94, 114, 247, 0.35);
-				margin-bottom: 24rpx;
+				background: $dj-gradient-primary;
+				border-radius: $dj-radius-lg;
+				padding: $dj-spacing-md $dj-spacing-md $dj-spacing-base;
+				box-shadow: $dj-shadow-primary;
+				margin-bottom: $dj-spacing-base;
 
 				.user_row {
 					display: flex;
 					align-items: center;
-					gap: 24rpx;
+					gap: $dj-spacing-base;
 					margin-bottom: 28rpx;
 
 					.avatar {
@@ -278,9 +270,9 @@
 						justify-content: center;
 
 						.avatar_initial {
-							font-size: 36rpx;
-							font-weight: 700;
-							color: #fff;
+							font-size: $dj-fs-xl;
+							font-weight: $dj-fw-bold;
+							color: $dj-text-inverse;
 						}
 					}
 
@@ -288,14 +280,14 @@
 						flex: 1;
 
 						.user_greeting {
-							font-size: 30rpx;
-							font-weight: 700;
-							color: #fff;
-							margin-bottom: 8rpx;
+							font-size: $dj-fs-md;
+							font-weight: $dj-fw-bold;
+							color: $dj-text-inverse;
+							margin-bottom: $dj-spacing-xs;
 						}
 
 						.user_desc {
-							font-size: 24rpx;
+							font-size: $dj-fs-sm;
 							color: rgba(255, 255, 255, 0.75);
 						}
 					}
@@ -310,53 +302,53 @@
 
 					.status_badge {
 						background: rgba(255, 255, 255, 0.2);
-						border-radius: 20rpx;
+						border-radius: $dj-radius-md;
 						padding: 6rpx 20rpx;
 
 						.badge_text {
-							font-size: 24rpx;
-							font-weight: 700;
-							color: #fff;
+							font-size: $dj-fs-sm;
+							font-weight: $dj-fw-bold;
+							color: $dj-text-inverse;
 						}
 					}
 
 					.expire_text {
-						font-size: 24rpx;
+						font-size: $dj-fs-sm;
 						color: rgba(255, 255, 255, 0.75);
 					}
 				}
 			}
 
 			.section_card {
-				background: #fff;
-				border-radius: 24rpx;
-				padding: 32rpx;
-				box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
-				margin-bottom: 24rpx;
+				background: $dj-bg-base;
+				border-radius: $dj-radius-lg;
+				padding: $dj-spacing-md;
+				box-shadow: $dj-shadow-sm;
+				margin-bottom: $dj-spacing-base;
 
 				.section_title {
-					font-size: 30rpx;
-					font-weight: 700;
-					color: #1a1a1a;
+					font-size: $dj-fs-md;
+					font-weight: $dj-fw-bold;
+					color: $dj-text-primary;
 					margin-bottom: 28rpx;
 					padding-left: 12rpx;
-					border-left: 6rpx solid #5E72F7;
+					border-left: 6rpx solid $dj-primary;
 				}
 
 				.level_grid {
 					display: flex;
 					flex-wrap: wrap;
-					gap: 16rpx;
+					gap: $dj-spacing-sm;
 
 					.level_item {
 						width: calc((100% - 32rpx) / 3);
-						border-radius: 20rpx;
+						border-radius: $dj-radius-md;
 						overflow: hidden;
 						border: 2rpx solid #e8eaff;
 						background: #f8f9ff;
 
 						&.active {
-							background: linear-gradient(135deg, #5E72F7 0%, #9354FF 100%);
+							background: $dj-gradient-primary;
 							border-color: transparent;
 							box-shadow: 0 4rpx 20rpx rgba(94, 114, 247, 0.35);
 
@@ -369,77 +361,77 @@
 							}
 
 							.level_price {
-								color: #fff;
-								.price_num { color: #fff; }
+								color: $dj-text-inverse;
+								.price_num { color: $dj-text-inverse; }
 							}
 						}
 
 						.level_tag {
 							display: block;
 							width: 100%;
-							background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
-							color: #fff;
-							font-size: 20rpx;
-							font-weight: 700;
+							background: linear-gradient(90deg, $dj-primary 0%, $dj-primary-deep 100%);
+							color: $dj-text-inverse;
+							font-size: $dj-fs-xs;
+							font-weight: $dj-fw-bold;
 							text-align: center;
-							padding: 10rpx 8rpx;
-							line-height: 1.3;
+							padding: 10rpx $dj-spacing-xs;
+							line-height: $dj-lh-tight;
 							word-break: break-word;
 						}
 
 						.level_body {
-							padding: 16rpx 16rpx 24rpx;
+							padding: $dj-spacing-sm $dj-spacing-sm $dj-spacing-base;
 						}
 
 						.level_name {
-							font-size: 24rpx;
-							color: #888;
-							margin-bottom: 8rpx;
+							font-size: $dj-fs-sm;
+							color: $dj-text-tertiary;
+							margin-bottom: $dj-spacing-xs;
 						}
 
 						.level_price {
 							display: flex;
 							align-items: baseline;
-							gap: 4rpx;
+							gap: $dj-spacing-xxs;
 							margin: 10rpx 0;
-							color: #5E72F7;
+							color: $dj-primary;
 
 							.currency {
-								font-size: 28rpx;
-								font-weight: 700;
+								font-size: $dj-fs-base;
+								font-weight: $dj-fw-bold;
 							}
 
 							.price_num {
-								font-size: 52rpx;
+								font-size: $dj-fs-display;
 								font-weight: 900;
 								line-height: 1;
-								color: #5E72F7;
+								color: $dj-primary;
 							}
 						}
 
 						.level_rate {
 							font-size: 22rpx;
-							color: #666;
-							line-height: 1.6;
+							color: $dj-text-secondary;
+							line-height: $dj-lh-loose;
 						}
 					}
 				}
 			}
 
 			.benefits_card {
-				background: #fff;
-				border-radius: 24rpx;
-				padding: 32rpx;
-				box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
-				margin-bottom: 24rpx;
+				background: $dj-bg-base;
+				border-radius: $dj-radius-lg;
+				padding: $dj-spacing-md;
+				box-shadow: $dj-shadow-sm;
+				margin-bottom: $dj-spacing-base;
 
 				.section_title {
-					font-size: 30rpx;
-					font-weight: 700;
-					color: #1a1a1a;
-					margin-bottom: 24rpx;
+					font-size: $dj-fs-md;
+					font-weight: $dj-fw-bold;
+					color: $dj-text-primary;
+					margin-bottom: $dj-spacing-base;
 					padding-left: 12rpx;
-					border-left: 6rpx solid #5E72F7;
+					border-left: 6rpx solid $dj-primary;
 				}
 
 				.benefits_list {
@@ -460,7 +452,7 @@
 				.benefit_icon {
 					width: 72rpx;
 					height: 72rpx;
-					border-radius: 16rpx;
+					border-radius: $dj-radius-base;
 					display: flex;
 					align-items: center;
 					justify-content: center;
@@ -479,26 +471,26 @@
 				}
 
 				.benefit_title {
-					font-size: 28rpx;
-					font-weight: 700;
-					color: #1a1a1a;
-					margin-bottom: 4rpx;
+					font-size: $dj-fs-base;
+					font-weight: $dj-fw-bold;
+					color: $dj-text-primary;
+					margin-bottom: $dj-spacing-xxs;
 				}
 
 				.benefit_desc {
-					font-size: 24rpx;
-					color: #888;
+					font-size: $dj-fs-sm;
+					color: $dj-text-tertiary;
 					line-height: 1.5;
 				}
 			}
 
 			.desc_card {
-				background: #fff;
-				border-radius: 24rpx;
-				padding: 32rpx;
-				box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
+				background: $dj-bg-base;
+				border-radius: $dj-radius-lg;
+				padding: $dj-spacing-md;
+				box-shadow: $dj-shadow-sm;
 				font-size: 26rpx;
-				color: #555;
+				color: $dj-text-secondary;
 			}
 		}
 
@@ -507,9 +499,10 @@
 			bottom: 0;
 			left: 0;
 			width: 100%;
-			padding: 20rpx 32rpx 40rpx;
-			background: #fff;
+			padding: 20rpx $dj-spacing-md $dj-spacing-lg;
+			background: $dj-bg-base;
 			box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.06);
 		}
+
 	}
 </style>

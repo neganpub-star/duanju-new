@@ -42,7 +42,7 @@
 								</view>
 							</view>
 						</view>
-						<view class="empty_tip" v-else>{{ $t('brokerage.noData') }}</view>
+						<EmptyState v-else type="wallet" size="mini" :text="$t('brokerage.noData')" />
 					</view>
 				</view>
 			</scroll-view>
@@ -51,7 +51,9 @@
 </template>
 
 <script>
+	import EmptyState from '@/components/EmptyState.vue'
 	export default {
+		components: { EmptyState },
 		data() {
 			return {
 				info: {
@@ -111,7 +113,7 @@
 			}
 
 			.top_card {
-				background: linear-gradient(135deg, #5E72F7 0%, #9354FF 100%);
+				background: $dj-gradient-primary;
 				border-radius: 28rpx;
 				padding: 40rpx;
 				box-shadow: 0 8rpx 32rpx rgba(94, 114, 247, 0.35);
@@ -152,7 +154,7 @@
 					color: #1a1a1a;
 					margin-bottom: 24rpx;
 					padding-left: 12rpx;
-					border-left: 6rpx solid #5E72F7;
+					border-left: 6rpx solid $dj-primary;
 				}
 
 				.list_box {
@@ -176,7 +178,7 @@
 
 							.relation_tag {
 								font-size: 22rpx;
-								color: #5E72F7;
+								color: $dj-primary;
 								background: #eef0ff;
 								padding: 4rpx 16rpx;
 								border-radius: 20rpx;
@@ -203,7 +205,7 @@
 									font-weight: 600;
 									color: #333;
 
-									&.accent { color: #5E72F7; }
+									&.accent { color: $dj-primary; }
 								}
 							}
 						}

@@ -74,7 +74,7 @@
 			}
 		},
 		created() {
-			this.isColor = `#9354FF`,
+			this.isColor = `$dj-primary-deep`,
 				this.getAD()
 		},
 		methods: {
@@ -227,7 +227,7 @@
 				}
 				
 				.right {
-					color: #5E72F7;
+					color: $dj-primary;
 					white-space: nowrap;
 					margin-left: 20rpx;
 				}

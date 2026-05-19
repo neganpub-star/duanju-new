@@ -91,31 +91,12 @@
 <script>
 	import api from '@/common/request/api.js'
 	import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
+	import { primaryBtn, disabledBtn } from '@/common/utils/buttonStyle.js'
 	export default {
 		data() {
 			return {
-				buttonStyleDisable: {
-					width: '300rpx',
-					height: '80rpx',
-					border: 'none',
-					fontSize: '24rpx',
-					color: '#fff',
-					background: '#E0E0E0',
-					borderRadius: '14rpx',
-					margin: '0',
-					fontWeight: 'bold'
-				},
-				buttonStyle: {
-					width: '300rpx',
-					height: '80rpx',
-					border: 'none',
-					fontSize: '24rpx',
-					color: '#fff',
-					background: 'linear-gradient(90deg, #5E72F7 0%, #9354FF 100%)',
-					borderRadius: '14rpx',
-					margin: '0',
-					fontWeight: 'bold'
-				},
+				buttonStyleDisable: disabledBtn({ size: 'sm', width: '300rpx' }),
+				buttonStyle: primaryBtn({ size: 'sm', width: '300rpx' }),
 				userInfo: {},
 				user: {
 					avatar: '',

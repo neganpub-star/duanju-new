@@ -48,20 +48,11 @@
 
 <script>
 	import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
+	import { primaryBtn } from '@/common/utils/buttonStyle.js'
 	export default {
 		data() {
 			return {
-				buttonStyle: {
-					width: '100%',
-					height: '100rpx',
-					border: 'none',
-					fontSize: '24rpx',
-					color: '#fff',
-					background: 'linear-gradient(90deg, #5E72F7 0%, #9354FF 100%)',
-					borderRadius: '16rpx',
-					margin: '0',
-					fontWeight: 'bold'
-				},
+				buttonStyle: primaryBtn({ fontSize: '24rpx' }),
 				buttonLoading: true,
 				integralData: [],
 				integralActiveId: 0,
@@ -194,20 +185,20 @@
 							background: #fff;
 
 							&.active {
-								border-color: #9354FF;
+								border-color: $dj-primary-deep;
 								box-shadow: 0 4rpx 20rpx rgba(147, 84, 255, 0.2);
 
 								.item-top {
-									background: linear-gradient(135deg, #5E72F7 0%, #9354FF 100%);
+									background: $dj-gradient-primary;
 
 									.pkg-title {
-										color: #fff;
+										color: $dj-text-inverse;
 									}
 								}
 
 								.price-row {
 									.price-symbol, .price-num {
-										background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+										background: $dj-gradient-primary;
 										-webkit-background-clip: text;
 										-webkit-text-fill-color: transparent;
 										background-clip: text;

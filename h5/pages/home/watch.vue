@@ -75,7 +75,7 @@
 			</view>
 
 			<view class="nodata" v-if="!currentList.length && loadStatus === 'nomore'">
-				<u-empty mode="data" icon="http://cdn.uviewui.com/uview/empty/data.png" :text="$t('watch.noRecord')" />
+				<EmptyState :text="$t('watch.noRecord')" />
 			</view>
 
 			<view class="list-status" v-if="currentList.length">
@@ -110,9 +110,10 @@
 <script>
 	import { mapGetters } from 'vuex'
 	import CustomTabBar from '@/components/CustomTabBar.vue'
+	import EmptyState from '@/components/EmptyState.vue'
 
 	export default {
-		components: { CustomTabBar },
+		components: { CustomTabBar, EmptyState },
 		data() {
 			return {
 				headerH: 0,
@@ -242,8 +243,8 @@
 </script>
 
 <style lang="scss" scoped>
-$purple: #9354FF;
-$blue: #5E72F7;
+$purple: $dj-primary-deep;
+$blue: $dj-primary;
 $grad: linear-gradient(90deg, #{$blue}, #{$purple});
 
 .page {

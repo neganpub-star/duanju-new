@@ -97,15 +97,19 @@ public class VideoController {
             @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(name = "pagesize", required = false) Integer pagesize,  // 旧前端用 pagesize
             @RequestParam(required = false) String keyword,
+            @RequestParam(name = "search", required = false) String search,       // H5 端用 search
             @RequestParam(required = false) Long categoryId,
             @RequestParam(name = "category_id", required = false) Long categoryIdOld) { // 旧前端用 category_id
         int pNum = (page != null) ? page : pageNum;
         int pSize = (pagesize != null) ? pagesize : pageSize;
         Long catId = (categoryIdOld != null) ? categoryIdOld : categoryId;
+        // search 和 keyword 二选一（H5 用 search，admin/管理后台 / 旧前端用 keyword）
+        String kw = (search != null && !search.isBlank()) ? search.trim()
+                  : (keyword != null && !keyword.isBlank() ? keyword.trim() : null);
         PageQuery pq = new PageQuery();
         pq.setPageNum(pNum);
         pq.setPageSize(pSize);
-        PageResult<Video> result = videoService.pageList(pq, siteId, keyword, catId, 1);
+        PageResult<Video> result = videoService.pageList(pq, siteId, kw, catId, 1);
         List<Video> rows = result.getRows();
         // 默认 is_favorite=0，登录用户叠加实际收藏状态
         rows.forEach(v -> v.setIsFavorite(0));

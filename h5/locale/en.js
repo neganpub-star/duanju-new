@@ -11,6 +11,8 @@ export default {
     save: 'Save',
     loading: 'Loading...',
     noData: 'No data available',
+    noResults: 'No matching results',
+    loadFailed: 'Failed to load, please try again',
     noMore: 'No more',
     networkError: 'Network error, please try again',
     success: 'Success',
@@ -375,5 +377,6 @@ export default {
     wxNotInstalled: 'WeChat not installed',
     pointsUnit: 'pts',
     rechargePoints: 'Recharge Points',
+    rechargeMore: 'Recharge to unlock more episodes',
   },
 }

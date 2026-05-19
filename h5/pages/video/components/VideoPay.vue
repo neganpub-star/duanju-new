@@ -17,7 +17,7 @@
 				<view class="right">{{ $t('videopay.balance', [userInfoStore.usable || 0]) }}</view>
 			</view>
 			<view class="p_list">
-				<!-- 点数不足提示 + 充值入口 -->
+				<!-- 点数不足：警示色提示 + 充值入口 -->
 				<view class="p_recharge_tip" v-if="iosIsPay && (userInfoStore.usable || 0) < price" @click.stop="goRecharge">
 					<view class="tip-left">
 						<text class="tip-icon">⚡</text>
@@ -25,11 +25,18 @@
 					</view>
 					<text class="tip-arrow">›</text>
 				</view>
+				<!-- 余额够也常驻一个轻量充值入口（兜底，避免 VIP 区不渲染时用户无路可走） -->
+				<view class="p_recharge_tip p_recharge_tip--soft" v-else-if="iosIsPay" @click.stop="goRecharge">
+					<view class="tip-left">
+						<text class="tip-icon">💎</text>
+						<text class="tip-text">{{ $t('videopay.rechargeMore') }}</text>
+					</view>
+					<text class="tip-arrow">›</text>
+				</view>
 
 				<!-- VIP 套餐 -->
 				<view class="p_section_header" v-if="iosIsPay && vipData.length">
 					<view class="title">{{ $t('vip.selectPlan') }}</view>
-					<view class="recharge-link" @click.stop="goRecharge">{{ $t('videopay.rechargePoints') }} ›</view>
 				</view>
 				<view class="p_vip_section" v-if="iosIsPay && vipData.length">
 					<view class="vip-card" v-for="(item, index) in vipData" :key="'vip-'+index" @click="recharge('member', item.id, item.price)">
@@ -75,7 +82,7 @@
 				vipData: [],
 				buttonLoading: true,
 				isAdLoading: false,
-				isColor: `#9354FF`,
+				isColor: `$dj-primary-deep`,
 			};
 		},
 		computed: {
@@ -96,7 +103,7 @@
 			},
 		},
 		created() {
-			this.isColor = `#9354FF`
+			this.isColor = `$dj-primary-deep`
 			this.getIntegralList()
 			this.getVipList()
 			// 弹窗打开时刷新余额（v-if 每次重建组件，show watcher 不会触发初始值）
@@ -263,7 +270,7 @@
 				content: '';
 				display: block;
 				height: 6rpx;
-				background: linear-gradient(90deg, #6e7ff3 0%, #9354FF 100%);
+				background: linear-gradient(90deg, #6e7ff3 0%, $dj-primary-deep 100%);
 				border-radius: 24rpx 24rpx 0 0;
 				margin: 0 -40rpx;
 				margin-bottom: 0;
@@ -298,7 +305,7 @@
 				}
 
 				.right {
-					color: #9354FF;
+					color: $dj-primary-deep;
 					white-space: nowrap;
 					margin-left: 20rpx;
 				}
@@ -321,7 +328,7 @@
 					align-items: center;
 
 					.text2 {
-						color: #5E72F7;
+						color: $dj-primary;
 					}
 				}
 
@@ -335,11 +342,18 @@
 					align-items: center;
 					justify-content: space-between;
 					width: 100%;
-					background: rgba(147, 84, 255, 0.08);
+					background: rgba(245, 108, 108, 0.10);   // 警示底色（不足提醒）
+					border: 1rpx solid rgba(245, 108, 108, 0.18);
 					border-radius: 16rpx;
 					padding: 22rpx 28rpx;
 					margin-bottom: 16rpx;
 					box-sizing: border-box;
+					transition: opacity 0.2s, transform 0.2s;
+
+					&:active {
+						opacity: 0.85;
+						transform: scale(0.99);
+					}
 
 					.tip-left {
 						display: flex;
@@ -352,14 +366,24 @@
 
 						.tip-text {
 							font-size: 26rpx;
-							color: #9354FF;
+							color: #c0392b;
+							font-weight: 600;
 						}
 					}
 
 					.tip-arrow {
 						font-size: 30rpx;
-						color: #9354FF;
+						color: #c0392b;
 						font-weight: 700;
+					}
+
+					/* 余额够时的轻量版：紫色软底 + 主色文字 */
+					&.p_recharge_tip--soft {
+						background: rgba(147, 84, 255, 0.08);
+						border-color: rgba(147, 84, 255, 0.18);
+
+						.tip-text { color: $dj-primary-deep; font-weight: 500; }
+						.tip-arrow { color: $dj-primary-deep; }
 					}
 				}
 
@@ -371,19 +395,19 @@
 				width: 100%;
 				margin-top: 24rpx;
 				padding: 0 4rpx 12rpx 16rpx;
-				border-left: 6rpx solid #9354FF;
+				border-left: 6rpx solid $dj-primary-deep;
 				box-sizing: border-box;
 
 				.title {
 					font-size: 30rpx;
 					font-weight: 600;
-					color: #9354FF;
+					color: $dj-primary-deep;
 				}
 
 				.recharge-link {
 					font-size: 30rpx;
 					font-weight: 600;
-					color: #9354FF;
+					color: $dj-primary-deep;
 				}
 			}
 
@@ -411,7 +435,7 @@
 					}
 					
 					&.item2 {
-						background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+						background: $dj-gradient-primary;
 						color: #fff;
 					}
 					
@@ -446,7 +470,7 @@
 							justify-content: center;
 							
 							.text2 {
-								color: #5E72F7;
+								color: $dj-primary;
 							}
 						}
 					}
@@ -454,7 +478,7 @@
 					.tips {
 						font-size: 28rpx;
 						text-align: center;
-						background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+						background: $dj-gradient-primary;
 						padding: 8rpx 0;
 						color: #fff;
 					}
@@ -465,7 +489,7 @@
 						right: -2rpx;
 						padding: 4rpx 16rpx;
 						font-size: 24rpx;
-						background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+						background: $dj-gradient-primary;
 						border-radius: 0 0 0 20rpx;
 						color: #fff;
 					}
@@ -518,14 +542,14 @@
 						.vc-currency {
 							font-size: 26rpx;
 							font-weight: 700;
-							color: #5E72F7;
+							color: $dj-primary;
 							padding-bottom: 8rpx;
 						}
 
 						.vc-amount {
 							font-size: 56rpx;
 							font-weight: 700;
-							color: #5E72F7;
+							color: $dj-primary;
 							line-height: 1;
 						}
 					}
@@ -543,8 +567,8 @@
 						width: 100%;
 						padding: 16rpx 0;
 						border-radius: 40rpx;
-						border: 2rpx solid #5E72F7;
-						color: #5E72F7;
+						border: 2rpx solid $dj-primary;
+						color: $dj-primary;
 						font-size: 24rpx;
 						text-align: center;
 						font-weight: 600;
@@ -556,7 +580,7 @@
 						right: 0;
 						padding: 4rpx 16rpx;
 						font-size: 22rpx;
-						background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+						background: $dj-gradient-primary;
 						border-radius: 0 20rpx 0 20rpx;
 						color: #fff;
 					}

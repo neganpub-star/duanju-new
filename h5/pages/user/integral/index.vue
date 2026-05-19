@@ -51,15 +51,8 @@
 							</view>
 						</view>
 
-						<view class="empty-box" v-else>
-							<view class="empty-icon">
-								<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-									<circle cx="40" cy="40" r="36" fill="#F5F5F5"/>
-									<path d="M28 40h24M40 28v24" stroke="#ccc" stroke-width="3" stroke-linecap="round"/>
-								</svg>
-							</view>
-							<text class="empty-text">{{ $t('common.noData') }}</text>
-						</view>
+						<EmptyState v-else type="wallet" />
+
 					</view>
 
 				</view>
@@ -70,7 +63,9 @@
 
 <script>
 	import { mapGetters } from "vuex"
+	import EmptyState from '@/components/EmptyState.vue'
 	export default {
+		components: { EmptyState },
 		data() {
 			return {
 				list: [],
@@ -156,7 +151,7 @@
 .balance-card {
 	position: relative;
 	overflow: hidden;
-	background: linear-gradient(135deg, #5E72F7 0%, #9354FF 100%);
+	background: $dj-gradient-primary;
 	border-radius: 24rpx;
 	padding: 48rpx 40rpx;
 	display: flex;
@@ -238,7 +233,7 @@
 	.card-btn {
 		position: relative;
 		background: rgba(255, 255, 255, 0.95);
-		color: #5E72F7;
+		color: $dj-primary;
 		font-size: 26rpx;
 		font-weight: 700;
 		padding: 16rpx 32rpx;

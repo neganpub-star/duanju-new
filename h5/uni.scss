@@ -79,3 +79,119 @@ $uni-color-subtitle: #555555; // 二级标题颜色
 $uni-font-size-subtitle:26px;
 $uni-color-paragraph: #3F536E; // 文章段落颜色
 $uni-font-size-paragraph:15px;
+
+/* ============================================================
+ * 项目 Design Tokens（短剧 H5）
+ *   命名规范：$dj-{category}-{level}
+ *   单位说明：rpx（uni-app 自动按 750 设计稿换算到实际像素）
+ *
+ *   使用示例：
+ *     .title { font-size: $dj-fs-lg; color: $dj-text-primary; }
+ *     .card  { padding: $dj-spacing-base; border-radius: $dj-radius-md; }
+ *
+ *   原则：所有页面 / 组件颜色、字号、间距、圆角必须用这里的变量，
+ *        避免再出现散落的 #999 / 28rpx / 16rpx 等硬编码
+ * ============================================================ */
+
+/* ---- 品牌主题色 ----
+ *   衍生 token（gradient / light / shadow）都引用基础变量 $dj-primary / $dj-primary-deep / $dj-accent,
+ *   只改基础变量就能让所有衍生色一起换肤
+ */
+$dj-primary:  #10b981;            // 主色（紫蓝）— 改这一个，渐变 / 浅色 / 阴影会同步跟随
+$dj-primary-deep: #9354FF;       // 主色加深（紫）
+$dj-primary-soft: #f5f6ff;       // 主色超浅背景（页面/卡片用）
+$dj-primary-light: rgba($dj-primary, 0.1);    // hover/点击态浅色（自动从主色生成）
+$dj-accent: #ec4899;             // 强调粉色（与紫色搭配高光、徽章用）
+$dj-gradient-primary: linear-gradient(135deg, $dj-primary 0%, $dj-primary-deep 100%);
+$dj-gradient-accent: linear-gradient(135deg, $dj-primary 0%, $dj-accent 100%);
+
+/* ---- 语义色 ---- */
+$dj-success: #67C23A;
+$dj-warning: #E6A23C;
+$dj-danger: #F56C6C;
+$dj-info: #909399;
+
+/* ---- 文字颜色 ---- */
+$dj-text-primary: #1a1a1a;       // 标题、强调文字
+$dj-text-regular: #303133;       // 正文
+$dj-text-secondary: #606266;     // 次要文字
+$dj-text-tertiary: #909399;      // 辅助说明
+$dj-text-placeholder: #c0c4cc;   // 占位符
+$dj-text-disabled: #d8d8d8;
+$dj-text-inverse: #ffffff;       // 反白（深色背景上的文字）
+$dj-text-on-primary: #ffffff;    // 主色背景上的文字
+
+/* ---- 背景颜色 ---- */
+$dj-bg-base: #ffffff;            // 卡片/弹窗基底
+$dj-bg-page: #f7f8fa;            // 普通页面背景
+$dj-bg-soft: #f5f6ff;            // 紫色软背景
+$dj-bg-hover: #f1f1f1;           // 点击/hover 灰底
+$dj-bg-mask: rgba(0, 0, 0, 0.5); // 弹窗遮罩
+$dj-bg-overlay: rgba(0, 0, 0, 0.6); // 视频覆盖层
+
+/* ---- 边框 ---- */
+$dj-border-base: #e4e7ed;
+$dj-border-light: #ebeef5;
+$dj-border-lighter: #f2f6fc;
+$dj-border-dashed: 2rpx dashed $dj-border-base;
+
+/* ---- 字号（rpx，750 设计稿） ---- */
+$dj-fs-xs: 20rpx;     // 备注、超小辅助
+$dj-fs-sm: 24rpx;     // 副标、说明
+$dj-fs-base: 28rpx;   // 正文（默认）
+$dj-fs-md: 30rpx;     // 强调正文
+$dj-fs-lg: 32rpx;     // 标题
+$dj-fs-xl: 36rpx;     // 页面主标题
+$dj-fs-2xl: 40rpx;    // 大标题
+$dj-fs-display: 52rpx; // 价格、数字展示位
+
+/* ---- 字重 ---- */
+$dj-fw-normal: 400;
+$dj-fw-medium: 500;
+$dj-fw-semi: 600;
+$dj-fw-bold: 700;
+
+/* ---- 行高 ---- */
+$dj-lh-tight: 1.2;
+$dj-lh-base: 1.4;
+$dj-lh-loose: 1.6;
+
+/* ---- 间距（margin / padding / gap） ---- */
+$dj-spacing-xxs: 4rpx;
+$dj-spacing-xs: 8rpx;
+$dj-spacing-sm: 16rpx;
+$dj-spacing-base: 24rpx;
+$dj-spacing-md: 32rpx;
+$dj-spacing-lg: 40rpx;
+$dj-spacing-xl: 56rpx;
+$dj-spacing-xxl: 80rpx;
+
+/* ---- 圆角 ---- */
+$dj-radius-xs: 8rpx;
+$dj-radius-sm: 12rpx;
+$dj-radius-base: 16rpx;
+$dj-radius-md: 20rpx;
+$dj-radius-lg: 24rpx;
+$dj-radius-xl: 32rpx;
+$dj-radius-pill: 9999rpx;   // 胶囊
+
+/* ---- 阴影 ---- */
+$dj-shadow-sm:   0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+$dj-shadow-base: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+$dj-shadow-lg:   0 8rpx 32rpx rgba(0, 0, 0, 0.12);
+$dj-shadow-primary: 0 8rpx 32rpx rgba($dj-primary, 0.35);   // 自动跟随主色
+$dj-shadow-accent:  0 8rpx 32rpx rgba($dj-accent, 0.28);
+
+/* ---- 过渡 ---- */
+$dj-transition-fast: 0.15s ease;
+$dj-transition-base: 0.25s ease;
+$dj-transition-slow: 0.4s ease;
+
+/* ---- z-index 层级 ---- */
+$dj-z-base: 1;
+$dj-z-dropdown: 100;
+$dj-z-sticky: 200;
+$dj-z-fixed: 300;
+$dj-z-modal-backdrop: 1000;
+$dj-z-modal: 1010;
+$dj-z-toast: 2000;

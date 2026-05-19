@@ -80,15 +80,15 @@
 								<view  v-else class="video" style="background-color: #fff;position: relative;z-index: 2;padding: 40px 0;">
 									
 									<view v-if=" daoTime!=0" style="display: flex;flex-direction: column;align-items: center;" >
-										<view style="font-size: 16px;font-weight: 700;color: #5E72F7;margin-bottom: 60rpx;">{{ $t('video.nextBetter') }}</view>
-										<view style="font-size: 14px; color: #5E72F7;margin-bottom: 40rpx;">
+										<view style="font-size: 16px;font-weight: 700;color: var(--dj-primary);margin-bottom: 60rpx;">{{ $t('video.nextBetter') }}</view>
+										<view style="font-size: 14px; color: var(--dj-primary);margin-bottom: 40rpx;">
 											看个广告，休息片刻：{{daoTime}}
 										</view>
 										
 										
 									</view>
 									<view v-else style="display: flex;flex-direction: column;align-items: center;" >
-										<view style="font-size: 65rpx;font-weight: 700;color: #5E72F7;margin-bottom: 60rpx;padding-top: 36rpx;">{{ $t('video.continueWatch') }}</view>
+										<view style="font-size: 65rpx;font-weight: 700;color: var(--dj-primary);margin-bottom: 60rpx;padding-top: 36rpx;">{{ $t('video.continueWatch') }}</view>
 										
 									</view>
 									<view class="dwCenter">
@@ -316,7 +316,7 @@
 		components: { VideoMenu, VideoPay, CommentPanel, tkiQrcode },
 		data() {
 			return {
-				isColor: `#9354FF`,
+				isColor: `$dj-primary-deep`,
 				
 				current: 0,
 				currentTime: 0, // 当前视频播放进度
@@ -1466,7 +1466,7 @@
 				width: 80rpx;
 				height: 80rpx;
 				border-radius: 50%;
-				background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+				background: $dj-gradient-primary;
 				outline: none;
 				background-image: url('https://img.nymaite.com/video_short/icons/jifen.png');
 				background-size: cover;
@@ -1533,7 +1533,7 @@
 					height: 80rpx;
 					line-height: 80rpx;
 					border-radius: 80rpx;
-					background: linear-gradient(90deg, #5E72F7 0%, #9354FF 100%);
+					background: $dj-gradient-primary;
 					margin: 0 auto;
 					
 					&:active {

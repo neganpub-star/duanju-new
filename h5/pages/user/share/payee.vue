@@ -90,28 +90,19 @@
 <script>
 	import api from '@/common/request/api.js'
 	import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
+	import { primaryBtn } from '@/common/utils/buttonStyle.js'
 	export default {
 		data() {
 			return {
-				isColor: `#9354FF`,
-				
-				isBgColor: `#5E72F7`,
-				buttonStyle: {
-					width: '100%',
-					height: '108rpx',
-					border: 'none',
-					fontSize: '32rpx',
-					color: '#fff',
-					background: `linear-gradient(90deg, #5E72F7 0%, #9354FF 100%)`,
-					borderRadius: '16rpx',
-					margin: '0',
-					fontWeight: 'bold'
-				},
+				isColor: `var(--dj-primary-deep)`,
+
+				isBgColor: `var(--dj-primary)`,
+				buttonStyle: primaryBtn({ height: '108rpx', fontSize: '32rpx' }),
 				buttonLoading: false,
 				tabsActiveStyle: {
-					background: `linear-gradient(90deg, #5E72F7 0%, #9354FF 100%)`,
+					background: 'var(--dj-gradient-primary)',
 					'-webkit-background-clip': 'text',
-					color: '#5E72F7',
+					color: 'var(--dj-primary)',
 					fontSize: '32rpx',
 					fontWeight: 'bold',
 				},
