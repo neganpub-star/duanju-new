@@ -164,9 +164,9 @@
 
 					.balance_block {
 						.balance_label {
-							font-size: 24rpx;
+							font-size: $dj-fs-sm;
 							color: rgba(255, 255, 255, 0.75);
-							margin-bottom: 8rpx;
+							margin-bottom: $dj-spacing-xs;
 						}
 
 						.balance_amount {
@@ -194,7 +194,7 @@
 						border: 1.5rpx solid rgba(255, 255, 255, 0.5);
 						border-radius: 40rpx;
 						padding: 14rpx 36rpx;
-						font-size: 28rpx;
+						font-size: $dj-fs-base;
 						font-weight: 700;
 						color: #fff;
 						backdrop-filter: blur(8rpx);
@@ -215,7 +215,7 @@
 						display: flex;
 						flex-direction: column;
 						align-items: center;
-						gap: 8rpx;
+						gap: $dj-spacing-xs;
 
 						.stat_label {
 							font-size: 22rpx;
@@ -223,7 +223,7 @@
 						}
 
 						.stat_value {
-							font-size: 28rpx;
+							font-size: $dj-fs-base;
 							font-weight: 700;
 							color: #fff;
 
@@ -231,7 +231,7 @@
 								background: rgba(255, 255, 255, 0.2);
 								border-radius: 20rpx;
 								padding: 4rpx 16rpx;
-								font-size: 24rpx;
+								font-size: $dj-fs-sm;
 							}
 						}
 					}
@@ -242,7 +242,7 @@
 			.menu_grid {
 				display: flex;
 				flex-wrap: wrap;
-				gap: 16rpx;
+				gap: $dj-spacing-sm;
 				margin: 28rpx 0;
 
 				.menu_item {
@@ -287,7 +287,7 @@
 					}
 
 					.menu_label {
-						font-size: 24rpx;
+						font-size: $dj-fs-sm;
 						font-weight: 600;
 						color: #333;
 						text-align: center;
@@ -306,10 +306,10 @@
 
 				&.desc_placeholder {
 					.desc_title {
-						font-size: 30rpx;
+						font-size: $dj-fs-md;
 						font-weight: 700;
 						color: #222;
-						margin-bottom: 24rpx;
+						margin-bottom: $dj-spacing-base;
 						padding-left: 12rpx;
 						border-left: 6rpx solid $dj-primary;
 					}
@@ -317,7 +317,7 @@
 					.desc_item {
 						display: flex;
 						align-items: center;
-						gap: 16rpx;
+						gap: $dj-spacing-sm;
 						padding: 16rpx 0;
 						border-bottom: 1rpx solid #f0f0f0;
 
@@ -326,11 +326,11 @@
 						}
 
 						.desc_icon {
-							font-size: 32rpx;
+							font-size: $dj-fs-lg;
 						}
 
 						.desc_text {
-							font-size: 28rpx;
+							font-size: $dj-fs-base;
 							color: #444;
 						}
 					}

@@ -46,11 +46,11 @@
 				</view>
 			</view>
 			
-			<view class="button" style="margin-top: 40rpx;">
+			<view class="button" style="margin-top: $dj-spacing-lg;">
 				<u-button type="error" :plain="true" :text="$t('user.logout')" @click="logoutClick"></u-button>
 			</view>
 			
-			<!-- <view class="button" style="margin-top: 40rpx;">
+			<!-- <view class="button" style="margin-top: $dj-spacing-lg;">
 				<u-button type="error" text="注销账号" @click="deleteClick"></u-button>
 			</view> -->
 			
@@ -352,12 +352,12 @@
 <style lang="scss" scoped>
 	.page_content {
 		.main_content {
-			padding: 40rpx;
+			padding: $dj-spacing-lg;
 			overflow-y: auto;
 			
 			.wrapper {
 				height: 100rpx;
-				font-size: 32rpx;
+				font-size: $dj-fs-lg;
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
@@ -393,7 +393,7 @@
 					.nickname,
 					.mobile
 					{
-						font-size: 32rpx;
+						font-size: $dj-fs-lg;
 						color: #999;
 						text-align: right;
 					}
@@ -411,7 +411,7 @@
 				align-items: center;
 				
 				.label {
-					font-size: 32rpx;
+					font-size: $dj-fs-lg;
 					color: #000;
 					white-space: nowrap;
 					margin-right: 30rpx;
@@ -419,13 +419,13 @@
 				
 				.input {
 					flex: 1;
-					font-size: 32rpx;
+					font-size: $dj-fs-lg;
 					color: #000;
-					margin-left: 40rpx;
+					margin-left: $dj-spacing-lg;
 				}
 				
 				.send {
-					font-size: 28rpx;
+					font-size: $dj-fs-base;
 					color: #000;
 					padding: 20rpx 0;
 					position: absolute;

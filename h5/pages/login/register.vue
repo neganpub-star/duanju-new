@@ -235,7 +235,7 @@
 				.u-form-item__body__right__message {
 					margin-left: 0 !important;
 					line-height: 1.5em;
-					font-size: 28rpx;
+					font-size: $dj-fs-base;
 					padding: 0 10rpx 20rpx 10rpx;
 				}
 			}
@@ -252,7 +252,7 @@
 				}
 				
 				.codebtn {
-					font-size: 28rpx;
+					font-size: $dj-fs-base;
 					color: #333;
 				}
 			}
@@ -265,7 +265,7 @@
 		.check_box {
 			display: flex;
 			align-items: center;
-			font-size: 28rpx;
+			font-size: $dj-fs-base;
 			
 			.text {
 				color: #583EF2;
@@ -278,7 +278,7 @@
 			
 			.text {
 				color: #626262;
-				font-size: 28rpx;
+				font-size: $dj-fs-base;
 			}
 		}
 	}

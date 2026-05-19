@@ -81,7 +81,7 @@
 									
 									<view v-if=" daoTime!=0" style="display: flex;flex-direction: column;align-items: center;" >
 										<view style="font-size: 16px;font-weight: 700;color: var(--dj-primary);margin-bottom: 60rpx;">{{ $t('video.nextBetter') }}</view>
-										<view style="font-size: 14px; color: var(--dj-primary);margin-bottom: 40rpx;">
+										<view style="font-size: 14px; color: var(--dj-primary);margin-bottom: $dj-spacing-lg;">
 											看个广告，休息片刻：{{daoTime}}
 										</view>
 										
@@ -223,10 +223,10 @@
 						<ad-custom unit-id="adunit-0b636c153e797660" bindload="adLoad" binderror="adError" bindclose="adClose"></ad-custom>
 
 					</view>
-					<view style="margin-bottom: 20rpx;font-size: 28rpx;">
+					<view style="margin-bottom: 20rpx;font-size: $dj-fs-base;">
 						免费原创内容生产不易
 					</view>
-					<view style="margin-bottom: 20rpx; font-size: 28rpx;">
+					<view style="margin-bottom: 20rpx; font-size: $dj-fs-base;">
 						观看本集需先解锁
 					</view>
 					<view class="box_look" style="margin-bottom: 20rpx;" v-if="userInfo && config.uniad_switch == '1' && config.adpid" @click="adCheck">
@@ -1412,7 +1412,7 @@
 	// 		.box_img{
 	// 			width: 50rpx;
 	// 			height: 50rpx;
-	// 			margin-bottom: 40rpx;
+	// 			margin-bottom: $dj-spacing-lg;
 	// 		}
 	// 		.box_hezi{
 	// 			background-color: #fff;
@@ -1427,7 +1427,7 @@
 	// 				width: 80%;
 	// 				height: 300rpx;
 					
-	// 				margin-bottom: 40rpx;
+	// 				margin-bottom: $dj-spacing-lg;
 					
 	// 			}
 	// 			.box_look{
@@ -1524,7 +1524,7 @@
 				text-align: center;
 				
 				.text {
-					font-size: 32rpx;
+					font-size: $dj-fs-lg;
 					margin-bottom: 30rpx;
 					line-height: 48rpx;
 				}
@@ -1552,7 +1552,7 @@
 			left: 0;
 			right: 0;
 			z-index: 1;
-			font-size: 32rpx;
+			font-size: $dj-fs-lg;
 			padding: 18rpx 32rpx;
 			background: rgba(30, 30, 30, 0.68); /* 深灰色半透明 */
 			border-radius: 32rpx;
@@ -1668,9 +1668,9 @@
 							align-items: center;
 							
 							.text {
-								font-size: 32rpx;
+								font-size: $dj-fs-lg;
 								color: #fff;
-								margin-top: 40rpx;
+								margin-top: $dj-spacing-lg;
 							}
 						}
 					}
@@ -1722,7 +1722,7 @@
 							align-items: center;
 							justify-content: center;
 							border: 1rpx solid rgba(255, 255, 255, 0.20);
-							margin-bottom: 8rpx;
+							margin-bottom: $dj-spacing-xs;
 						}
 
 						.icon-svg,
@@ -1738,7 +1738,7 @@
 						}
 
 						.text {
-							font-size: 24rpx;
+							font-size: $dj-fs-sm;
 							font-weight: 600;
 							color: rgba(255, 255, 255, 0.95);
 							text-shadow: 0 2rpx 6rpx rgba(0,0,0,0.55);
@@ -1788,7 +1788,7 @@
 						display: flex;
 						flex-direction: row;
 						justify-content: center;
-						font-size: 40rpx;
+						font-size: $dj-fs-2xl;
 						margin-bottom: 60rpx;
 						font-weight: 700;
 						

@@ -204,7 +204,7 @@
 				justify-content: space-between;
 				position: relative;
 				padding: 30rpx 0;
-				font-size: 32rpx;
+				font-size: $dj-fs-lg;
 
 				.left {
 					flex: 1;
@@ -218,7 +218,7 @@
 					}
 					
 					.text2 {
-						font-size: 24rpx;
+						font-size: $dj-fs-sm;
 						color: rgba(#fff, 0.5);
 						margin: 0 40rpx;
 						white-space: nowrap;
@@ -246,10 +246,10 @@
 					width: calc((100% - 60rpx) / 3);
 					height: 252rpx;
 					margin-right: 30rpx;
-					margin-bottom: 40rpx;
+					margin-bottom: $dj-spacing-lg;
 					position: relative;
 					background: rgba(#fff, 0.1);
-					font-size: 28rpx;
+					font-size: $dj-fs-base;
 					border-radius: 10rpx;
 					overflow: hidden;
 					border: none;
@@ -270,7 +270,7 @@
 					
 					.info {
 						width: 100%;
-						padding: 8rpx;
+						padding: $dj-spacing-xs;
 						text-align: center;
 						position: absolute;
 						bottom: 0;
@@ -292,7 +292,7 @@
 						
 						.icon {
 							width: 60rpx;
-							margin-bottom: 8rpx;
+							margin-bottom: $dj-spacing-xs;
 						}
 					}
 				}

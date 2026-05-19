@@ -223,7 +223,7 @@
 				
 				.tips {
 					color: #fff;
-					font-size: 36rpx;
+					font-size: $dj-fs-xl;
 					font-weight: 700;
 					position: absolute;
 
@@ -265,7 +265,7 @@
 			}
 			
 			.title_box {
-				margin-bottom: 40rpx;
+				margin-bottom: $dj-spacing-lg;
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -276,7 +276,7 @@
 				}
 				
 				.text {
-					font-size: 40rpx;
+					font-size: $dj-fs-2xl;
 					color: #EAD0AE;
 					text-shadow: 0 2rpx 0 0 #000000;
 					font-weight: bold;
@@ -297,18 +297,18 @@
 			}
 
 			.task_box {
-				margin-top: 32rpx;
+				margin-top: $dj-spacing-md;
 				
 				.item_box {
 					.item {
 						border-radius: 20rpx;
 						background: #42403E;
-						padding: 24rpx;
+						padding: $dj-spacing-base;
 						display: flex;
 						align-items: center;
 						justify-content: space-between;
 						font-weight: bold;
-						margin-bottom: 16rpx;
+						margin-bottom: $dj-spacing-sm;
 						
 						&:last-child {
 							margin-bottom: 0;
@@ -316,8 +316,8 @@
 						
 						.texts {
 							flex: 1;
-							margin-right: 80rpx;
-							font-size: 28rpx;
+							margin-right: $dj-spacing-xxl;
+							font-size: $dj-fs-base;
 							color: #FAD9B4;
 							
 							.line {
@@ -336,7 +336,7 @@
 							border-radius: 50rpx;
 							background: #F3D2A6;
 							text-align: center;
-							font-size: 28rpx;
+							font-size: $dj-fs-base;
 							color: #3A3A38;
 							
 							&.disabled {

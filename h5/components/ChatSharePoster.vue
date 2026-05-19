@@ -215,7 +215,7 @@
 			
 			.poster {
 				position: relative;
-				padding: 40rpx;
+				padding: $dj-spacing-lg;
 				background: #6A62D1;
 				border-radius: 20rpx;
 				
@@ -232,16 +232,16 @@
 					margin-top: 30rpx;
 					background: #fff;
 					border-radius: 20rpx;
-					padding: 40rpx;
+					padding: $dj-spacing-lg;
 					
 					.title {
-						font-size: 32rpx;
+						font-size: $dj-fs-lg;
 						font-weight: 700;
 						margin-bottom: 20rpx;
 					}
 					
 					.content {
-						font-size: 28rpx;
+						font-size: $dj-fs-base;
 						white-space: pre-line;
 						word-break: break-all;
 						word-wrap: break-word;
@@ -258,7 +258,7 @@
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
-					margin-top: 40rpx;
+					margin-top: $dj-spacing-lg;
 					
 					.infos {
 						flex: 1;
@@ -283,13 +283,13 @@
 						
 						.nickname {
 							flex: 1;
-							font-size: 28rpx;
+							font-size: $dj-fs-base;
 							margin-left: 20rpx;
 							color: #fff;
 							
 							.text1 {
 								font-weight: 700;
-								margin-bottom: 8rpx;
+								margin-bottom: $dj-spacing-xs;
 							}
 						}
 					}
@@ -332,11 +332,11 @@
 		}
 		
 		.tips {
-			margin-top: 40rpx;
+			margin-top: $dj-spacing-lg;
 			width: 100%;
 			text-align: center;
 			color: #fff;
-			font-size: 28rpx;
+			font-size: $dj-fs-base;
 			font-weight: bold;
 		}
 	}

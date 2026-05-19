@@ -163,7 +163,7 @@ export default {
 
 .app-modal__text {
 	display: block;
-	font-size: 28rpx;
+	font-size: $dj-fs-base;
 	color: $dj-text-secondary;
 	text-align: center;
 	line-height: 1.55;
@@ -182,7 +182,7 @@ export default {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 30rpx;
+	font-size: $dj-fs-md;
 	font-weight: 600;
 	transition: background 0.15s;
 	-webkit-tap-highlight-color: transparent;

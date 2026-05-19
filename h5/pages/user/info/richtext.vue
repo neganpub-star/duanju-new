@@ -51,6 +51,6 @@
 <style lang="scss" scoped>
 	.main_content {
 		overflow-y: auto;
-		padding: 40rpx;
+		padding: $dj-spacing-lg;
 	}
 </style>

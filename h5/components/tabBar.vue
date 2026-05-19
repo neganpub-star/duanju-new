@@ -133,7 +133,7 @@
                 height: 41rpx;
             }
             .tab_text {
-                font-size: 20rpx;
+                font-size: $dj-fs-xs;
                 margin-top: 9rpx;
             }
         }

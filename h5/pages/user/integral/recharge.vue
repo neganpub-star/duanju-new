@@ -21,7 +21,7 @@
 							<view class="item-bottom">
 								<view class="price-row">
 									<text class="price-symbol">¥</text>
-									<text class="price-num">{{ item.price }}</text>
+									<text class="price-num dj-num">{{ item.price }}</text>
 								</view>
 								<view class="original-row" v-if="item.originalPrice && item.originalPrice > item.price">
 									<text class="original-price">¥{{ item.originalPrice }}</text>
@@ -159,7 +159,7 @@
 			overflow-y: auto;
 			
 			.box_title {
-				font-size: 30rpx;
+				font-size: $dj-fs-md;
 				color: #000;
 				font-weight: 700;
 			}
@@ -215,14 +215,14 @@
 								gap: 10rpx;
 
 								.pkg-title {
-									font-size: 32rpx;
+									font-size: $dj-fs-lg;
 									font-weight: 700;
 									color: #333;
 									line-height: 1.2;
 								}
 
 								.give-tag {
-									font-size: 20rpx;
+									font-size: $dj-fs-xs;
 									color: #fff;
 									background: linear-gradient(90deg, #ff6b35 0%, #ff4444 100%);
 									padding: 4rpx 12rpx;
@@ -276,11 +276,11 @@
 			
 			.box3 {
 				.box_content {
-					margin-top: 24rpx;
+					margin-top: $dj-spacing-base;
 					
 					.text_info {
 						border: 2rpx solid rgba(238, 238, 238, 1);
-						font-size: 24rpx;
+						font-size: $dj-fs-sm;
 						color: #7F7F7F;
 						padding: 24rpx 32rpx;
 						border-radius: 20rpx;

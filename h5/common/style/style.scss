@@ -20,6 +20,29 @@
   --dj-bg-soft: #{$dj-bg-soft};
 }
 
+/* ============ 数字精化工具类（金额 / 点数 / 佣金 / 倒计时） ============
+ * 用法：<text class="dj-num">¥99</text>  或  <view class="dj-num dj-num--lg">10000</view>
+ *
+ * 效果：
+ *   - 等宽数字（tabular-nums）：1234 与 9999 列对齐
+ *   - 系统字体偏 Display 体（在 iOS / 现代浏览器上是衬线大字体）
+ *   - 字距压缩（letter-spacing: -0.5rpx）让数字更紧凑、专业
+ *   - feature-settings 启用 lining numerals（更精致的现代数字字形）
+ * ============================================================ */
+.dj-num {
+  font-family: -apple-system, "SF Pro Display", "SF Pro Text", BlinkMacSystemFont,
+               "Helvetica Neue", "PingFang SC", system-ui, sans-serif;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  letter-spacing: -0.5rpx;
+}
+
+/* 数字尺寸变体 */
+.dj-num--sm { font-size: 24rpx; font-weight: 600; }
+.dj-num--md { font-size: 36rpx; font-weight: 700; letter-spacing: -1rpx; }
+.dj-num--lg { font-size: 52rpx; font-weight: 800; letter-spacing: -1.5rpx; }
+.dj-num--xl { font-size: 72rpx; font-weight: 800; letter-spacing: -2rpx; line-height: 1; }
+
 view,
 scroll-view,
 swiper,

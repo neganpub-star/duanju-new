@@ -48,7 +48,7 @@
 							<view class="level_name">{{ item.expire }}{{ $t('common.days') }}</view>
 							<view class="level_price">
 								<text class="currency">¥</text>
-								<text class="price_num">{{ item.price }}</text>
+								<text class="price_num dj-num">{{ item.price }}</text>
 							</view>
 							<view class="level_rate">{{ $t('dealer.directRate', [Number(item.direct)]) }}</view>
 							<view class="level_rate">{{ $t('dealer.indirectRate', [Number(item.indirect)]) }}</view>

@@ -207,7 +207,7 @@
 		.card-amount-row {
 			display: flex;
 			align-items: baseline;
-			gap: 8rpx;
+			gap: $dj-spacing-xs;
 
 			.card-amount {
 				font-size: 72rpx;
@@ -217,7 +217,7 @@
 			}
 
 			.card-unit {
-				font-size: 28rpx;
+				font-size: $dj-fs-base;
 				opacity: 0.8;
 				font-weight: 500;
 			}
@@ -226,7 +226,7 @@
 		.card-hint {
 			font-size: 22rpx;
 			opacity: 0.6;
-			margin-top: 16rpx;
+			margin-top: $dj-spacing-sm;
 		}
 	}
 
@@ -249,7 +249,7 @@
 	align-items: center;
 	background: #fff;
 	border-radius: 20rpx;
-	margin-top: 24rpx;
+	margin-top: $dj-spacing-base;
 	padding: 32rpx 0;
 	box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
 
@@ -258,7 +258,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 16rpx;
+		gap: $dj-spacing-sm;
 
 		.action-icon {
 			width: 80rpx;
@@ -297,7 +297,7 @@
 
 // ── 明细列表 ──────────────────────────────────────────
 .detail-section {
-	margin-top: 24rpx;
+	margin-top: $dj-spacing-base;
 	background: #fff;
 	border-radius: 20rpx;
 	box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
@@ -308,7 +308,7 @@
 		border-bottom: 2rpx solid #f5f5f5;
 
 		.section-title {
-			font-size: 32rpx;
+			font-size: $dj-fs-lg;
 			font-weight: 700;
 			color: #1a1a2e;
 		}
@@ -319,7 +319,7 @@
 			display: flex;
 			align-items: center;
 			padding: 32rpx 40rpx;
-			gap: 24rpx;
+			gap: $dj-spacing-base;
 			border-bottom: 2rpx solid #f8f8f8;
 
 			&:last-child {
@@ -340,7 +340,7 @@
 
 					.icon-text {
 						color: #67c23a;
-						font-size: 36rpx;
+						font-size: $dj-fs-xl;
 						font-weight: 700;
 					}
 				}
@@ -350,7 +350,7 @@
 
 					.icon-text {
 						color: #f56c6c;
-						font-size: 36rpx;
+						font-size: $dj-fs-xl;
 						font-weight: 700;
 					}
 				}
@@ -361,16 +361,16 @@
 				min-width: 0;
 				display: flex;
 				flex-direction: column;
-				gap: 8rpx;
+				gap: $dj-spacing-xs;
 
 				.item-name {
-					font-size: 30rpx;
+					font-size: $dj-fs-md;
 					font-weight: 600;
 					color: #1a1a2e;
 				}
 
 				.item-time {
-					font-size: 24rpx;
+					font-size: $dj-fs-sm;
 					color: #aaa;
 				}
 			}
@@ -404,7 +404,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 24rpx;
+		gap: $dj-spacing-base;
 
 		.empty-icon {
 			width: 120rpx;
@@ -417,7 +417,7 @@
 		}
 
 		.empty-text {
-			font-size: 28rpx;
+			font-size: $dj-fs-base;
 			color: #bbb;
 		}
 	}

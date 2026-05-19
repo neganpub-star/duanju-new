@@ -80,7 +80,7 @@ export default {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		margin-bottom: 24rpx;
+		margin-bottom: $dj-spacing-base;
 		transition: transform 0.4s ease;
 	}
 
@@ -90,14 +90,14 @@ export default {
 	}
 
 	&__text {
-		font-size: 28rpx;
+		font-size: $dj-fs-base;
 		font-weight: 600;
 		color: $dj-text-secondary;
-		margin-bottom: 8rpx;
+		margin-bottom: $dj-spacing-xs;
 	}
 
 	&__desc {
-		font-size: 24rpx;
+		font-size: $dj-fs-sm;
 		color: $dj-text-tertiary;
 		text-align: center;
 		max-width: 480rpx;
@@ -105,12 +105,12 @@ export default {
 	}
 
 	&__action {
-		margin-top: 24rpx;
+		margin-top: $dj-spacing-base;
 		padding: 12rpx 32rpx;
 		border-radius: 24rpx;
 		background: var(--dj-gradient-primary);
 		color: $dj-text-inverse;
-		font-size: 24rpx;
+		font-size: $dj-fs-sm;
 		font-weight: 600;
 	}
 
@@ -121,7 +121,7 @@ export default {
 		.empty-state__icon {
 			width: 96rpx;
 			height: 96rpx;
-			margin-bottom: 16rpx;
+			margin-bottom: $dj-spacing-sm;
 		}
 
 		.empty-state__emoji { font-size: 44rpx; }

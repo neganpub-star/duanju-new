@@ -95,7 +95,7 @@ export default {
 	height: 44rpx;
 }
 .tab-text {
-	font-size: 20rpx;
+	font-size: $dj-fs-xs;
 	color: #999;
 	margin-top: 4rpx;
 }

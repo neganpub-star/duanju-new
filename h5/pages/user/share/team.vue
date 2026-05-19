@@ -116,18 +116,18 @@
 			.top_card {
 				background: $dj-gradient-primary;
 				border-radius: 28rpx;
-				padding: 40rpx;
+				padding: $dj-spacing-lg;
 				box-shadow: 0 8rpx 32rpx rgba(94, 114, 247, 0.35);
 				display: flex;
 				flex-direction: column;
 				align-items: center;
-				margin-bottom: 24rpx;
+				margin-bottom: $dj-spacing-base;
 
 				.stat_total {
 					display: flex;
 					align-items: baseline;
-					gap: 8rpx;
-					margin-bottom: 16rpx;
+					gap: $dj-spacing-xs;
+					margin-bottom: $dj-spacing-sm;
 
 					.stat_num {
 						font-size: 72rpx;
@@ -137,7 +137,7 @@
 					}
 
 					.stat_unit {
-						font-size: 28rpx;
+						font-size: $dj-fs-base;
 						font-weight: 600;
 						color: rgba(255, 255, 255, 0.85);
 					}
@@ -146,7 +146,7 @@
 				.stat_sub {
 					display: flex;
 					align-items: center;
-					gap: 16rpx;
+					gap: $dj-spacing-sm;
 
 					.sub_item {
 						font-size: 26rpx;
@@ -163,14 +163,14 @@
 			.content_box {
 				background: #fff;
 				border-radius: 24rpx;
-				padding: 32rpx;
+				padding: $dj-spacing-md;
 				box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
 
 				.section_title {
-					font-size: 30rpx;
+					font-size: $dj-fs-md;
 					font-weight: 700;
 					color: #1a1a1a;
-					margin-bottom: 24rpx;
+					margin-bottom: $dj-spacing-base;
 					padding-left: 12rpx;
 					border-left: 6rpx solid $dj-primary;
 				}
@@ -199,10 +199,10 @@
 
 							.item_info {
 								.nickname {
-									font-size: 30rpx;
+									font-size: $dj-fs-md;
 									font-weight: 700;
 									color: #1a1a1a;
-									margin-bottom: 8rpx;
+									margin-bottom: $dj-spacing-xs;
 								}
 
 								.join_time {
@@ -213,7 +213,7 @@
 						}
 
 						.type_tag {
-							font-size: 24rpx;
+							font-size: $dj-fs-sm;
 							font-weight: 600;
 							padding: 6rpx 20rpx;
 							border-radius: 20rpx;
@@ -233,7 +233,7 @@
 
 				.empty_tip {
 					text-align: center;
-					font-size: 28rpx;
+					font-size: $dj-fs-base;
 					color: #bbb;
 					padding: 60rpx 0;
 				}

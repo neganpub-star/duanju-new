@@ -221,7 +221,7 @@
 				border-radius: 24rpx;
 				padding: 8rpx 32rpx 32rpx;
 				box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
-				margin-bottom: 24rpx;
+				margin-bottom: $dj-spacing-base;
 
 				.field_row {
 					display: flex;
@@ -232,11 +232,11 @@
 
 					&.amount_row {
 						border-bottom: none;
-						padding-bottom: 8rpx;
+						padding-bottom: $dj-spacing-xs;
 					}
 
 					.field_label {
-						font-size: 28rpx;
+						font-size: $dj-fs-base;
 						font-weight: 600;
 						color: #222;
 						flex-shrink: 0;
@@ -249,19 +249,19 @@
 					}
 
 					.field_value {
-						font-size: 28rpx;
+						font-size: $dj-fs-base;
 						color: #555;
 					}
 
 					.type_value {
 						display: flex;
 						align-items: center;
-						gap: 8rpx;
+						gap: $dj-spacing-xs;
 						color: $dj-primary;
 						font-weight: 600;
 
 						.arrow {
-							font-size: 36rpx;
+							font-size: $dj-fs-xl;
 							color: #aaa;
 							font-weight: 400;
 						}
@@ -270,7 +270,7 @@
 					.field_input {
 						flex: 1;
 						text-align: right;
-						font-size: 28rpx;
+						font-size: $dj-fs-base;
 						color: #222;
 					}
 				}
@@ -280,10 +280,10 @@
 					align-items: center;
 					padding: 16rpx 0 32rpx;
 					border-bottom: 1rpx solid #f2f2f2;
-					margin-bottom: 32rpx;
+					margin-bottom: $dj-spacing-md;
 
 					.currency {
-						font-size: 36rpx;
+						font-size: $dj-fs-xl;
 						font-weight: 700;
 						color: $dj-primary;
 						margin-right: 12rpx;
@@ -301,14 +301,14 @@
 			.records_card {
 				background: #fff;
 				border-radius: 24rpx;
-				padding: 32rpx;
+				padding: $dj-spacing-md;
 				box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
 
 				.records_title {
-					font-size: 30rpx;
+					font-size: $dj-fs-md;
 					font-weight: 700;
 					color: #1a1a1a;
-					margin-bottom: 24rpx;
+					margin-bottom: $dj-spacing-base;
 					padding-left: 12rpx;
 					border-left: 6rpx solid $dj-primary;
 				}
@@ -335,12 +335,12 @@
 							display: flex;
 							align-items: center;
 							justify-content: center;
-							font-size: 36rpx;
+							font-size: $dj-fs-xl;
 						}
 
 						.record_info {
 							.record_money {
-								font-size: 32rpx;
+								font-size: $dj-fs-lg;
 								font-weight: 700;
 								color: #1a1a1a;
 								margin-bottom: 6rpx;
@@ -353,7 +353,7 @@
 					}
 
 					.record_status {
-						font-size: 24rpx;
+						font-size: $dj-fs-sm;
 						font-weight: 600;
 						padding: 8rpx 20rpx;
 						border-radius: 20rpx;
@@ -367,7 +367,7 @@
 
 				.empty_tip {
 					text-align: center;
-					font-size: 28rpx;
+					font-size: $dj-fs-base;
 					color: #bbb;
 					padding: 60rpx 0;
 				}

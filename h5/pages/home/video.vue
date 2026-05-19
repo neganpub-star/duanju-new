@@ -33,7 +33,7 @@
 							
 							<view v-if=" daoTime!=0" style="display: flex;flex-direction: column;align-items: center;" >
 								<view style="font-size: 16px;font-weight: 700;color: var(--dj-primary);margin-bottom: 60rpx;">{{ $t('video.nextBetter') }}</view>
-								<view style="font-size: 14px; color: var(--dj-primary);margin-bottom: 40rpx;">
+								<view style="font-size: 14px; color: var(--dj-primary);margin-bottom: $dj-spacing-lg;">
 									{{ $t('video.adCountdown', [daoTime]) }}
 								</view>
 								
@@ -906,7 +906,7 @@
 									text-shadow: 0 2rpx 4rpx rgba(0,0,0,0.5);
 								}
 								.description {
-									font-size: 28rpx;
+									font-size: $dj-fs-base;
 									text-shadow: 0 1rpx 2rpx rgba(0,0,0,0.5);
 								}
 							}
@@ -917,7 +917,7 @@
 								right: 20rpx;
 								display: flex;
 								flex-direction: column;
-								gap: 40rpx;
+								gap: $dj-spacing-lg;
 								align-items: center;
 								.icon-circle {
 									width: 88rpx;
@@ -928,7 +928,7 @@
 									align-items: center;
 									justify-content: center;
 									border: 1rpx solid rgba(255, 255, 255, 0.20);
-									margin-bottom: 8rpx;
+									margin-bottom: $dj-spacing-xs;
 								}
 								.action-item {
 									display: flex;
@@ -961,7 +961,7 @@
 										}
 									}
 									.count-text {
-										font-size: 24rpx;
+										font-size: $dj-fs-sm;
 										margin-top: 10rpx;
 									}
 									.share-btn {
@@ -1039,7 +1039,7 @@
 								align-items: center;
 								justify-content: center;
 								border: 1rpx solid rgba(255, 255, 255, 0.20);
-								margin-bottom: 8rpx;
+								margin-bottom: $dj-spacing-xs;
 							}
 
 							.btn.share-btn {
@@ -1051,7 +1051,7 @@
 							}
 							
 							.text {
-								font-size: 28rpx;
+								font-size: $dj-fs-base;
 								
 								&.active {
 									color: var(--dj-primary);
@@ -1063,7 +1063,7 @@
 								background: $dj-gradient-primary;
 								color: #fff;
 								box-sizing: border-box;
-								font-size: 28rpx;
+								font-size: $dj-fs-base;
 								line-height: 40rpx;
 								
 								&::after {
@@ -1082,7 +1082,7 @@
 						/* #endif */
 						left: 30rpx;
 						z-index: 1;
-						font-size: 32rpx;
+						font-size: $dj-fs-lg;
 						
 						.title {
 							font-weight: 700;
@@ -1097,7 +1097,7 @@
 						}
 						.desc-text {
 							color: #eaeaea;
-							font-size: 28rpx;
+							font-size: $dj-fs-base;
 							line-height: 1.4;
 							max-width: 90%;
 							word-break: break-all;
@@ -1106,7 +1106,7 @@
 							text-overflow: ellipsis;
 							display: inline-block;
 							vertical-align: middle;
-							margin-right: 8rpx;
+							margin-right: $dj-spacing-xs;
 							transition: max-width 0.2s;
 						}
 						.desc-unfold {
@@ -1130,7 +1130,7 @@
 							display: flex;
 							flex-direction: row;
 							overflow: hidden;
-							font-size: 30rpx;
+							font-size: $dj-fs-md;
 							min-height: 80rpx;
 							
 							.text {
@@ -1245,7 +1245,7 @@
 							display: flex;
 							flex-direction: row;
 							justify-content: center;
-							font-size: 40rpx;
+							font-size: $dj-fs-2xl;
 							margin-bottom: 60rpx;
 							font-weight: 700;
 							
@@ -1328,7 +1328,7 @@
 		100% { transform: scale(1); }
 	}
 	.like-num, .collect-num {
-		font-size: 28rpx;
+		font-size: $dj-fs-base;
 		font-weight: 500;
 		color: #f5f5f5;
 		margin-top: 4rpx;

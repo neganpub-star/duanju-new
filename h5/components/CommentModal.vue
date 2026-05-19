@@ -128,7 +128,7 @@ export default {
 .comment-list { padding: 20rpx; }
 .comment-item { border-bottom: 1px solid #eee; padding: 10rpx 0; }
 .comment-actions text { margin-right: 20rpx; color: #007aff; }
-.reply-list { margin-left: 40rpx; color: #888; }
+.reply-list { margin-left: $dj-spacing-lg; color: #888; }
 .comment-input { display: flex; padding: 10rpx; border-top: 1px solid #eee; }
 .comment-avatar { width: 40rpx; height: 40rpx; border-radius: 50%; margin-right: 10rpx; }
 </style> 

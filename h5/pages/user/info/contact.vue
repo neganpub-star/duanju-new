@@ -96,7 +96,7 @@
 			padding: 24rpx 32rpx 60rpx 32rpx;
 			
 			.title_box {
-				margin-bottom: 40rpx;
+				margin-bottom: $dj-spacing-lg;
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -107,7 +107,7 @@
 				}
 				
 				.text {
-					font-size: 40rpx;
+					font-size: $dj-fs-2xl;
 					color: pink;
 					text-shadow: 0 2rpx 0 0 #000000;
 					font-weight: bold;
@@ -128,19 +128,19 @@
 			}
 			
 			.task_box {
-				margin-top: 32rpx;
+				margin-top: $dj-spacing-md;
 				
 				.item_box {
 					.item {
 						height: 100rpx;
 						border-radius: 20rpx;
 						background: #42403E;
-						padding: 24rpx;
+						padding: $dj-spacing-base;
 						display: flex;
 						align-items: center;
 						justify-content: space-between;
 						font-weight: bold;
-						margin-bottom: 16rpx;
+						margin-bottom: $dj-spacing-sm;
 						
 						&:last-child {
 							margin-bottom: 0;
@@ -148,8 +148,8 @@
 						
 						.texts {
 							flex: 1;
-							margin-right: 40rpx;
-							font-size: 28rpx;
+							margin-right: $dj-spacing-lg;
+							font-size: $dj-fs-base;
 							color: pink;
 							display: flex;
 							align-items: center;
@@ -163,7 +163,7 @@
 							border-radius: 50rpx;
 							background: pink;
 							text-align: center;
-							font-size: 28rpx;
+							font-size: $dj-fs-base;
 							color: #3A3A38;
 						}
 					}

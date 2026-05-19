@@ -403,10 +403,10 @@
 		background: rgba(255,255,255,0.92);
 		border-radius: 40rpx;
 		padding: 18rpx 28rpx;
-		gap: 16rpx;
+		gap: $dj-spacing-sm;
 
 		.search_placeholder {
-			font-size: 28rpx;
+			font-size: $dj-fs-base;
 			color: #aaa;
 			flex: 1;
 		}
@@ -449,7 +449,7 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		font-size: 28rpx;
+		font-size: $dj-fs-base;
 		position: relative;
 		padding: 14rpx 28rpx;
 		color: #999;
@@ -488,7 +488,7 @@
 		height: 520rpx;
 		border-radius: 30rpx;
 		overflow: hidden;
-		margin-bottom: 40rpx;
+		margin-bottom: $dj-spacing-lg;
 		position: relative;
 		transform: translateY(20px);
 		opacity: 0;
@@ -529,13 +529,13 @@
 
 		.sitem_info {
 			.title {
-				font-size: 40rpx;
+				font-size: $dj-fs-2xl;
 				font-weight: 700;
 				margin-bottom: 15rpx;
 				text-shadow: 0 2rpx 4rpx rgba(0,0,0,0.5);
 			}
 			.text {
-				font-size: 28rpx;
+				font-size: $dj-fs-base;
 				color: rgba(255,255,255,0.85);
 				line-height: 1.5;
 				text-shadow: 0 1rpx 2rpx rgba(0,0,0,0.5);
@@ -549,7 +549,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			font-size: 30rpx;
+			font-size: $dj-fs-md;
 			background: rgba(255, 255, 255, 0.25);
 			border: 1rpx solid rgba(255, 255, 255, 0.3);
 			border-radius: 40rpx;
@@ -587,7 +587,7 @@
 	
 	.item {
 		width: calc((100% - 50rpx) / 3);
-		margin-bottom: 40rpx;
+		margin-bottom: $dj-spacing-lg;
 		
 		/* 动画初始状态 */
 		opacity: 0;
@@ -630,7 +630,7 @@
 				bottom: 8rpx;
 				background: rgba(0, 0, 0, 0.65);
 				color: #fff;
-				font-size: 20rpx;
+				font-size: $dj-fs-xs;
 				font-weight: 600;
 				padding: 4rpx 12rpx;
 				border-radius: 999rpx;
@@ -646,10 +646,10 @@
 		}
 
 		.info {
-			margin-top: 16rpx;
+			margin-top: $dj-spacing-sm;
 
 			.title {
-				font-size: 30rpx;
+				font-size: $dj-fs-md;
 				color: #1a1a1a;
 				font-weight: 700;
 				line-height: 1.35;
@@ -659,11 +659,11 @@
 			.tags-row {
 				display: flex;
 				flex-wrap: wrap;
-				gap: 8rpx;
+				gap: $dj-spacing-xs;
 				margin-top: 12rpx;
 
 				.tag-pill {
-					font-size: 20rpx;
+					font-size: $dj-fs-xs;
 					color: #5a5e66;
 					background: rgba(80, 72, 229, 0.08);
 					border-radius: 10rpx;

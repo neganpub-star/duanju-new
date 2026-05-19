@@ -234,7 +234,7 @@
 
 	.search_input {
 		flex: 1;
-		font-size: 28rpx;
+		font-size: $dj-fs-base;
 		margin-left: 15rpx;
 	}
 
@@ -248,7 +248,7 @@
 		
 		text {
 			color: #fff;
-			font-size: 28rpx;
+			font-size: $dj-fs-base;
 			font-weight: 500;
 		}
 
@@ -271,7 +271,7 @@
 	}
 	
 	.hot_section {
-		margin-top: 40rpx;
+		margin-top: $dj-spacing-lg;
 		animation-delay: 0.1s;
 	}
 
@@ -290,7 +290,7 @@
 	}
 
 	.section_title {
-		font-size: 32rpx;
+		font-size: $dj-fs-lg;
 		font-weight: 600;
 	}
 
@@ -332,7 +332,7 @@
 		}
 		.hot_index {
 			width: 40rpx;
-			font-size: 28rpx;
+			font-size: $dj-fs-base;
 			font-weight: 600;
 			color: #999;
 			&.top-1 { color: #ff4d4f; }
@@ -341,7 +341,7 @@
 		}
 		.hot_title {
 			flex: 1;
-			font-size: 28rpx;
+			font-size: $dj-fs-base;
 			color: #333;
 		}
 	}
@@ -382,14 +382,14 @@
 			padding: 20rpx 10rpx;
 		}
 		.title {
-			font-size: 28rpx;
+			font-size: $dj-fs-base;
 			font-weight: 600;
 			color: #333;
 		}
 		.text {
-			font-size: 24rpx;
+			font-size: $dj-fs-sm;
 			color: #999;
-			margin-top: 8rpx;
+			margin-top: $dj-spacing-xs;
 		}
 	}
 	

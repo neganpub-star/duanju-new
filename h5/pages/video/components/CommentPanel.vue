@@ -329,7 +329,7 @@ export default {
 	border-bottom: 1rpx solid #f5f5f5;
 
 	.panel-title {
-		font-size: 32rpx;
+		font-size: $dj-fs-lg;
 		font-weight: 600;
 		color: #111;
 	}
@@ -352,13 +352,13 @@ export default {
 .empty-tip {
 	padding: 80rpx 0;
 	text-align: center;
-	font-size: 28rpx;
+	font-size: $dj-fs-base;
 	color: #aaa;
 }
 
 .comment-item {
 	display: flex;
-	margin-bottom: 40rpx;
+	margin-bottom: $dj-spacing-lg;
 
 	.avatar {
 		width: 72rpx;
@@ -376,13 +376,13 @@ export default {
 		.comment-meta {
 			display: flex;
 			align-items: center;
-			margin-bottom: 8rpx;
+			margin-bottom: $dj-spacing-xs;
 
 			.nickname {
 				font-size: 26rpx;
 				font-weight: 600;
 				color: #333;
-				margin-right: 16rpx;
+				margin-right: $dj-spacing-sm;
 			}
 
 			.time {
@@ -392,7 +392,7 @@ export default {
 		}
 
 		.comment-content {
-			font-size: 28rpx;
+			font-size: $dj-fs-base;
 			color: #333;
 			line-height: 1.5;
 			word-break: break-all;
@@ -423,13 +423,13 @@ export default {
 }
 
 .replies-box {
-	margin-top: 16rpx;
+	margin-top: $dj-spacing-sm;
 	background: #f9f9f9;
 	border-radius: 12rpx;
 	padding: 16rpx 20rpx;
 
 	.reply-item {
-		font-size: 24rpx;
+		font-size: $dj-fs-sm;
 		color: #555;
 		line-height: 1.6;
 		margin-bottom: 12rpx;
@@ -461,10 +461,10 @@ export default {
 	.load-more-reply {
 		display: flex;
 		align-items: center;
-		gap: 8rpx;
-		font-size: 24rpx;
+		gap: $dj-spacing-xs;
+		font-size: $dj-fs-sm;
 		color: $dj-primary;
-		margin-top: 8rpx;
+		margin-top: $dj-spacing-xs;
 		cursor: pointer;
 	}
 }
@@ -497,7 +497,7 @@ export default {
 
 	.comment-input {
 		flex: 1;
-		font-size: 28rpx;
+		font-size: $dj-fs-base;
 		color: #333;
 		background: transparent;
 		height: 72rpx;
@@ -518,7 +518,7 @@ export default {
 		transition: background 0.2s;
 
 		text {
-			font-size: 28rpx;
+			font-size: $dj-fs-base;
 			color: #fff;
 			font-weight: 500;
 		}

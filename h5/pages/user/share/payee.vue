@@ -339,16 +339,16 @@
 				
 				.form_input {
 					font-weight: 700;
-					margin-bottom: 40rpx;
+					margin-bottom: $dj-spacing-lg;
 					
 					.label {
-						font-size: 36rpx;
+						font-size: $dj-fs-xl;
 						color: rgba(39, 45, 47, 1);
 					}
 					
 					.input {
 						height: auto;
-						font-size: 32rpx;
+						font-size: $dj-fs-lg;
 						color: #000;
 						padding: 20rpx 0;
 						border-bottom: 2rpx solid rgba(221, 221, 221, 1);
@@ -389,7 +389,7 @@
 						.tip {
 							width: 100%;
 							height: 100%;
-							font-size: 28rpx;
+							font-size: $dj-fs-base;
 							font-weight: normal;
 							color: rgba(153, 153, 153, 1);
 							display: flex;

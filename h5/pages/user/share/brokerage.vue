@@ -13,7 +13,7 @@
 				<view class="scroll_content">
 					<!-- 统计卡片 -->
 					<view class="top_card">
-						<view class="stat_amount">{{ info.sum }}<text class="unit">{{ $t('brokerage.yuan') }}</text></view>
+						<view class="stat_amount dj-num">{{ info.sum }}<text class="unit">{{ $t('brokerage.yuan') }}</text></view>
 						<view class="stat_orders">{{ $t('brokerage.totalOrders', [info.count]) }}</view>
 					</view>
 
@@ -115,22 +115,22 @@
 			.top_card {
 				background: $dj-gradient-primary;
 				border-radius: 28rpx;
-				padding: 40rpx;
+				padding: $dj-spacing-lg;
 				box-shadow: 0 8rpx 32rpx rgba(94, 114, 247, 0.35);
 				display: flex;
 				flex-direction: column;
 				align-items: center;
-				margin-bottom: 24rpx;
+				margin-bottom: $dj-spacing-base;
 
 				.stat_amount {
 					font-size: 64rpx;
 					font-weight: 900;
 					color: #fff;
 					line-height: 1;
-					margin-bottom: 16rpx;
+					margin-bottom: $dj-spacing-sm;
 
 					.unit {
-						font-size: 28rpx;
+						font-size: $dj-fs-base;
 						font-weight: 600;
 						margin-left: 4rpx;
 					}
@@ -145,14 +145,14 @@
 			.content_box {
 				background: #fff;
 				border-radius: 24rpx;
-				padding: 32rpx;
+				padding: $dj-spacing-md;
 				box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
 
 				.section_title {
-					font-size: 30rpx;
+					font-size: $dj-fs-md;
 					font-weight: 700;
 					color: #1a1a1a;
-					margin-bottom: 24rpx;
+					margin-bottom: $dj-spacing-base;
 					padding-left: 12rpx;
 					border-left: 6rpx solid $dj-primary;
 				}
@@ -168,10 +168,10 @@
 							display: flex;
 							align-items: center;
 							justify-content: space-between;
-							margin-bottom: 16rpx;
+							margin-bottom: $dj-spacing-sm;
 
 							.nickname {
-								font-size: 30rpx;
+								font-size: $dj-fs-md;
 								font-weight: 700;
 								color: #1a1a1a;
 							}
@@ -187,21 +187,21 @@
 
 						.item_row {
 							display: flex;
-							gap: 32rpx;
+							gap: $dj-spacing-md;
 							margin-bottom: 12rpx;
 
 							.item_col {
 								display: flex;
 								align-items: center;
-								gap: 8rpx;
+								gap: $dj-spacing-xs;
 
 								.col_label {
-									font-size: 24rpx;
+									font-size: $dj-fs-sm;
 									color: #999;
 								}
 
 								.col_value {
-									font-size: 28rpx;
+									font-size: $dj-fs-base;
 									font-weight: 600;
 									color: #333;
 
@@ -230,7 +230,7 @@
 
 				.empty_tip {
 					text-align: center;
-					font-size: 28rpx;
+					font-size: $dj-fs-base;
 					color: #bbb;
 					padding: 60rpx 0;
 				}

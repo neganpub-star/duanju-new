@@ -282,7 +282,7 @@
 				justify-content: space-between;
 				position: relative;
 				padding: 28rpx 0;
-				font-size: 32rpx;
+				font-size: $dj-fs-lg;
 
 				.left {
 					flex: 1;
@@ -296,7 +296,7 @@
 					}
 
 					.text2 {
-						font-size: 24rpx;
+						font-size: $dj-fs-sm;
 						color: rgba(#1a1a1a, 0.4);
 						margin: 0 40rpx;
 						white-space: nowrap;
@@ -316,7 +316,7 @@
 				flex-direction: row;
 				justify-content: space-between;
 				align-items: center;
-				font-size: 28rpx;
+				font-size: $dj-fs-base;
 				padding: 18rpx 24rpx;
 				background: #fff;
 				border-radius: 14rpx;
@@ -346,7 +346,7 @@
 					border: 1rpx solid rgba(245, 108, 108, 0.18);
 					border-radius: 16rpx;
 					padding: 22rpx 28rpx;
-					margin-bottom: 16rpx;
+					margin-bottom: $dj-spacing-sm;
 					box-sizing: border-box;
 					transition: opacity 0.2s, transform 0.2s;
 
@@ -361,7 +361,7 @@
 						gap: 12rpx;
 
 						.tip-icon {
-							font-size: 28rpx;
+							font-size: $dj-fs-base;
 						}
 
 						.tip-text {
@@ -372,7 +372,7 @@
 					}
 
 					.tip-arrow {
-						font-size: 30rpx;
+						font-size: $dj-fs-md;
 						color: #c0392b;
 						font-weight: 700;
 					}
@@ -393,19 +393,19 @@
 				align-items: center;
 				justify-content: space-between;
 				width: 100%;
-				margin-top: 24rpx;
+				margin-top: $dj-spacing-base;
 				padding: 0 4rpx 12rpx 16rpx;
 				border-left: 6rpx solid $dj-primary-deep;
 				box-sizing: border-box;
 
 				.title {
-					font-size: 30rpx;
+					font-size: $dj-fs-md;
 					font-weight: 600;
 					color: $dj-primary-deep;
 				}
 
 				.recharge-link {
-					font-size: 30rpx;
+					font-size: $dj-fs-md;
 					font-weight: 600;
 					color: $dj-primary-deep;
 				}
@@ -423,7 +423,7 @@
 					height: 168rpx;
 					border-radius: 20rpx;
 					background: #fff;
-					margin-bottom: 40rpx;
+					margin-bottom: $dj-spacing-lg;
 					position: relative;
 					overflow: hidden;
 					color: #000;
@@ -431,7 +431,7 @@
 					flex-direction: column;
 					
 					&:nth-child(2n) {
-						margin-left: 40rpx;
+						margin-left: $dj-spacing-lg;
 					}
 					
 					&.item2 {
@@ -453,17 +453,17 @@
 							justify-content: center;
 							
 							.text1 {
-								font-size: 40rpx;
+								font-size: $dj-fs-2xl;
 								font-weight: 700;
 							}
 							
 							.text2 {
-								font-size: 28rpx;
+								font-size: $dj-fs-base;
 							}
 						}
 						
 						.line2 {
-							font-size: 28rpx;
+							font-size: $dj-fs-base;
 							display: flex;
 							flex-direction: row;
 							align-items: center;
@@ -476,7 +476,7 @@
 					}
 					
 					.tips {
-						font-size: 28rpx;
+						font-size: $dj-fs-base;
 						text-align: center;
 						background: $dj-gradient-primary;
 						padding: 8rpx 0;
@@ -488,7 +488,7 @@
 						top: -2rpx;
 						right: -2rpx;
 						padding: 4rpx 16rpx;
-						font-size: 24rpx;
+						font-size: $dj-fs-sm;
 						background: $dj-gradient-primary;
 						border-radius: 0 0 0 20rpx;
 						color: #fff;
@@ -522,7 +522,7 @@
 					box-sizing: border-box;
 
 					.vc-name {
-						font-size: 28rpx;
+						font-size: $dj-fs-base;
 						font-weight: 700;
 						color: #1a1a1a;
 						text-align: center;
@@ -543,7 +543,7 @@
 							font-size: 26rpx;
 							font-weight: 700;
 							color: $dj-primary;
-							padding-bottom: 8rpx;
+							padding-bottom: $dj-spacing-xs;
 						}
 
 						.vc-amount {
@@ -569,7 +569,7 @@
 						border-radius: 40rpx;
 						border: 2rpx solid $dj-primary;
 						color: $dj-primary;
-						font-size: 24rpx;
+						font-size: $dj-fs-sm;
 						text-align: center;
 						font-weight: 600;
 					}
@@ -588,7 +588,7 @@
 			}
 
 			.p_info {
-				font-size: 24rpx;
+				font-size: $dj-fs-sm;
 				text-align: center;
 				margin-top: 20rpx;
 				color: rgba(#1a1a1a, 0.4);

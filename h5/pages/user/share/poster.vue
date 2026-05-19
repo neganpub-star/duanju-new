@@ -359,12 +359,12 @@
 					color: #000;
 					
 					.title {
-						font-size: 28rpx;
+						font-size: $dj-fs-base;
 						margin-bottom: 10rpx;
 					}
 					
 					.msg {
-						font-size: 24rpx;
+						font-size: $dj-fs-sm;
 						line-height: 40rpx;
 					}
 				}
@@ -374,7 +374,7 @@
 					height: 80rpx;
 					line-height: 80rpx;
 					color: #fff;
-					font-size: 32rpx;
+					font-size: $dj-fs-lg;
 					background: $dj-gradient-primary;
 					border-radius: 16rpx;
 					text-align: center;

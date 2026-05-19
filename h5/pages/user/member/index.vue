@@ -182,7 +182,7 @@
 		min-height: 100vh;
 
 		.main_content {
-			padding-bottom: 80rpx;
+			padding-bottom: $dj-spacing-xxl;
 
 			/* ── 头部 Banner ── */
 			.vip_box {
@@ -214,12 +214,12 @@
 						padding: 6rpx 20rpx;
 						margin-bottom: 20rpx;
 
-						.tag_icon { font-size: 28rpx; margin-right: 8rpx; color: #ffd700; }
-						.tag_text { font-size: 24rpx; color: #fff; font-weight: 600; }
+						.tag_icon { font-size: $dj-fs-base; margin-right: $dj-spacing-xs; color: #ffd700; }
+						.tag_text { font-size: $dj-fs-sm; color: #fff; font-weight: 600; }
 					}
 
 					.vip_title {
-						font-size: 52rpx;
+						font-size: $dj-fs-display;
 						font-weight: 900;
 						color: #fff;
 						margin-bottom: 10rpx;
@@ -236,7 +236,7 @@
 
 					.vip_perks {
 						display: flex;
-						gap: 24rpx;
+						gap: $dj-spacing-base;
 
 						.perk {
 							display: flex;
@@ -247,7 +247,7 @@
 
 							.perk_icon {
 								color: #ffd700;
-								font-size: 24rpx;
+								font-size: $dj-fs-sm;
 								margin-right: 6rpx;
 								font-weight: bold;
 							}
@@ -274,13 +274,13 @@
 				box-shadow: 0 2rpx 20rpx rgba(0,0,0,0.06);
 
 				.section_title {
-					font-size: 32rpx;
+					font-size: $dj-fs-lg;
 					font-weight: 800;
 					color: #1a1a2e;
 					margin-bottom: 28rpx;
 					padding-left: 4rpx;
 					border-left: 6rpx solid $dj-primary;
-					padding-left: 16rpx;
+					padding-left: $dj-spacing-sm;
 				}
 
 				.card_box {
@@ -313,14 +313,14 @@
 							top: -2rpx; right: -2rpx;
 							background: $dj-gradient-primary;
 							color: #fff;
-							font-size: 20rpx;
+							font-size: $dj-fs-xs;
 							font-weight: bold;
 							padding: 6rpx 18rpx;
 							border-radius: 0 18rpx 0 16rpx;
 						}
 
 						.item_name {
-							font-size: 28rpx;
+							font-size: $dj-fs-base;
 							font-weight: 800;
 							color: #222;
 							margin-bottom: 6rpx;
@@ -329,7 +329,7 @@
 						.item_days {
 							font-size: 22rpx;
 							color: #777;
-							margin-bottom: 16rpx;
+							margin-bottom: $dj-spacing-sm;
 						}
 
 						.item_price {
@@ -356,7 +356,7 @@
 							font-size: 22rpx;
 							color: #bbb;
 							text-decoration: line-through;
-							margin-bottom: 24rpx;
+							margin-bottom: $dj-spacing-base;
 						}
 
 						.item_btn {
@@ -391,19 +391,19 @@
 			}
 
 			.title_box {
-				margin-bottom: 24rpx;
+				margin-bottom: $dj-spacing-base;
 				.text {
-					font-size: 32rpx;
+					font-size: $dj-fs-lg;
 					color: #1a1a2e;
 					font-weight: 800;
 					border-left: 6rpx solid $dj-primary;
-					padding-left: 16rpx;
+					padding-left: $dj-spacing-sm;
 				}
 			}
 
 			.info_box {
 				color: #555;
-				font-size: 28rpx;
+				font-size: $dj-fs-base;
 			}
 
 			.task_box {

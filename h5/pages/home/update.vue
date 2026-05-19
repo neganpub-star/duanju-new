@@ -99,17 +99,17 @@
 	.page_container {
 		
 		.update_content {
-			font-size: 28rpx;
+			font-size: $dj-fs-base;
 			color: #666;
 			line-height: 46rpx;
-			padding: 40rpx;
+			padding: $dj-spacing-lg;
 			
 			.bar {
 				padding: 40rpx 40rpx;
 				
 				.tip {
 					text-align: center;
-					font-size: 28rpx;
+					font-size: $dj-fs-base;
 					margin-top: 20rpx;
 				}
 			}

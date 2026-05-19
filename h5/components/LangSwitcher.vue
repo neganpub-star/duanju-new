@@ -1,7 +1,7 @@
 <template>
-  <view class="lang-switcher" v-if="showSwitcher" @click="openLangPanel">
-    <view class="lang-btn">
-      <!-- SVG 地球图标（去 emoji 廉价感） -->
+  <view class="lang-switcher" v-if="showSwitcher">
+    <view class="lang-btn" @click="openLangPanel">
+      <!-- SVG 地球图标 -->
       <svg class="lang-icon" viewBox="0 0 24 24" fill="none">
         <circle cx="12" cy="12" r="9.5" stroke="currentColor" stroke-width="1.4"/>
         <ellipse cx="12" cy="12" rx="4.2" ry="9.5" stroke="currentColor" stroke-width="1.4"/>
@@ -9,17 +9,30 @@
       </svg>
       <text class="lang-text">{{ currentLangLabel }}</text>
     </view>
+
+    <!-- 自定义底部弹起 ActionSheet -->
+    <AppActionSheet
+      :show="sheetVisible"
+      :title="$t('lang.title')"
+      :items="actionItems"
+      :active-value="currentLang"
+      @select="onLangSelect"
+      @update:show="sheetVisible = $event"
+    />
   </view>
 </template>
 
 <script>
 import { setLang, getCurrentLang } from '@/common/i18n/index.js'
+import AppActionSheet from '@/components/AppActionSheet.vue'
 
 export default {
   name: 'LangSwitcher',
+  components: { AppActionSheet },
   data() {
     return {
       currentLang: getCurrentLang(),
+      sheetVisible: false,
     }
   },
   computed: {
@@ -37,6 +50,15 @@ export default {
         .filter(code => allLangs[code])
         .map(code => ({ value: code, label: allLangs[code] }))
     },
+    actionItems() {
+      // 每个语言加一个国旗或字母图标，让 ActionSheet 看起来更精致
+      const FLAG_MAP = { 'zh-CN': '🇨🇳', 'zh-TW': '🇭🇰', 'en': '🇬🇧' }
+      return this.langOptions.map(o => ({
+        value: o.value,
+        label: o.label,
+        icon: FLAG_MAP[o.value] || '',
+      }))
+    },
     currentLangLabel() {
       const opt = this.langOptions.find(o => o.value === this.currentLang)
       return opt ? opt.label : 'CN'
@@ -44,17 +66,10 @@ export default {
   },
   methods: {
     openLangPanel() {
-      const itemList = this.langOptions.map(o => o.label)
-      uni.showActionSheet({
-        title: this.$t('lang.title'),
-        itemList,
-        success: (res) => {
-          const selected = this.langOptions[res.tapIndex]
-          if (selected) {
-            this.selectLang(selected.value)
-          }
-        }
-      })
+      this.sheetVisible = true
+    },
+    onLangSelect(item) {
+      this.selectLang(item.value)
     },
     selectLang(lang) {
       if (lang === this.currentLang) return
@@ -63,9 +78,6 @@ export default {
       this.$store.commit('app/setLang', lang)
       // #ifdef H5
       setTimeout(() => { window.location.reload() }, 200)
-      // #endif
-      // #ifndef H5
-      // 小程序端直接更新，不需要刷新
       // #endif
     }
   }
@@ -80,7 +92,7 @@ export default {
 .lang-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8rpx;
+  gap: $dj-spacing-xs;
   padding: 10rpx 20rpx;
   border-radius: 32rpx;
   background: rgba(255, 255, 255, 0.18);
@@ -100,7 +112,7 @@ export default {
   display: inline-block;
 }
 .lang-text {
-  font-size: 24rpx;
+  font-size: $dj-fs-sm;
   color: #fff;
   font-weight: 600;
   letter-spacing: 0.5rpx;

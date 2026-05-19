@@ -289,14 +289,14 @@ $grad: linear-gradient(90deg, #{$blue}, #{$purple});
 }
 
 .tab-text {
-	font-size: 30rpx;
+	font-size: $dj-fs-md;
 	color: #bbb;
 	transition: all 0.2s;
 	line-height: 1;
 }
 
 .tab.active .tab-text {
-	font-size: 32rpx;
+	font-size: $dj-fs-lg;
 	font-weight: 700;
 	color: #111;
 }
@@ -333,7 +333,7 @@ $grad: linear-gradient(90deg, #{$blue}, #{$purple});
 	display: flex;
 	flex-wrap: wrap;
 	padding: 20rpx 20rpx 0;
-	gap: 16rpx;
+	gap: $dj-spacing-sm;
 }
 
 .grid-item {
@@ -370,7 +370,7 @@ $grad: linear-gradient(90deg, #{$blue}, #{$purple});
 }
 
 .ep-text {
-	font-size: 20rpx;
+	font-size: $dj-fs-xs;
 	color: rgba(255,255,255,0.92);
 	line-height: 1.2;
 }
@@ -432,7 +432,7 @@ $grad: linear-gradient(90deg, #{$blue}, #{$purple});
 }
 
 .item-title {
-	font-size: 24rpx;
+	font-size: $dj-fs-sm;
 	color: #222;
 	font-weight: 500;
 	overflow: hidden;
@@ -443,7 +443,7 @@ $grad: linear-gradient(90deg, #{$blue}, #{$purple});
 }
 
 .item-sub {
-	font-size: 20rpx;
+	font-size: $dj-fs-xs;
 	color: #aaa;
 	margin-top: 4rpx;
 	display: block;
@@ -491,12 +491,12 @@ $grad: linear-gradient(90deg, #{$blue}, #{$purple});
 }
 
 .select-all-text {
-	font-size: 28rpx;
+	font-size: $dj-fs-base;
 	color: #444;
 }
 
 .delete-btn {
-	font-size: 28rpx;
+	font-size: $dj-fs-base;
 	font-weight: 600;
 	color: #fff;
 	background: $grad;

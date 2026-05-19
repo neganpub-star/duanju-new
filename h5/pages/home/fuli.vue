@@ -296,7 +296,7 @@
 		color: #fff;
 		padding-bottom: 152rpx;
 		overflow-y: auto;
-		font-size: 24rpx;
+		font-size: $dj-fs-sm;
 		background: radial-gradient(pink, pink);
 		.main_content {
 			padding: 30rpx;
@@ -317,7 +317,7 @@
 						margin-bottom: 20rpx;
 					}
 					.top_title{
-						font-size: 32rpx;
+						font-size: $dj-fs-lg;
 						color: #fff2d0;
 						margin-bottom: 20rpx;
 						
@@ -336,7 +336,7 @@
 						text-align: center;
 						line-height: 80rpx;
 						color: #ff5f3f;
-						font-size: 36rpx;
+						font-size: $dj-fs-xl;
 
 					}
 					
@@ -354,12 +354,12 @@
 						justify-content: space-between;
 						.first_title{
 							font-weight: 700;
-							font-size: 32rpx;
+							font-size: $dj-fs-lg;
 							color: #ff5f3f;
 						}
 						.first_right{
 							color: #ff5f3f;
-							font-size: 28rpx;
+							font-size: $dj-fs-base;
 
 						}
 					}
@@ -378,7 +378,7 @@
 								width: 240rpx;
 								height: 80rpx;
 								line-height:80rpx;
-								font-size: 36rpx;
+								font-size: $dj-fs-xl;
 								text-align: center;
 								background: radial-gradient(#fff2d0, #ffffff);
 								border-radius: 40rpx;
@@ -573,7 +573,7 @@
 						align-items: center;
 						
 						color: #ffffff;
-						font-size: 32rpx;
+						font-size: $dj-fs-lg;
 						.one_img{
 							width: 60rpx;
 							height: 60rpx;
@@ -590,7 +590,7 @@
 						border-radius: 30rpx;
 						text-align: center;
 						line-height: 60rpx;
-						font-size: 28rpx;
+						font-size: $dj-fs-base;
 						color: #ff5f3f;
 					}
 				}
@@ -599,7 +599,7 @@
 			.chou{
 				.chou_title{
 					color: #ffcdb3;
-					font-size: 32rpx;
+					font-size: $dj-fs-lg;
 					display: flex;
 					justify-content: space-between;
 					font-weight: 700;

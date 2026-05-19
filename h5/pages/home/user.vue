@@ -10,7 +10,7 @@
 			<view class="main_content" style="background: rgba(235, 236, 237, 1);" v-if="isStatus == 0">
 				<view class="userinfo_box" style="flex-direction: column;margin-bottom: 50rpx;align-items: center;" v-if="userInfoStore"
 					@click="jumpView('/pages/user/info/index')">
-					<view class="avatar" style="margin-bottom: 16rpx;">
+					<view class="avatar" style="margin-bottom: $dj-spacing-sm;">
 						<image class="image" :src="userInfoStore.avatar" mode="aspectFill"></image>
 					</view>
 					<view class="info" style="margin-left:0;display: flex;flex-direction: column;align-items: center;width: 100%;">
@@ -50,7 +50,7 @@
 
 			<view class="card_box" style="background: none;">
 				<view class="item" v-for="(item, index) in cardListTwo" :key="item.id" @click="cardItemClick(item)">
-					<view class="icon" style="margin-bottom: 32rpx;">
+					<view class="icon" style="margin-bottom: $dj-spacing-md;">
 						<image class="image" :src="item.img" mode="aspectFill"></image>
 					</view>
 					<view class="text" style="color: rgba(0, 0, 0, 0.7);">{{ item.text }}</view>
@@ -117,7 +117,7 @@
 				<view class="vip_box"
 					style="padding: 20rpx 32rpx;background: linear-gradient(90deg, rgba(124, 124, 255, 1) 0%, rgba(181, 209, 255, 1) 100%);justify-content: start;">
 					<view
-						style="width: 112rpx;height: 112rpx;background: rgba(0, 0, 0, 0.2);border-radius: 16rpx;margin-right: 32rpx; display: flex;align-items: center;justify-content: center;">
+						style="width: 112rpx;height: 112rpx;background: rgba(0, 0, 0, 0.2);border-radius: 16rpx;margin-right: $dj-spacing-md; display: flex;align-items: center;justify-content: center;">
 						<image src="https://img.nymaite.com/video_short/images/yqyl.png"
 							style="width: 40rpx;height: 40rpx;" mode=""></image>
 					</view>
@@ -179,7 +179,7 @@
 					</view>
 					<view class="hero-arrow" style="display:flex;align-items:center;">
 						<view @click.stop>
-							<LangSwitcher style="margin-right: 16rpx;" />
+							<LangSwitcher style="margin-right: $dj-spacing-sm;" />
 						</view>
 						<u-icon name="arrow-right" color="rgba(255,255,255,0.7)" size="18"></u-icon>
 					</view>
@@ -204,7 +204,7 @@
 					</view>
 					<view class="shortcut-divider"></view>
 					<view class="shortcut-item" @click="jumpView('/pages/user/integral/index')">
-						<text class="shortcut-num">{{ userInfoStore.usable || 0 }}</text>
+						<text class="shortcut-num dj-num">{{ userInfoStore.usable || 0 }}</text>
 						<text class="shortcut-label">{{ $t('user.myPoints') }}</text>
 					</view>
 					<view class="shortcut-divider"></view>
@@ -940,13 +940,13 @@
 
 						.image {
 							width: 52rpx;
-							margin-left: 8rpx;
+							margin-left: $dj-spacing-xs;
 						}
 					}
 
 					.msg {
 						margin-top: 10rpx; // 调整间距
-						font-size: 24rpx;
+						font-size: $dj-fs-sm;
 						width: 100%; // 占满宽度
 						justify-content: center; // 内容居中
 
@@ -956,7 +956,7 @@
 
 						.copy {
 							color: #5E5E5E;
-							margin-left: 8rpx;
+							margin-left: $dj-spacing-xs;
 							text-decoration: underline;
 							display: inline-block;
 						}
@@ -1015,7 +1015,7 @@
 						color: #222;
 
 						.line1 {
-							font-size: 32rpx;
+							font-size: $dj-fs-lg;
 							font-weight: 700;
 							color: #fff;
 							line-height: 1.3;
@@ -1023,8 +1023,8 @@
 						}
 
 						.line2 {
-							font-size: 24rpx;
-							margin-top: 8rpx;
+							font-size: $dj-fs-sm;
+							margin-top: $dj-spacing-xs;
 							color: rgba(255, 255, 255, 0.78);
 							line-height: 1.4;
 						}
@@ -1063,7 +1063,7 @@
 					justify-content: space-between;
 					color: #555;
 					padding: 0 32rpx;
-					font-size: 24rpx;
+					font-size: $dj-fs-sm;
 					font-weight: 600;
 
 					.left {
@@ -1077,7 +1077,7 @@
 
 						.image {
 							width: 30rpx;
-							margin-right: 8rpx;
+							margin-right: $dj-spacing-xs;
 							margin-left: 12rpx;
 						}
 
@@ -1109,45 +1109,47 @@
 					}
 
 					.text {
-						font-size: 24rpx;
+						font-size: $dj-fs-sm;
 						color: #444;
 						text-align: center;
-						margin-top: 8rpx;
+						margin-top: $dj-spacing-xs;
 					}
 				}
 			}
 
 			.menu_box {
 				background: #fff;
-				border-radius: 16rpx;
-				padding: 30rpx 40rpx;
-				margin-top: 24rpx;
-				box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.06);
+				border-radius: 24rpx;
+				padding: $dj-spacing-lg 36rpx 36rpx;
+				margin-top: $dj-spacing-base;
+				box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.06);
 
 				.title {
-					font-size: 30rpx;
-					color: #222;
-					font-weight: bold;
-					padding: 0 0 20rpx 0;
+					font-size: $dj-fs-md;
+					color: $dj-text-primary;
+					font-weight: 700;
+					padding: 0 0 24rpx 0;
 					position: relative;
-					margin-bottom: 20rpx;
+					margin-bottom: 28rpx;
+					letter-spacing: -0.5rpx;
 
 					&::after {
 						content: '';
 						position: absolute;
 						left: 0;
 						bottom: 0;
-						width: 100%;
-						height: 1rpx;
-						background-color: #f0f0f0;
+						width: 64rpx;
+						height: 4rpx;
+						border-radius: 999rpx;
+						background: var(--dj-gradient-primary);
 					}
 				}
 
 				.menu-grid {
 					display: grid;
 					grid-template-columns: repeat(4, 1fr);
-					gap: 8rpx;
-					padding: 16rpx 0;
+					gap: $dj-spacing-base $dj-spacing-sm;
+					padding: 8rpx 0 4rpx;
 				}
 
 				.menu-item {
@@ -1155,11 +1157,13 @@
 					flex-direction: column;
 					align-items: center;
 					justify-content: center;
-					padding: 16rpx 6rpx;
-					border-radius: 12rpx;
+					padding: 24rpx 10rpx 20rpx;
+					border-radius: 18rpx;
+					transition: background 0.2s, transform 0.15s;
 
 					&:active {
-						background: #f5f0ff;
+						background: $dj-bg-soft;
+						transform: scale(0.96);
 					}
 
 					.icon {
@@ -1177,7 +1181,7 @@
 					}
 
 					.text {
-						font-size: 24rpx;
+						font-size: $dj-fs-sm;
 						color: #555;
 						text-align: center;
 						line-height: 1.4;
@@ -1202,11 +1206,11 @@
 
 					.image {
 						width: 30rpx;
-						margin-right: 8rpx;
+						margin-right: $dj-spacing-xs;
 					}
 
 					.text {
-						font-size: 24rpx;
+						font-size: $dj-fs-sm;
 						color: rgba(#999, 0.5);
 					}
 				}
@@ -1224,7 +1228,7 @@
 					border-radius: 20rpx;
 					background: rgba(0, 0, 0, 0.9);
 					color: #fff;
-					font-size: 28rpx;
+					font-size: $dj-fs-base;
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
@@ -1288,7 +1292,7 @@
 		border-radius: 50%;
 		border: 4rpx solid rgba(255,255,255,0.6);
 		overflow: visible;
-		margin-right: 24rpx;
+		margin-right: $dj-spacing-base;
 		flex-shrink: 0;
 
 		.image {
@@ -1315,18 +1319,18 @@
 		flex: 1;
 
 		.hero-nickname {
-			font-size: 36rpx;
+			font-size: $dj-fs-xl;
 			font-weight: 700;
 			color: #fff;
 			margin-bottom: 10rpx;
 		}
 
 		.hero-uid {
-			font-size: 24rpx;
+			font-size: $dj-fs-sm;
 			color: rgba(255,255,255,0.7);
 			display: flex;
 			align-items: center;
-			gap: 16rpx;
+			gap: $dj-spacing-sm;
 		}
 
 		.copy-btn {
@@ -1366,10 +1370,10 @@
 		}
 
 		.shortcut-num {
-			font-size: 36rpx;
+			font-size: $dj-fs-xl;
 			font-weight: 700;
 			color: #fff;
-			margin-bottom: 8rpx;
+			margin-bottom: $dj-spacing-xs;
 		}
 
 		.shortcut-label {
