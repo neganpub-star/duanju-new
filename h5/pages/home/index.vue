@@ -76,6 +76,7 @@
 										</view>
 									</view>
 								</view>
+							</view>
 						</template>
 					</block>
 				</view>
