@@ -254,10 +254,12 @@
 					flex-direction: column;
 					align-items: center;
 					gap: 14rpx;
-					box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
+					border: 1rpx solid rgba(94, 114, 247, 0.18);
+					box-shadow: 0 4rpx 18rpx rgba(94, 114, 247, 0.12);
 
 					&.active {
 						background: $dj-gradient-primary;
+						border-color: transparent;
 						box-shadow: 0 4rpx 20rpx rgba(94, 114, 247, 0.35);
 
 						.menu_label {
@@ -278,11 +280,12 @@
 						}
 
 						&.reseller_icon {
-							background: rgba(94, 114, 247, 0.08);
+							background: $dj-gradient-primary;
 							border-radius: 50%;
-							padding: 12rpx;
+							padding: 14rpx;
 							width: 80rpx;
 							height: 80rpx;
+							box-shadow: 0 4rpx 12rpx rgba(94, 114, 247, 0.3);
 						}
 					}
 
