@@ -862,9 +862,6 @@
 <style lang="scss" scoped>
 	.page_content {
 		position: relative;
-		/* #ifdef H5 */
-		padding-bottom: 100rpx;
-		/* #endif */
 
 		.head_content {
 			position: fixed;
