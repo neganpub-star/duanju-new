@@ -30,6 +30,12 @@ export default {
 		return {
 			tabs: [
 				{
+					path: '/pages/home/video',
+					icon: '/static/tabbar/recommend_default.png',
+					selectedIcon: '/static/tabbar/recommend_selected.png',
+					i18nKey: 'nav.discover'
+				},
+				{
 					path: '/pages/home/index',
 					icon: '/static/tabbar/home_default.png',
 					selectedIcon: '/static/tabbar/home_selected.png',
@@ -40,12 +46,6 @@ export default {
 					icon: '/static/tabbar/watch_default.png',
 					selectedIcon: '/static/tabbar/watch_selected.png',
 					i18nKey: 'nav.watchlist'
-				},
-				{
-					path: '/pages/home/video',
-					icon: '/static/tabbar/recommend_default.png',
-					selectedIcon: '/static/tabbar/recommend_selected.png',
-					i18nKey: 'nav.discover'
 				},
 				{
 					path: '/pages/home/user',

@@ -1,7 +1,7 @@
 export default {
   // 导航
   nav: {
-    home: '首页',
+    home: '剧场',
     watchlist: '追剧',
     discover: '推荐',
     profile: '我的',

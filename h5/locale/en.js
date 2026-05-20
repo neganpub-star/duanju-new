@@ -1,6 +1,6 @@
 export default {
   nav: {
-    home: 'Home',
+    home: 'Theater',
     watchlist: 'Watchlist',
     discover: 'Discover',
     profile: 'Profile',

@@ -1,6 +1,6 @@
 export default {
   nav: {
-    home: '首頁',
+    home: '劇場',
     watchlist: '追劇',
     discover: '推薦',
     profile: '我的',
