@@ -18,7 +18,7 @@
 					</view>
 					<text class="app-action-label">{{ item.label }}</text>
 					<view v-if="item.value === activeValue" class="app-action-check">
-						<svg viewBox="0 0 24 24" width="32rpx" height="32rpx" fill="none">
+						<svg class="app-action-check-svg" viewBox="0 0 24 24" fill="none">
 							<path d="M5 12l5 5L20 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
 						</svg>
 					</view>
@@ -105,7 +105,8 @@ export default {
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-end;
-	z-index: 998;
+	/* 必须高于 CustomTabBar / 任何业务页 z-index */
+	z-index: 9999;
 	opacity: 0;
 	transition: opacity 0.22s ease;
 
@@ -113,7 +114,9 @@ export default {
 }
 
 .app-action-panel {
-	padding: 0 16rpx 24rpx;
+	/* 底部加大留白：跨过 iPhone 安全区 + 防止被 TabBar 视觉抢位 */
+	padding: 0 16rpx;
+	padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
 	transform: translateY(100%);
 	transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
 
@@ -211,9 +214,18 @@ export default {
 }
 
 .app-action-check {
+	width: 36rpx;
+	height: 36rpx;
 	color: $dj-primary;
 	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	flex-shrink: 0;
+}
+.app-action-check-svg {
+	width: 100%;
+	height: 100%;
+	display: block;
 }
 
 /* 间隔 */

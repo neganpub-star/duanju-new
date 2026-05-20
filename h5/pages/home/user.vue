@@ -113,25 +113,6 @@
 					</view>
 				</view>
 			</view>
-			<view class="vip_card" @click="jumpView('/pages/user/share/poster')">
-				<view class="vip_box"
-					style="padding: 20rpx 32rpx;background: linear-gradient(90deg, rgba(124, 124, 255, 1) 0%, rgba(181, 209, 255, 1) 100%);justify-content: start;">
-					<view
-						style="width: 112rpx;height: 112rpx;background: rgba(0, 0, 0, 0.2);border-radius: 16rpx;margin-right: $dj-spacing-md; display: flex;align-items: center;justify-content: center;">
-						<image src="https://img.nymaite.com/video_short/images/yqyl.png"
-							style="width: 40rpx;height: 40rpx;" mode=""></image>
-					</view>
-					<view class="left">
-						<view class="line2" style="display: flex;justify-content: space-between;align-items: center;">
-							<view>邀请有礼</view>
-							<view><u-icon name="arrow-right" color="#fff" size="12" :bold="true"></u-icon></view>
-						</view>
-						<view class="line2">所有通过您注册的用户，都将会给您带来收益</view>
-					</view>
-
-				</view>
-
-			</view>
 			<view class="copyright" v-if="copyrightData.length" @click="debugClick">
 				<view class="item" v-for="(item, index) in copyrightData" :key="index">
 					<image class="image" v-if="item.image" :src="item.image" mode="widthFix"></image>
@@ -976,11 +957,12 @@
 					min-height: 152rpx;
 					padding: 0 36rpx;
 					box-sizing: border-box;
-					background: #fff;
+					/* fallback 背景（inline style 紫渐变在某些端可能未渲染时兜底）*/
+					background: linear-gradient(141.96deg, #2a3599 0%, #7c3aed 100%);
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
-					border-bottom: 1rpx solid #f0f0f0;
+					border-bottom: 1rpx solid rgba(255, 255, 255, 0.12);
 					overflow: hidden;
 
 					/* 玻璃质感装饰光环 — 右上角柔和光圈 */
