@@ -5,7 +5,7 @@
 		
 		<!-- #ifndef MP-TOUTIAO -->
 			<view class="head_content">
-				<CustomNavbar :title="navTitle"></CustomNavbar>
+				<CustomNavbar :title="navTitle" :left="0"></CustomNavbar>
 			</view>
 		<!-- #endif -->
 		<view class="main_content">
@@ -466,7 +466,7 @@
 							success: () => {},
 							fail: () => {
 								uni.switchTab({
-									url: '/pages/home/index',
+									url: '/pages/home/video',
 									success: () => {
 										uni.navigateTo({
 											url: lastPage
@@ -477,7 +477,7 @@
 						})
 					} else {
 						uni.switchTab({
-							url: '/pages/home/user'
+							url: '/pages/home/video'
 						});
 					}
 					// #endif
@@ -487,7 +487,7 @@
 						uni.navigateBack()
 					} else {
 						uni.switchTab({
-							url: '/pages/home/user'
+							url: '/pages/home/video'
 						});
 					}
 				}

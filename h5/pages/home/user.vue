@@ -579,15 +579,8 @@
 		},
 		onLoad() {
 			if (!this.token) {
-				this.$appModal({
-					title: '系统提示',
-					content: '请先登录后再使用全部功能',
-					showCancel: false,
-					success: res => {
-						uni.navigateTo({ url: '/pages/login/login' });
-					}
-				});
-				return;
+				uni.reLaunch({ url: '/pages/login/login' })
+				return
 			}
 			uni.$on('updateUserInfo', () => {
 				this.getUserInfo()
@@ -596,8 +589,12 @@
 			this.richtext && this.initMenuList(this.richtext)
 		},
 		onShow() {
+			if (!this.token) {
+				uni.reLaunch({ url: '/pages/login/login' })
+				return
+			}
 			this.tabChange = true
-			this.token && this.getUserInfo()
+			this.getUserInfo()
 		},
 		onHide() {
 			this.tabChange = false

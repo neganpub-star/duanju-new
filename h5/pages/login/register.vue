@@ -3,7 +3,7 @@
 	<view class="page_content">
 		<!-- #ifndef MP-TOUTIAO -->
 		<view class="head_content">
-			<CustomNavbar title="注册"></CustomNavbar>
+			<CustomNavbar title="注册" :left="0"></CustomNavbar>
 		</view>
 		<!-- #endif -->
 		
@@ -168,7 +168,7 @@
 					})
 				} else {
 					uni.switchTab({
-						url: '/pages/home/index'
+						url: '/pages/home/video'
 					});
 				}
 			},

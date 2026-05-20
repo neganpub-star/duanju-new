@@ -175,7 +175,7 @@
 					success: res => {
 						if (res.confirm) {
 							this.logout()
-							uni.switchTab({ url: '/pages/home/user' })
+							uni.reLaunch({ url: '/pages/login/login' })
 						}
 					}
 				})
@@ -201,9 +201,7 @@
 				this.$request('user.delete').then(res => {
 					if(res.code === 1) {
 						this.logout()
-						uni.switchTab({
-							url: '/pages/home/user'
-						});
+						uni.reLaunch({ url: '/pages/login/login' })
 					}
 				})
 			},

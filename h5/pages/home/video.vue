@@ -271,15 +271,8 @@
      
 		onLoad() {
 			if (!this.token) {
-				this.$appModal({
-					title: this.$t('common.tip'),
-					content: this.$t('common.loginFirst'),
-					showCancel: false,
-					success: res => {
-						uni.navigateTo({ url: '/pages/login/login' });
-					}
-				});
-				return;
+				uni.reLaunch({ url: '/pages/login/login' })
+				return
 			}
 			// #ifdef MP-WEIXIN
 			this.getAD()
@@ -301,6 +294,10 @@
 			// #endif
 		},
 		onShow() {
+			if (!this.token) {
+				uni.reLaunch({ url: '/pages/login/login' })
+				return
+			}
 			this.tabChange = true
 			// #ifdef MP-WEIXIN
 				if(this.userInfo.mgg == 1){

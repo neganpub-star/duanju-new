@@ -136,11 +136,13 @@
 			},
 		},
 		onShow() {
-			if (this.token) {
-				this.getUserInfo && this.getUserInfo()
-				this.getCategoryList && this.getCategoryList()
-				this.getVideoList && this.getVideoList(true)
+			if (!this.token) {
+				uni.reLaunch({ url: '/pages/login/login' })
+				return
 			}
+			this.getUserInfo && this.getUserInfo()
+			this.getCategoryList && this.getCategoryList()
+			this.getVideoList && this.getVideoList(true)
 			this.AdNumber=getApp().globalData.isADTc;
 			 // #ifdef MP-WEIXIN
 			if(this.userInfo.mgg == 1){
@@ -156,15 +158,8 @@
 		},
 		onLoad() {
 			if (!this.token) {
-				this.$appModal({
-					title: '系统提示',
-					content: '请先登录后再使用全部功能',
-					showCancel: false,
-					success: res => {
-						uni.navigateTo({ url: '/pages/login/login' });
-					}
-				});
-				return;
+				uni.reLaunch({ url: '/pages/login/login' })
+				return
 			}
 			this.getCategoryList(); // 先获取分类
 			// this.getVideoList(true); // 分类获取后再请求视频

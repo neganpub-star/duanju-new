@@ -62,6 +62,17 @@ export default {
 	},
 	methods: {
 		openModal(opts) {
+			// 每个 tab/页面都挂了 <AppModal />，uni.$emit 会广播给所有实例。
+			// 此处只让位于当前 active 页面的实例响应，避免后台页面的 AppModal
+			// 也被打开，导致用户切回后看到一个早就被触发的旧弹窗。
+			try {
+				const pages = getCurrentPages()
+				const current = pages && pages[pages.length - 1]
+				if (current && current.$vm && this.$root && current.$vm !== this.$root) {
+					return
+				}
+			} catch (e) {}
+
 			this.title       = opts.title || ''
 			this.content     = opts.content || ''
 			this.confirmText = opts.confirmText || ''

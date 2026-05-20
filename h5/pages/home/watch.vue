@@ -140,6 +140,10 @@
 			}).exec()
 		},
 		onShow() {
+			if (!this.$store.state.user.token) {
+				uni.reLaunch({ url: '/pages/login/login' })
+				return
+			}
 			this.onRefresh()
 		},
 		methods: {
