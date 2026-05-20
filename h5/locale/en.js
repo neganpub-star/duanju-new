@@ -231,11 +231,12 @@ export default {
     reply: 'Reply',
     replyTo: 'Reply to',
     viewReplies: 'View all {0} replies',
-    send: 'Send',
+    send: 'Post',
     placeholder: 'Write a comment...',
     replyPlaceholder: 'Reply to @{0}',
     deleteTitle: 'Delete Comment',
     deleteContent: 'This cannot be undone. Confirm?',
+    emoji: 'Emoji',
   },
   search: {
     placeholder: 'Search dramas, actors...',

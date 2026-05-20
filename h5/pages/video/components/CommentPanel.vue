@@ -83,8 +83,23 @@
 				</view>
 			</scroll-view>
 
+			<!-- 表情面板 -->
+			<view class="emoji-panel" v-if="showEmoji">
+				<view
+					class="emoji-cell"
+					v-for="(emo, i) in emojiList"
+					:key="i"
+					@click="appendEmoji(emo)"
+				>
+					<text class="emoji-text">{{ emo }}</text>
+				</view>
+			</view>
+
 			<!-- 输入框 -->
 			<view class="input-bar">
+				<view class="emoji-btn" :class="{ active: showEmoji }" @click="toggleEmoji">
+					<text class="emoji-icon">😊</text>
+				</view>
 				<view class="input-wrap">
 					<input
 						class="comment-input"
@@ -92,6 +107,7 @@
 						:placeholder="inputPlaceholder"
 						:focus="inputFocus"
 						@confirm="submitComment"
+						@focus="showEmoji = false"
 						confirm-type="send"
 						maxlength="200"
 					/>
@@ -128,6 +144,16 @@ export default {
 			inputFocus: false,
 			replyTarget: null,   // { commentId, nickname } 当前回复目标
 			defaultAvatar: 'https://img.nymaite.com/video_short/icons/avatar.png',
+			showEmoji: false,
+			emojiList: [
+				'😀','😁','😂','🤣','😊','😍','🥰','😘',
+				'😎','🤩','🥳','😋','😜','🤪','😝','🤓',
+				'😇','🥺','😢','😭','😡','🤬','😨','😱',
+				'🤔','😴','🤤','🤗','🤭','🙄','😬','😏',
+				'👍','👎','👏','🙌','🤝','🙏','💪','✌️',
+				'❤️','💔','💖','✨','🔥','🎉','🌹','🌟',
+				'💯','👀','💩','🤡','🐶','🐱','🦄','🌈',
+			],
 		}
 	},
 	computed: {
@@ -149,6 +175,7 @@ export default {
 	},
 	methods: {
 		close() {
+			this.showEmoji = false;
 			this.$emit('close');
 		},
 		loadComments(reset = false) {
@@ -197,6 +224,13 @@ export default {
 		cancelReply() {
 			this.replyTarget = null;
 		},
+		toggleEmoji() {
+			this.showEmoji = !this.showEmoji;
+		},
+		appendEmoji(emo) {
+			if ((this.inputText || '').length >= 200) return;
+			this.inputText = (this.inputText || '') + emo;
+		},
 		submitComment() {
 			const content = this.inputText.trim();
 			if (!content) return;
@@ -213,6 +247,7 @@ export default {
 				if (res.code === 1) {
 					this.inputText = '';
 					this.replyTarget = null;
+					this.showEmoji = false;
 					uni.showToast({ title: '发表成功', icon: 'none', duration: 1200 });
 					this.loadComments(true);
 					if (!payload.parent_id) {
@@ -297,7 +332,7 @@ export default {
 .comment-mask {
 	position: fixed;
 	inset: 0;
-	z-index: 999;
+	z-index: 9999;
 	background: rgba(0, 0, 0, 0.5);
 	display: flex;
 	align-items: flex-end;
@@ -476,23 +511,51 @@ export default {
 .input-bar {
 	display: flex;
 	align-items: center;
-	padding: 16rpx 30rpx;
-	border-top: 1rpx solid #f0f0f0;
-	gap: 20rpx;
+	padding: 18rpx 24rpx;
+	border-top: 1rpx solid #ececec;
+	background: #fafafa;
+	gap: 16rpx;
 	flex-shrink: 0;
 
 	/* #ifdef H5 */
-	padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+	padding-bottom: calc(18rpx + env(safe-area-inset-bottom));
 	/* #endif */
+
+	.emoji-btn {
+		width: 64rpx;
+		height: 72rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		transition: opacity 0.2s;
+		opacity: 0.55;
+
+		.emoji-icon {
+			font-size: 48rpx;
+			line-height: 1;
+			filter: grayscale(1);
+		}
+
+		&.active {
+			opacity: 1;
+
+			.emoji-icon {
+				filter: none;
+			}
+		}
+	}
 
 	.input-wrap {
 		flex: 1;
 		display: flex;
 		align-items: center;
-		background: #f7f7f7;
+		background: #fff;
+		border: 1rpx solid #d8d8e0;
 		border-radius: 40rpx;
 		padding: 0 24rpx;
 		height: 72rpx;
+		box-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.03) inset;
 	}
 
 	.comment-input {
@@ -513,18 +576,50 @@ export default {
 		height: 72rpx;
 		display: flex;
 		align-items: center;
-		background: #e0e0e0;
+		background: #cfcfd6;
 		border-radius: 40rpx;
 		transition: background 0.2s;
 
 		text {
 			font-size: $dj-fs-base;
 			color: #fff;
-			font-weight: 500;
+			font-weight: 600;
 		}
 
 		&.active {
 			background: $dj-gradient-primary;
+			box-shadow: 0 4rpx 12rpx rgba(94, 114, 247, 0.3);
+		}
+	}
+}
+
+.emoji-panel {
+	flex-shrink: 0;
+	max-height: 360rpx;
+	overflow-y: auto;
+	background: #fafafa;
+	border-top: 1rpx solid #ececec;
+	padding: 16rpx 20rpx;
+	display: grid;
+	grid-template-columns: repeat(8, 1fr);
+	gap: 6rpx;
+
+	.emoji-cell {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 72rpx;
+		border-radius: 12rpx;
+		background: transparent;
+		transition: background 0.15s;
+
+		&:active {
+			background: rgba(147, 84, 255, 0.1);
+		}
+
+		.emoji-text {
+			font-size: 44rpx;
+			line-height: 1;
 		}
 	}
 }

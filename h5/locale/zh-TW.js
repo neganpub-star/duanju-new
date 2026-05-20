@@ -364,4 +364,18 @@ export default {
     rechargePoints: '充值點數',
     rechargeMore: '充值點數，解鎖更多劇集',
   },
+  comment: {
+    title: '評論',
+    noComments: '暫無評論，快來搶沙發吧~',
+    anonymousUser: '用戶',
+    reply: '回覆',
+    replyTo: '回覆',
+    viewReplies: '查看全部 {0} 條回覆',
+    send: '發表',
+    placeholder: '說點什麼吧...',
+    replyPlaceholder: '回覆 @{0}',
+    deleteTitle: '確認刪除',
+    deleteContent: '刪除後無法復原，確認嗎？',
+    emoji: '表情',
+  },
 }

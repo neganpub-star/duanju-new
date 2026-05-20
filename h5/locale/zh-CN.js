@@ -239,11 +239,12 @@ export default {
     reply: '回复',
     replyTo: '回复',
     viewReplies: '查看全部 {0} 条回复',
-    send: '发送',
+    send: '发表',
     placeholder: '说点什么吧...',
     replyPlaceholder: '回复 @{0}',
     deleteTitle: '确认删除',
     deleteContent: '删除后无法恢复，确认吗？',
+    emoji: '表情',
   },
   search: {
     placeholder: '搜索你感兴趣的短剧',
