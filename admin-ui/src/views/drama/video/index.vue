@@ -12,6 +12,11 @@
             <el-option label="下架" :value="0" />
           </el-select>
         </el-form-item>
+        <el-form-item label="分类" prop="categoryId">
+          <el-select v-model="queryParams.categoryId" placeholder="全部分类" clearable filterable style="width:160px">
+            <el-option v-for="c in categories" :key="c.id" :label="c.name" :value="c.id" />
+          </el-select>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" :icon="Search" @click="handleQuery">搜索</el-button>
           <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
@@ -64,6 +69,23 @@
               <el-icon class="rec-icon"><Star /></el-icon>
               <span>推荐</span>
             </el-tag>
+          </div>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="分类" min-width="150">
+        <template #default="{ row }">
+          <div class="cat-cell">
+            <template v-if="categoryNames(row.categoryIds).length">
+              <el-tag
+                v-for="name in categoryNames(row.categoryIds)"
+                :key="name"
+                size="small"
+                effect="plain"
+                class="cat-tag"
+              >{{ name }}</el-tag>
+            </template>
+            <span v-else class="cat-empty">未分类</span>
           </div>
         </template>
       </el-table-column>
@@ -196,6 +218,19 @@
             <!-- 分组：上架与排序 -->
             <div class="ep-section">
               <div class="ep-section-title"><span class="ep-bar"></span>上架与排序</div>
+              <el-form-item label="所属分类">
+                <el-select
+                  v-model="formCategoryIds"
+                  multiple
+                  filterable
+                  clearable
+                  placeholder="请选择分类（可多选）"
+                  style="width:100%"
+                >
+                  <el-option v-for="c in categories" :key="c.id" :label="c.name" :value="String(c.id)" />
+                </el-select>
+                <span class="ep-hint">用于前台分类页归类，可选多个</span>
+              </el-form-item>
               <el-form-item label="上架状态">
                 <el-radio-group v-model="form.status" class="ep-segment">
                   <el-radio-button :value="1">
@@ -352,7 +387,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="转码" width="90" align="center">
+        <el-table-column label="转码" width="96" align="center">
           <template #default="{ row }">
             <span v-if="row.transcodeStatus === 'done'" class="ep-trans-chip ep-trans-chip--done">
               <el-icon><CircleCheck /></el-icon>已转码
@@ -684,6 +719,7 @@
 
 <script setup>
 import { listVideo, addVideo, updateVideo, deleteVideo } from '@/api/drama/video'
+import { listCategory } from '@/api/drama/category'
 import { listEpisodes, addEpisode, updateEpisode, deleteEpisode, transcodeEpisode, batchSetEpisodes } from '@/api/drama/episode'
 import { uploadFile, listConfig, fetchRemoteUrl } from '@/api/system/config'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -718,7 +754,37 @@ const LANG_LABELS = { 'zh-CN': '简体中文', 'zh-TW': '繁體中文', en: 'Eng
 const loading = ref(false)
 const list = ref([])
 const total = ref(0)
-const queryParams = reactive({ pageNum: 1, pageSize: 10, siteId: 1, title: '', status: '' })
+const queryParams = reactive({ pageNum: 1, pageSize: 10, siteId: 1, title: '', status: '', categoryId: '' })
+
+// ===== 分类 =====
+const categories = ref([])
+// 分类 id -> 名称 映射，用于把 categoryIds 串渲染成可读标签
+const categoryMap = computed(() => {
+  const m = {}
+  categories.value.forEach(c => { m[c.id] = c.name })
+  return m
+})
+// 把逗号分隔的 categoryIds 串转成分类名称数组
+function categoryNames(ids) {
+  if (!ids && ids !== 0) return []
+  return String(ids).split(',').map(s => s.trim()).filter(Boolean)
+    .map(id => categoryMap.value[id]).filter(Boolean)
+}
+async function loadCategories() {
+  try {
+    const res = await listCategory({ siteId: 1 })
+    categories.value = res.data || []
+  } catch { /* 加载失败时分类列表为空 */ }
+}
+// 表单内分类多选与 categoryIds 字符串互转
+const formCategoryIds = computed({
+  get() {
+    return String(form.value.categoryIds || '').split(',').map(s => s.trim()).filter(Boolean)
+  },
+  set(val) {
+    form.value.categoryIds = (val || []).join(',')
+  }
+})
 const dialog = reactive({ visible: false, title: '' })
 const form = ref({})
 const formRef = ref()
@@ -1121,6 +1187,7 @@ function destroyPlayer() {
 }
 
 loadSupportedLangs()
+loadCategories()
 getList()
 </script>
 
@@ -1204,6 +1271,11 @@ getList()
   white-space: nowrap;
 }
 .rec-icon { font-size: 12px; }
+
+/* 分类标签 */
+.cat-cell { display: flex; flex-wrap: wrap; gap: 4px; }
+.cat-tag { border-radius: 4px; }
+.cat-empty { color: #c0c4cc; font-size: 13px; }
 
 /* 集数胶囊 */
 .ep-badge {
@@ -1434,11 +1506,12 @@ getList()
 .ep-trans-chip {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
+  gap: 3px;
+  padding: 3px 8px;
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
 }
 .ep-trans-chip .el-icon { font-size: 12px; }
 .ep-trans-chip--done { background: #e7f7e7; color: #2e7d32; }
@@ -1668,14 +1741,14 @@ html.dark .ep-section-title { color: #e5e7eb; }
   justify-content: space-between;
   gap: 12px;
   padding: 14px 20px;
-  background: linear-gradient(135deg, #1e1e2f 0%, #2a2d4a 100%);
-  color: #fff;
+  background: linear-gradient(135deg, #eef2ff 0%, #f8f9ff 100%);
+  color: #303133;
 }
 .preview-header-title { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
 .preview-header-icon {
   font-size: 22px;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.18);
+  color: #5048e5;
+  background: rgba(80, 72, 229, 0.12);
   padding: 8px;
   border-radius: 10px;
   flex-shrink: 0;
@@ -1688,10 +1761,10 @@ html.dark .ep-section-title { color: #e5e7eb; }
   font-size: 15px;
   font-weight: 700;
 }
-.preview-ep-tag { background: rgba(255, 255, 255, 0.25) !important; border-color: transparent !important; color: #fff !important; }
+.preview-ep-tag { background: #5048e5 !important; border-color: transparent !important; color: #fff !important; }
 .preview-title-sub {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.7);
+  color: #909399;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1704,9 +1777,9 @@ html.dark .ep-section-title { color: #e5e7eb; }
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #606266;
+  background: #fff;
+  border: 1px solid #e4e7ed;
   cursor: pointer;
   border-radius: 50%;
   transition: all 0.2s;
@@ -1718,6 +1791,19 @@ html.dark .ep-section-title { color: #e5e7eb; }
   color: #fff;
   transform: rotate(90deg);
   box-shadow: 0 2px 10px rgba(245, 108, 108, 0.45);
+}
+
+/* 深色模式：头部回到深色渐变 + 浅色文字 */
+html.dark .preview-header {
+  background: linear-gradient(135deg, #1f1f2f 0%, #1a1a1a 100%);
+  color: #e5eaf3;
+}
+html.dark .preview-header-icon { color: #fff; background: rgba(255, 255, 255, 0.18); }
+html.dark .preview-title-sub { color: rgba(255, 255, 255, 0.6); }
+html.dark .preview-close {
+  color: #cfd3dc;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* 内容布局 */
